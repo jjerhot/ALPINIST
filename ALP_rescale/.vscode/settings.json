@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "Pi0MCfromALPXs_orig.C": "cpp",
+        "ExpParameters.C": "cpp",
+        "direct_rescale.C": "cpp",
+        "out_dat_merge.C": "cpp",
+        "Pi0MCfromALPXs.C": "cpp",
+        "Pi0MCfromALPXs_gluon_oldtest.C": "cpp",
+        "rescale.C": "cpp",
+        "fstream": "cpp",
+        "ALP_decayMC.C": "cpp"
+    }
+}
