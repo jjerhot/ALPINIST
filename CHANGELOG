@@ -5,3 +5,14 @@ v1.0.0
 ------
 Initial release, January 2022
 
+v1.1.0
+------
+July 2022
+- Running over multiple modes and experiments allowed
+- More precise binning for ALP production
+- Incoming beam angle can be specified
+- Exclusion plots can be done in a plane of two couplings for a fixed ALP mass + other user interface improvements for ALP_rescale
+- Each experiment can be run with different setups
+- More than one signal region can be checked simultaneously
+- New figures and updated tables generated
+- Many other smaller improvements and fixes

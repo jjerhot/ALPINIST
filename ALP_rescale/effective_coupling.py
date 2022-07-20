@@ -39,12 +39,22 @@ class mixing:
 
     #define ALP-meson mixing parameters
 
-    def pi(self,C_GG,m_a):
+    def pi(self, C_GG, m_a):
         return self._FVMD(m_a) * f.alpha_s(m_a) * c.fpi * (-32*np.pi**2 * C_GG / self._lambda_a) * self._K_a_pi0 * m_a**2/(m_a**2 - c.m_pi0**2)
-    def eta(self,C_GG,m_a):
+    def eta(self, C_GG, m_a):
         return self._FVMD(m_a) * f.alpha_s(m_a) * c.fpi * (-32*np.pi**2 * C_GG / self._lambda_a) * (self._K_a_eta * m_a**2 + self._m_a_eta_Squared)/(m_a**2 - c.m_eta**2)
-    def etap(self,C_GG,m_a):
+    def etap(self, C_GG, m_a):
         return self._FVMD(m_a) * f.alpha_s(m_a) * c.fpi * (-32*np.pi**2 * C_GG / self._lambda_a) * (self._K_a_etap * m_a**2 + self._m_a_etap_Squared)/(m_a**2 - c.m_etap**2)
+
+class gluon_coupling:
+    def __init__(self, Lambda):
+        self._lambda = Lambda
+    def _f(self,tau):
+        if tau >= 1: return mp.asin(1/np.sqrt(tau))
+        else: return np.pi/2 + 1j/2*mp.log((1+np.sqrt(1-tau))/(1-np.sqrt(1-tau)))
+    def _B1(self,tau): return 1 - tau * np.abs(self._f(tau))**2
+    def g_GG_eff(self, m_a, C_GG, C_qq=0): #for decays to mesons
+        return (C_GG + C_qq/2*(self._B1(4*c.m_q[0]**2/m_a**2) + self._B1(4*c.m_q[1]**2/m_a**2) + self._B1(4*c.m_q[2]**2/m_a**2) + self._B1(4*c.m_q[3]**2/m_a**2) + self._B1(4*c.m_q[4]**2/m_a**2)))/self._lambda
 
 class photon_coupling: #using (22) [1708.00443]
     def __init__(self, Lambda):
@@ -58,9 +68,10 @@ class photon_coupling: #using (22) [1708.00443]
     def _chiC(self,m_a,C_GG): #chiral contribution
         if m_a > c.m_etap: return 0.
         return - 1.92 * C_GG
-    def g_gg_eff(self, m_a, C_GG, C_WW, C_BB, C_ll = 0):
+    def g_gg_eff(self, m_a, C_GG, C_WW, C_BB, C_ll = 0, C_qq = 0):
         C_gg_eff = C_BB + C_WW + C_WW*(2* c.alpha_EM * self._B2(4*c.m_W**2/m_a**2))/(np.pi*mp.sin(c.theta_w)**2) + self._chiC(m_a, C_GG) #contributions of gauge boson couplings to photon coupling (up to 1 loop)
         C_gg_eff = C_gg_eff + C_ll/(16 * np.pi**2)*(self._B1(4*c.m_el**2/m_a**2)+self._B1(4*c.m_mu**2/m_a**2)+self._B1(4*c.m_tau**2/m_a**2)) # + leptonic 1-loop contribution
+        C_gg_eff = C_gg_eff + C_qq/(16 * np.pi**2)*(4/3*self._B1(4*c.m_q[3]**2/m_a**2)+1/3*self._B1(4*c.m_q[4]**2/m_a**2)) # + quark 1-loop contribution, b and c quarks
         C_gg_eff = C_gg_eff + self._lambda*(self._th.pi(C_GG,m_a)/(16*np.pi**2 * c.fpi) + self._th.eta(C_GG,m_a)/(16*np.pi**2 * c.feta) + self._th.etap(C_GG,m_a)/(16*np.pi**2 * c.fetap)) # + meson mixing contributions
 
         return C_gg_eff / self._lambda
@@ -168,3 +179,21 @@ class cu_coupling:
         C_aW_cu = 3 * c.alpha_W**2 * sum([np.prod(k) for k in zip(self._V_kc, self._V_ku, self._f_k_loop)]) 
 
         return C_aG_cu * C_GG / self._lambda + C_aW_cu * C_WW / self._lambda
+
+class sd_coupling:
+    def __init__(self, Lambda):
+        self._lambda = Lambda
+        #define K decay branching fraction
+        self._V_qs = [c.V_us, c.V_cs, c.V_ts]
+        self._V_qd = [c.V_ud, c.V_cd, c.V_td]
+
+        self._f_q_loop = [F_loop(c.m_q[0]**2/c.m_W**2), F_loop(c.m_q[3]**2/c.m_W**2), F_loop(c.m_q[5]**2/c.m_W**2)]
+
+        self._g_8 = 5.
+
+    def g_sd_eff(self, m_a, C_GG, C_WW):
+        C_aG_sd = -32*np.pi**3 * c.alpha_W * self._g_8 * (c.m_pi0**2 - m_a**2)/(4*c.m_K0**2 - c.m_pi0**2 - 3*m_a**2) * c.fpi**2/c.m_W**2 * c.V_us * c.V_ud #https://arxiv.org/pdf/2110.10698.pdf
+
+        C_aW_sd = 3 * c.alpha_W**2 * sum([np.prod(q) for q in zip(self._V_qs, self._V_qd, self._f_q_loop)]) # effective a_sd coupling
+
+        return C_aG_sd * C_GG / self._lambda + C_aW_sd * C_WW / self._lambda

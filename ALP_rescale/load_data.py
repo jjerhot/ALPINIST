@@ -12,11 +12,11 @@ class Load_data:
     constraint_dictionary = {}
     boundary_dictionary = {}
 
-    def __init__(self,exp,channels_decay,channels_production):
+    def __init__(self,exp,region,channels_decay,channels_production):
         for chan_dec in channels_decay:
             for chan_prod in channels_production:
 
-                filename_dat = path.dirname(path.realpath(__file__))+"/../tab_decay/"+exp+"/"+exp+'_'+chan_prod+'_'+chan_dec+'.dat'
+                filename_dat = path.dirname(path.realpath(__file__))+"/../tab_decay/"+exp+"/"+exp+'_'+chan_prod+'_'+chan_dec+region+'.dat'
 
                 if path.exists(filename_dat):
                     
@@ -44,12 +44,12 @@ class Load_data:
                     self.boundary_dictionary[exp+'_'+chan_prod+'_'+chan_dec] = np.array([[0, -1],[0,-1]])
 
 class Process_data:
-    def __init__(self,experiment,channels_decay,channels_production):
+    def __init__(self,experiment,region,channels_decay,channels_production):
         self._channels_decay = channels_decay
         self._channels_production = channels_production
         self._exp = experiment        
 
-        self._data = Load_data(self._exp,self._channels_decay,self._channels_production)
+        self._data = Load_data(self._exp,region,self._channels_decay,self._channels_production)
 
         self._digi_widths = {}
         for channel in self._channels_decay:
@@ -91,14 +91,14 @@ class Process_data:
 
         return number_of_decays
 
-    def ALP_events_EFT(self, m_a, C_GG, C_WW, C_BB, Lambda, AA, BB, C_ll):
+    def ALP_events_EFT(self, m_a, C_GG, C_WW, C_BB, Lambda, AA, BB, C_ll, C_qq):
 #        self._processed += 1./(201*896)
         self._processed += 1./22725
         print("\r" + " processed for " + self._exp + ": " + "{:.2f}".format(self._processed*100) + "%", end="             ")
 
         #eff. photon coupling:
         ph = eff.photon_coupling(Lambda)
-        g_gg = ph.g_gg_eff(m_a, C_GG, C_WW, C_BB, C_ll)
+        g_gg = ph.g_gg_eff(m_a, C_GG, C_WW, C_BB, C_ll, C_qq)
 
         #eff. lepton coupling
         lp = eff.lepton_coupling(Lambda)
@@ -123,7 +123,15 @@ class Process_data:
 
         BR_D_Pi_a = width.D_pi_a(m_a,cu.g_cu_eff(m_a,C_GG,C_WW)) / c.Gamma_D
 
-        g_GG = C_GG/Lambda
+        #K_S decay branching fraction:
+
+        sd = eff.sd_coupling(Lambda)
+
+        BR_KS_Pi0_a = width.KS_pi0_a(m_a,sd.g_sd_eff(m_a,C_GG,C_WW)) / c.Gamma_KS
+
+        #effective gluon coupling for hadronic decays
+        gl = eff.gluon_coupling(Lambda)
+        g_GG = gl.g_GG_eff(m_a, C_GG, C_qq)
 
         self._coupling_production={ 'primakoff':         g_gg,
                                     'photonfrommeson':   g_gg,
@@ -132,7 +140,8 @@ class Process_data:
                                     'mixingEtaPrim':     th_etap,
                                     'BmesonK':           BR_B_K_a,
                                     'BmesonKstar':       BR_B_Kstar_a,
-                                    'DmesonPi':          BR_D_Pi_a}        
+                                    'DmesonPi':          BR_D_Pi_a,
+                                    'KSmesonPi0':        BR_KS_Pi0_a}        
 
         self._coupling_decay = {'2Gamma':       g_gg,
                                 '2El':          g_ee,

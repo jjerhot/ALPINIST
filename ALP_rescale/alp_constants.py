@@ -27,6 +27,7 @@ Gamma_B0 = hPl/(1.52*1e-12) #B0 total decay width in GeV
 Gamma_B = hPl/(1.638*1e-12) #B^+- total decay width in GeV
 Gamma_D0 = hPl/(0.41*1e-12) #D0 total decay width in GeV
 Gamma_D = hPl/(1.04*1e-12) #D^+- total decay width in GeV
+Gamma_KS = hPl/(0.8954*1e-10) #K_S total decay width in GeV
 m_K0 = 0.49761 #K0 mass in GeV 2018PDG
 m_K = 0.49367 #K^+- mass in GeV 2018PDG
 m_K0star = 0.89555 #K0* mass in GeV 2018PDG
