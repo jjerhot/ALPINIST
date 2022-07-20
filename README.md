@@ -9,16 +9,14 @@ The framework comprises of several modules each of which reads, processes and wr
 
 For using each module, please follow the instructions in the corresponding subdirectory.
 
-Note that this public repository contains only the ALP_rescale module and the necessary tables. For access to the full repository contact one of the authors. 
-
 Citation
 -----------------
 
-This code has been published together with [arXiv:2201.xxxxx][2201.xxxxx] and uses values and equations cited there.
+This code has been published together with [arXiv:2201.05170][2201.05170] and uses values and equations cited there.
 
 When using this framework, please cite
 
-- <em>ALPINIST: Axion-Like Particles In Numerous Interactions Simulated and Tabulated</em>, J. Jerhot et al., [arXiv:2201.xxxxx][2201.xxxxx].
+- <em>ALPINIST: Axion-Like Particles In Numerous Interactions Simulated and Tabulated</em>, J. Jerhot et al., JHEP 07 (2022), 094, [arXiv:2201.05170][2201.05170].
 
 and the following external software used by this framework
 
@@ -30,5 +28,5 @@ and the following external software used by this framework
 
 - <em>Python 3 Reference Manual</em>, G. Van Rossum and F. L. Drake,  CreateSpace, Scotts Valley,CA, 2009.
 
-[2201.xxxxx]: https://arxiv.org/
+[2201.05170]: https://arxiv.org/abs/2201.05170
 [1410.3012]: https://arxiv.org/abs/1410.3012v1

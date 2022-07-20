@@ -1,3 +1,11 @@
+variables = [   'ma',
+                'CBB',
+                'CWW',
+                'CGG',
+                'Cll',
+                'Cqq'
+            ]
+
 experiments = [ 'NA62',
                 'CHARM',
                 'NuCal',
@@ -7,8 +15,8 @@ experiments = [ 'NA62',
                 'SHADOWS'
                 ]
 channels_decay = [  '2Gamma',
-#                    '2El',
-#                    '2Mu',
+                    '2El',
+                    '2Mu',
                     '3Pi0',
                     '3Pi',
                     '2PiGamma',
@@ -25,7 +33,8 @@ channels_production = [ 'primakoff',
                         'mixingEtaPrim',
                         'BmesonK',
                         'BmesonKstar',
-                        'DmesonPi'
+                        'DmesonPi',
+                        'KSmesonPi0'
                         ]
 reference_couplings = {'primakoff':         1e-4,
                        'photonfrommeson':   1e-4,
@@ -34,7 +43,8 @@ reference_couplings = {'primakoff':         1e-4,
                        'mixingEtaPrim':     1e-4,
                        'BmesonK':           1e-10,
                        'BmesonKstar':       1e-10,
-                       'DmesonPi':          1e-10}
+                       'DmesonPi':          1e-10,
+                       'KSmesonPi0':        1e-10}
 scaling_exponent =    {'primakoff':         2,
                        'photonfrommeson':   2,
                        'mixingPi0':         2,
@@ -42,5 +52,5 @@ scaling_exponent =    {'primakoff':         2,
                        'mixingEtaPrim':     2,
                        'BmesonK':           1,
                        'BmesonKstar':       1,
-                       'DmesonPi':          1}
-
+                       'DmesonPi':          1,
+                       'KSmesonPi0':        1,}

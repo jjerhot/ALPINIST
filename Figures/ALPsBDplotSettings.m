@@ -9,7 +9,8 @@ LogTick::usage="List of ticks for x and y axis"
 LogTickLegend::usage="List of ticks for z axis"
 reportColorRange::usage="Returns the colors and range for given plot. Use as {plot,colors,range} = reportColorRange['original contour plot']"
 trimPoint::usage="display number n with given number of sig.digits,trim trailing decimal point"
-colorLegend::usage="Makes z axis legend according to the input color and range"
+colorLegend::usage="Makes log z axis legend according to the input color and range"
+colorLegendLinear::usage="Makes z axis legend according to the input color and range"
 at::usage="convenience function to position objects in Graphics"
 display::usage="Same as Graphics,but with fixed PlotRange"
 cropVector::usage="Crop for vector graphics"
@@ -155,6 +156,60 @@ colorLegend[cFunc_,rawRange_,OptionsPattern[]]:=
 		Background->OptionValue[Background],FrameStyle->outerFrameStyle,RoundingRadius->OptionValue[RoundingRadius],BoxFrame->OptionValue[BoxFrame]
 		]
 	];
+Options[colorLegendLinear]=
+	{LabelStyle->Directive[baseStyle],FrameLabel-> None,Background->Transparent,FrameStyle->None,RoundingRadius->10,"ColorSwathes"->None,"LeftLabel"->False,"Digits"->3,Contours->None,BoxFrame->0,"ColorBarFrameStyle"->Black,ImageSize->Automatic};
+
+colorLegendLinear[cFunc_,rawRange_,OptionsPattern[]]:=
+	Module[
+		{frameticks,tickPositions,nColor,nTick,range=If[rawRange[[-1]]<1,{Floor[rawRange[[1]],0.01],Floor[rawRange[[-1]],0.01]},{Floor[rawRange[[1]],10],Floor[rawRange[[-1]],10]}],colors,contours=OptionValue[Contours],colorBarLabelStyle=OptionValue[LabelStyle],colorBarFrameStyle=OptionValue["ColorBarFrameStyle"],outerFrameStyle=OptionValue[FrameStyle],colorSwathes=OptionValue["ColorSwathes"],filling,origDim},
+		(*Here we decide how many color gradations to diplay-either a given number,equally spaced,or "continuous," i.e.256 steps:*)
+		Switch[
+			colorSwathes,_?NumericQ,nColor=colorSwathes;
+			colors=(Range[nColor]-1/2)/nColor;
+			nTick=nColor,_,nColor=256;
+			colors=(Range[nColor]-1)/(nColor-1);
+			nTick=1
+		];
+		(*Number of labels is nTick+1,unless changed by numerical Contours setting below:*)
+		Switch[
+			contours,_?NumericQ,tickPositions=(range[[1]]+(range[[-1]]-range[[1]]) (Range[contours+1]-1)/contours);
+			,List[Repeated[_?NumericQ]],tickPositions=contours,_,tickPositions=(range[[1]]+(range[[-1]]-range[[1]]) (Range[nTick+1]-1)/nTick);
+		];
+		frameticks=
+			(*{If[TrueQ[OptionValue["LeftLabel"]],Reverse[#],#]&@{None,LogTickLegend[range[[1]],range[[-1]]]},{None,None}};*)
+			{If[TrueQ[OptionValue["LeftLabel"]],Reverse[#],#]&@{None,Function[{min,max},{#,trimPoint[#,OptionValue["Digits"]],{-0.3,0}}&/@tickPositions]},{None,None}};
+
+		filling=
+		Graphics[(*Create strip of colored,translated unit squares.If colorSwathes are selected,colors don't vary inside squares.Otherwise,colors vary linearly in each of 256 squares to get smooth gradient using VertexColors:*)
+				MapIndexed[
+					{Translate[Polygon[{{0,0},{1,0},{1,1},{0,1}},VertexColors->{cFunc[#[[1]]],cFunc[#[[1]]],cFunc[#[[2]]],cFunc[#[[2]]]}],{0,#2[[1]]-1}]}&,
+					Transpose[
+						If[
+							colorSwathes===None,
+							{Most[colors],Rest[colors]}(*Offset top versus bottom colors of polygons to create linear VertexColors*),
+							{colors,colors} (*Top and bottom colors are same when uniform colorSwathes are desired*)
+						]
+					]
+				], (**End MapIndexed**)
+						(*Options for inset Graphics:*)
+						ImagePadding->0,PlotRangePadding->0,AspectRatio->Full(*AspectRatio\[Rule]Full allows colored squares to strecth with resizing in the following.*)
+			];
+		origDim=ImageDimensions[#]&@filling;
+		(*DisplayForm@FrameBox replaces Framed because it allows additional BoxFrame option to specify THICKNESS of frame:*)
+		DisplayForm@FrameBox[ 
+			(*Wrapped in Pane to allow unlimited resizing:*)
+			Pane@Graphics[
+				Inset[
+					ImageResize[#,{Last[origDim]/8,Last[origDim]}]&@filling//Rasterize,
+					(*Options for Inset:*)
+					{0,First[range]},{0,0},{(range[[-1]]-range[[1]])/8,range[[-1]]-range[[1]]},ContentSelectable->True (*this sets the size of the inset in the enclosing Graphics whose PlotRange is given next:*)
+				],
+				(*Options for enclosing Graphics:*)
+				PlotRange->{{0,(range[[-1]]-range[[1]])/8},range[[{1,-1}]]},Frame->True,FrameLabel->OptionValue[FrameLabel],LabelStyle-> colorBarLabelStyle,FrameTicks->frameticks,FrameTicksStyle->{colorBarLabelStyle,Black},FrameStyle->colorBarFrameStyle,ImageSize->OptionValue[ImageSize]],
+		(*Options for FrameBox:*)
+		Background->OptionValue[Background],FrameStyle->outerFrameStyle,RoundingRadius->OptionValue[RoundingRadius],BoxFrame->OptionValue[BoxFrame]
+		]
+	];
 
 at[position_,scale_:Automatic][obj_]:=
 	(*convenience function to position objects in Graphics*)
@@ -187,8 +242,8 @@ lines=Cases[cp,_Tooltip,Infinity];
 Graphics[GraphicsComplex[points,{regions,lines}],Sequence@@Options[cp]]];
 (*setup for 90CL plots*)
 
-baseLegend90CL=LineLegend[{{Thickness[0.05],Lighter[Gray,0.3]},{Thickness[0.05],Darker[Gray,0.2]},Darker[Red,0.6],Red,Darker[Green,0.5],Black,Lighter[RGBColor[0.05,0.2,0.75],0.3]},{"NuCal","CHARM","NA62","DUNE","DarkQuest","SHADOWS","SHiP"},Spacings-> 0.25,LabelStyle->baseStyleLeg90CL];
-dashedLegend90CL=LineLegend[{Dashed,Darker[Gray,0.9]},{"2\[Gamma] only"},Spacings-> 0.25,LabelStyle->baseStyleLeg90CL];
+baseLegend90CL=LineLegend[{{Thickness[0.05],Opacity[0.6,Lighter[Gray,0.3]]},{Thickness[0.05],Opacity[0.6,Darker[Gray,0.3]]},Opacity[0.5,Darker[Red,0.6]],Opacity[0.5,Red],Opacity[0.5,Darker[Green,0.5]],Opacity[0.5,Black],Opacity[0.5,Lighter[RGBColor[0.05,0.2,0.75],0.3]],Opacity[0.5,Orange]},{"NuCal","CHARM","NA62","DUNE","DarkQuest","SHADOWS","SHiP","KOTO"},Spacings-> 0.15,LabelStyle->baseStyleLeg90CL];
+dashedLegend90CL=LineLegend[{Dashed,Darker[Gray,0.9]},{"2\[Gamma] only"},Spacings-> 0.2,LabelStyle->baseStyleLeg90CL];
 
 gridLines3mesons={Method->{"GridLinesInFront"->True},GridLines->{{0.135,0.547,0.957},{}},GridLinesStyle->{{Darker[Gray,0.4],Thickness->0.01},{}}};
 gridLines2mesons={Method->{"GridLinesInFront"->True},GridLines->{{0.547,0.94},{}},GridLinesStyle->{{Darker[Gray,0.4],Thickness->0.025},{}}};
@@ -199,13 +254,13 @@ plotReducedSettings90CL={PlotRange->{{0.4,2.},{1*10^-10,1*10^-5},{10^-8,Full}},P
 
 (*Colors and contours for 90CL plots:*)
 
-plotSettings90CLNA62={Contours->{3.0},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.5,Darker[Red,0.6]],Evaluate[plotSettings90CL]};
+plotSettings90CLNA62={Contours->{2.3},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.5,Darker[Red,0.6]],Evaluate[plotSettings90CL]};
 plotSettings90CLCHARM={Contours->{2.3},ContourShading->{Transparent,Opacity[0.5,Darker[Gray,0.2]]},ContourStyle->None,Evaluate[plotSettings90CL]};
 plotSettings90CLNuCal={Contours->{3.6},ContourShading->{Transparent,Opacity[0.6,Lighter[Gray,0.3]]},ContourStyle->None,Evaluate[plotSettings90CL]};
-plotSettings90CLSHiP={Contours-> {3.0},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.5,Lighter[RGBColor[0.05,0.2,0.75],0.3]],Evaluate[plotSettings90CL]};
+plotSettings90CLSHiP={Contours-> {2.3},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.5,Lighter[RGBColor[0.05,0.2,0.75],0.3]],Evaluate[plotSettings90CL]};
 plotSettings90CLDarkQuest={Contours->{10.0},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.5,Darker[Green,0.5]],Evaluate[plotSettings90CL]};
-plotSettings90CLDUNE={Contours->{0.3},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.5,Red],Evaluate[plotSettings90CL]};
-plotSettings90CLSHADOWS={Contours->{3.0},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.5,Black],Evaluate[plotSettings90CL]};
+plotSettings90CLDUNE={Contours->{0.23},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.5,Red],Evaluate[plotSettings90CL]};
+plotSettings90CLSHADOWS={Contours->{2.3},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.5,Black],Evaluate[plotSettings90CL]};
 
 plotSettings90CLReducedNA62={Contours->{3.0},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.5,Darker[Red,0.6]],Evaluate[plotReducedSettings90CL]};
 plotSettings90CLReducedCHARM={Contours->{2.3},ContourShading->{Transparent,Opacity[0.5,Darker[Gray,0.2]]},ContourStyle->None,Evaluate[plotReducedSettings90CL]};
