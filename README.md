@@ -12,13 +12,17 @@ For using each module, please follow the instructions in the corresponding subdi
 Citation
 -----------------
 
-This code has been published together with [arXiv:2201.05170][2201.05170] and uses values and equations cited there.
+This code has been published together with [arXiv:2201.05170][2201.05170] and [arXiv:2303.xxxxx][2303.xxxxx] and uses values and equations cited there.
 
 When using this framework, please cite
 
 - <em>ALPINIST: Axion-Like Particles In Numerous Interactions Simulated and Tabulated</em>, J. Jerhot et al., JHEP 07 (2022), 094, [arXiv:2201.05170][2201.05170].
 
-and the following external software used by this framework
+and when using for reinterpretation for KOTO experment, please cite
+
+- <em>Probing Long-lived Axions at the KOTO Experiment</em>, Y. Afik, et al., [arXiv:2303.xxxxx][2303.xxxxx].
+
+The following external software is used by this framework
 
 - <em>An Introduction to PYTHIA 8.2</em>, T. Sjostrand et al, Comput. Phys.Commun. 191 (2015) 159, [arXiv:1410.3012][1410.3012].
 
@@ -29,4 +33,5 @@ and the following external software used by this framework
 - <em>Python 3 Reference Manual</em>, G. Van Rossum and F. L. Drake,  CreateSpace, Scotts Valley,CA, 2009.
 
 [2201.05170]: https://arxiv.org/abs/2201.05170
+[2303.xxxxx]: https://arxiv.org/abs/2303.xxxxx
 [1410.3012]: https://arxiv.org/abs/1410.3012v1

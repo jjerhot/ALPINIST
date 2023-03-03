@@ -21,7 +21,7 @@ class Load_digitized:
 
             if not mode == ('2Gamma' or '2El' or '2Mu'): self.digitized_exists = 1 #for 2Gamma/2El/2Mu use analytical instead           
         else: 
-            print('Error: ',width_file_name,' not found')
+            print('[Warning:] \t',width_file_name,'not found')
 
     def _mass_bound(self,m_a):
         return {
@@ -105,9 +105,4 @@ def B_Kstar_a(m_a, g_bs): #B -> K* + ALP
 def D_pi_a(m_a, g_cu): #D -> pi + ALP
     f_0 = 0.612/(1-m_a**2/6.46)
     if c.m_D0 > m_a + c.m_pi: return mp.fabs(g_cu)**2 /(64*np.pi*c.m_D**3)*(c.m_D**2 - c.m_pi**2)**2 * np.sqrt(f.lambda_Kallen(c.m_D,c.m_pi,m_a)) * f_0**2
-    return 0.
-
-def KS_pi0_a(m_a, g_sd): #K_S -> pi0 + ALP
-    f_0 = (1.-0.023+(c.m_K0**2-c.m_pi0**2)**2*(-0.34+0.28*(c.m_K0**2+c.m_pi0**2)))/(1-m_a**2/(0.94+0.54*(c.m_K0**2+c.m_pi0**2))**2) #eq. 15 in https://arxiv.org/pdf/1004.0886.pdf
-    if c.m_K0 > m_a + c.m_pi0: return mp.fabs(g_sd)**2 /(64*np.pi*c.m_K0**3)*(c.m_K0**2 - c.m_pi0**2)**2 * np.sqrt(f.lambda_Kallen(c.m_K0,c.m_pi0,m_a)) * f_0**2
     return 0.

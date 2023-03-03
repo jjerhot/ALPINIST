@@ -6,14 +6,20 @@ variables = [   'ma',
                 'Cqq'
             ]
 
-experiments = [ 'NA62',
-                'CHARM',
-                'NuCal',
-                'SHiP',
-                'DarkQuest',
-                'DUNE',
-                'SHADOWS'
-                ]
+experiments = { 'NA62':         'NA62',
+                'CHARM':        'CHARM',
+                'NuCal':        'NuCal',
+                'SHiP':         'SHiP',
+                'DarkQuest':    'DarkQuest',
+                'DUNE':         'DUNE',
+                'SHADOWS':      'SHADOWS',
+                'KOTOpnn':      'KOTO',
+                'KOTOexclPnn':  'KOTO',
+                'KOTOdump':     'KOTO',
+                'KOTO2pnn':     'KOTO2',
+                'KOTO2dump':    'KOTO2',
+                'E137':         'E137',
+                'E141':         'E141'}
 channels_decay = [  '2Gamma',
                     '2El',
                     '2Mu',
@@ -34,7 +40,7 @@ channels_production = [ 'primakoff',
                         'BmesonK',
                         'BmesonKstar',
                         'DmesonPi',
-                        'KSmesonPi0'
+                        'recast',
                         ]
 reference_couplings = {'primakoff':         1e-4,
                        'photonfrommeson':   1e-4,
@@ -44,7 +50,7 @@ reference_couplings = {'primakoff':         1e-4,
                        'BmesonK':           1e-10,
                        'BmesonKstar':       1e-10,
                        'DmesonPi':          1e-10,
-                       'KSmesonPi0':        1e-10}
+                       'recast':            1,}
 scaling_exponent =    {'primakoff':         2,
                        'photonfrommeson':   2,
                        'mixingPi0':         2,
@@ -53,4 +59,4 @@ scaling_exponent =    {'primakoff':         2,
                        'BmesonK':           1,
                        'BmesonKstar':       1,
                        'DmesonPi':          1,
-                       'KSmesonPi0':        1,}
+                       'recast':            2,}

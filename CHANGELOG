@@ -16,3 +16,17 @@ July 2022
 - More than one signal region can be checked simultaneously
 - New figures and updated tables generated
 - Many other smaller improvements and fixes
+
+v1.2.0
+------
+March 2023
+- Parallel production of ALP yield tables
+- ALP_rescale interface: running for custom experiments, production and decay modes
+- Allow multiple signal regions for simulation and add SR merging
+- Implement KOTO/2 geometry and selection conditions
+- Generate all datasets for KOTO
+- Update FCNC Yukawa to use existing classes
+- Add recasting for electron dumps
+- Improve argument parser for ALP_decay
+- Add flags for verbosity and for requiring all final states to be in acceptance
+- Other smaller improvements and bug fixes
