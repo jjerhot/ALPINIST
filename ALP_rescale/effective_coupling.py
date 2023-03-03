@@ -179,21 +179,3 @@ class cu_coupling:
         C_aW_cu = 3 * c.alpha_W**2 * sum([np.prod(k) for k in zip(self._V_kc, self._V_ku, self._f_k_loop)]) 
 
         return C_aG_cu * C_GG / self._lambda + C_aW_cu * C_WW / self._lambda
-
-class sd_coupling:
-    def __init__(self, Lambda):
-        self._lambda = Lambda
-        #define K decay branching fraction
-        self._V_qs = [c.V_us, c.V_cs, c.V_ts]
-        self._V_qd = [c.V_ud, c.V_cd, c.V_td]
-
-        self._f_q_loop = [F_loop(c.m_q[0]**2/c.m_W**2), F_loop(c.m_q[3]**2/c.m_W**2), F_loop(c.m_q[5]**2/c.m_W**2)]
-
-        self._g_8 = 5.
-
-    def g_sd_eff(self, m_a, C_GG, C_WW):
-        C_aG_sd = -32*np.pi**3 * c.alpha_W * self._g_8 * (c.m_pi0**2 - m_a**2)/(4*c.m_K0**2 - c.m_pi0**2 - 3*m_a**2) * c.fpi**2/c.m_W**2 * c.V_us * c.V_ud #https://arxiv.org/pdf/2110.10698.pdf
-
-        C_aW_sd = 3 * c.alpha_W**2 * sum([np.prod(q) for q in zip(self._V_qs, self._V_qd, self._f_q_loop)]) # effective a_sd coupling
-
-        return C_aG_sd * C_GG / self._lambda + C_aW_sd * C_WW / self._lambda

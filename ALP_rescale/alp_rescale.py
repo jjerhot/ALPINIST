@@ -2,14 +2,15 @@ from os import path
 import numpy as np
 import alp_setup as setup
 import load_data as ld
+from alp_mergeSigRegions import MergeInput
 import argparse
 
 parser = argparse.ArgumentParser(description='ALP MC rescaling. \n Select the experiment, production and decay modes and other parameters or use default')
 parser.add_argument("-varX", type=str, help="X-axis variable. Options are: ma | CBB | CWW | CGG | Cll | Cqq. Standard choice is ma.")
-parser.add_argument("-varY", type=str, help="Y-axis variable. Options are: ma | CBB | CWW | CGG | Cll | Cqq. Standard choice is one of the couplings.")
-parser.add_argument("-e","--exp",  default="", type=str, help="Experiments available (case sensitive): exp = NA62 | CHARM | nuCAL | SHiP | DarkQuest | DUNE | SHADOWS | KOTO. If not specified, running over all experiments available.")
-parser.add_argument("-p","--prod",  default="", type=str, help="Production modes available (case sensitive): prod = primakoff | photonfrommeson | mixingPi0 | mixingEta | mixingEtaPrim | BmesonK | BmesonKstar | DmesonPi | KSmesonPi0. If not specified, running over all production modes available.")
-parser.add_argument("-d","--decay",  default="", type=str, help="Decay modes available (case sensitive): decay = 2Gamma | 2El | 2Mu | 3Pi0 | 3Pi | 2PiGamma | 2Pi0Eta | 2PiEta. If not specified, running over all decay modes available.")
+parser.add_argument("-varY", type=str, help="Y-axis variable. Options are: ma | CBB | CWW | CGG | Cll | Cqq. Standard choice is one of the couplings. For setting other options to zero (couplings only), use -only option as for example: -varY CBB-only")
+parser.add_argument("-e","--exp",  default="", type=str, nargs='*', help="Experiments available (case sensitive): exp = NA62 | CHARM | nuCAL | SHiP | DarkQuest | DUNE | SHADOWS | KOTO. If not specified, running over all experiments available.")
+parser.add_argument("-p","--prod",  default="", type=str, nargs='*', help="Production modes available (case sensitive): prod = primakoff | photonfrommeson | mixingPi0 | mixingEta | mixingEtaPrim | BmesonK | BmesonKstar | DmesonPi | KSmesonPi0. If not specified, running over all production modes available.")
+parser.add_argument("-d","--decay",  default="", type=str, nargs='*', help="Decay modes available (case sensitive): decay = 2Gamma | 2El | 2Mu | 3Pi0 | 3Pi | 2PiGamma | 2Pi0Eta | 2PiEta. If not specified, running over all decay modes available.")
 parser.add_argument("-l","--lambda", dest="lam", default=1000, type=float, help="The \u039B [GeV] energy scale. Default value is \u039B = 1000 GeV")
 parser.add_argument("-a", default=0, type=float, help="The model-dependent A parameter in [2102.04474]. Default value is A = 0")
 parser.add_argument("-b", default=0, type=float, help="The model-dependent B parameter in [2102.04474]. Default value is B = 0")
@@ -17,10 +18,21 @@ parser.add_argument("-reg", default=1, type=int, help="Number of signal regions.
 
 args = parser.parse_args()
 #X- and Y-axis:
+oneCouplingOnly = 0
+if '-only' in args.varX:
+    parser.error("[Error:] \t Cxx-only option available only for Y-axis.")
+if '-only' in args.varY:
+    oneCouplingOnly = 1
+    args.varY = args.varY.replace('-only', '')
+    if args.varY == "ma":
+        parser.error("[Error:] \t -only option available only for couplings.")
+
 if args.varX in setup.variables:
     if args.varY in setup.variables:
         if args.varX != args.varY:
             print("[Info:] \t Running with X-axis varible " + args.varX + " and Y-axis variable " + args.varY)
+            if oneCouplingOnly:
+                print("[Info:] \t Running for " + args.varY + " coupling only, other couplings set to 0")
         else:
             parser.error("[Error:] \t X-axis and Y-axis variable must be different.")
     else:
@@ -41,20 +53,23 @@ scaledCouplingsX = {}
 scaledCouplingsY = {}
 for var in setup.variables:
     if var != args.varX and var != args.varY and var != "ma":
-        response_fixed = input(" - Fixed value for coupling " + var + "? [Y/N]: ")
-        if response_fixed == "Y" or response_fixed == "y":
-            fixedValues[var] = float(input(" - Enter fixed value for " + var + " coupling: "))
-        elif response_fixed == "N" or response_fixed == "n":
-            response_scaleX = input(" - Scale coupling " + var + " with x-axis " + args.varX + "? [Y/N]: ")
-            if response_scaleX == "Y" or response_scaleX == "y":
-                scaledCouplingsX[var] = float(input(" - Enter ratio between " + var + " coupling and x-axis " + args.varX + ": "))
-            elif response_scaleX == "N" or response_scaleX == "n":
-                print("[Info:] \t Scaling with y-axis " + args.varY)
-                scaledCouplingsY[var] = float(input(" - Enter ratio between " + var + " coupling and y-axis " + args.varY + ": "))
-            else:
-                raise KeyError("[Error:] \t Invalid answer: " + response_scaleX + ". Type [Y/N] or [y/n]")
+        if oneCouplingOnly:
+            fixedValues[var] = 0
         else:
-            raise KeyError("[Error:] \t Invalid answer: " + response_fixed + ". Type [Y/N] or [y/n]")
+            response_fixed = input(" - Fixed value for coupling " + var + "? [Y/N]: ")
+            if response_fixed == "Y" or response_fixed == "y":
+                fixedValues[var] = float(input(" - Enter fixed value for " + var + " coupling: "))
+            elif response_fixed == "N" or response_fixed == "n":
+                response_scaleX = input(" - Scale coupling " + var + " with x-axis " + args.varX + "? [Y/N]: ")
+                if response_scaleX == "Y" or response_scaleX == "y":
+                    scaledCouplingsX[var] = float(input(" - Enter ratio between " + var + " coupling and x-axis " + args.varX + ": "))
+                elif response_scaleX == "N" or response_scaleX == "n":
+                    print("[Info:] \t Scaling with y-axis " + args.varY)
+                    scaledCouplingsY[var] = float(input(" - Enter ratio between " + var + " coupling and y-axis " + args.varY + ": "))
+                else:
+                    raise KeyError("[Error:] \t Invalid answer: " + response_scaleX + ". Type [Y/N] or [y/n]")
+            else:
+                raise KeyError("[Error:] \t Invalid answer: " + response_fixed + ". Type [Y/N] or [y/n]")
 
 if alpMassFixed:
     print("[Info:] \t Mass ma fixed value: " + str(alpMass))
@@ -67,32 +82,43 @@ for couplings in scaledCouplingsY.keys():
     print("[Info:] \t Ratio between " + couplings + " and y-axis " + args.varY + ": " + str(scaledCouplingsY[couplings]))
 
 #experiment:
+experiments = []
 if args.exp == "":
-    print("[Info:] \t Running for all experiments available")
-    experiments = setup.experiments
-elif args.exp in setup.experiments:
-    print("[Info:] \t Running for ", args.exp, " experiment")
-    experiments = [args.exp]
+    experiments = setup.experiments.keys()
+    print("[Info:] \t Selected all experiments available")
 else:
-    parser.error("[Error:] \t Experiment " + args.exp + " not available. Experiments available: exp = NA62 | CHARM | nuCAL | SHiP | DarkQuest | DUNE | SHADOWS. If not specified, running over all experiments available.")
+    for exp in args.exp:
+        if exp in setup.experiments.keys():
+            experiments.append(exp)
+        else:
+            parser.error("[Error:] \t Experiment " + exp + " not available. Experiment modes available: exp = " + ' | '.join(setup.experiments.keys()) + ". If not specified, running over all experiments available.")
+    print("[Info:] \t Selected experiments:", ', '.join(experiments))
+
 #production mode:
+channels_production = []
 if args.prod == "":
-    print("[Info:] \t Running for all production modes available")
     channels_production = setup.channels_production
-elif args.prod in setup.channels_production:
-    print("[Info:] \t Running for ", args.prod, " production mode")
-    channels_production = [args.prod]
+    print("[Info:] \t Selected all production modes available")
 else:
-    parser.error("[Error:] \t Production mode " + args.prod + " not available. Production modes available: prod = primakoff | photonfrommeson | mixingPi0 | mixingEta | mixingEtaPrim | BmesonK | BmesonKstar | DmesonPi. If not specified, running over all production modes available.")
+    for prod in args.prod:
+        if prod in setup.channels_production:
+            channels_production.append(prod)
+        else:
+            parser.error("[Error:] \t Production mode " + prod + " not available. Production modes available: prod = " + ' | '.join(setup.channels_production) + ". If not specified, running over all production modes available.")
+    print("[Info:] \t Selected production modes:", ', '.join(channels_production))
+
 #decay mode:
+channels_decay = []
 if args.decay == "":
-    print("[Info:] \t Running for all decay modes available.")
     channels_decay = setup.channels_decay
-elif args.decay in setup.channels_decay:
-    print("[Info:] \t Running for ", args.decay, " decay mode.")
-    channels_decay = [args.decay]
+    print("[Info:] \t Selected all decay modes available.")
 else:
-    parser.error("[Error:] \t Decay mode " + args.decay + " not available. Decay modes available: decay = 2Gamma | 2El | 2Mu | 3Pi0 | 3Pi | 2PiGamma | 2Pi0Eta | 2PiEta. If not specified, running over all decay modes available.")
+    for dec in args.decay:
+        if dec in setup.channels_decay:
+            channels_decay.append(dec)
+        else:
+            parser.error("[Error:] \t Decay mode " + dec + " not available. Decay modes available: decay = " + ' | '.join(setup.channels_decay) + ". If not specified, running over all decay modes available.")
+    print("[Info:] \t Selected decay modes:", ', '.join(channels_decay))
 #scale
 if args.lam <= 0:
     parser.error("[Error:] \t \u039B has to be a positive number.")
@@ -102,7 +128,10 @@ if args.reg > 0:
     if args.reg == 1:
         regions = [""]
     else:
-        regions = ["_reg" + str(sigReg+1) for sigReg in range(args.reg)]
+        if len(experiments) == 1:
+            regions = ["_reg" + str(sigReg+1) for sigReg in range(args.reg)]
+        else:
+            parser.error("[Error:] \t Option for multiple signal regions is available only when running for one experiment")
 else:
     parser.error("[Error:] \t At least one signal region needed")
 
@@ -121,13 +150,13 @@ for fixed in fixedValues.keys():
     variables_values[fixed] = fixedValues[fixed]
 
 
-def ALP_events_exp(expName, sigRegion, Lambda, AA, BB):
+def ALP_events_exp(expName, Lambda, AA, BB):
     #x- and y-axis grid
+    c_a_bin_width = 0.025 #0.1: 101 values, 0.05: 201 values, 0.025: 401 values
+    m_a_bin_width = 0.005 #0.02: 225 values, 0.005: 896 values
     #make logarithmic lists of masses (E-4 to 3 GeV) and couplings (E-11 to E-1) -> note: small stepsize right now
-    c_a_list_log = [ c_a_log for c_a_log in np.arange(-11+np.log10(Lambda),-0.999+np.log10(Lambda),0.1)] # 101 values
-    m_a_list_log = [ m_a_log for m_a_log in np.arange(-4,np.log10(3.05),0.02)] # 224(225) values (only for log10(3))
-#    c_a_list_log = [ c_a_log for c_a_log in np.arange(-11+np.log10(Lambda),-0.999+np.log10(Lambda),0.05)] # 201 values
-#    m_a_list_log = [ m_a_log for m_a_log in np.arange(-4,np.log10(3.05),0.005)] # 896 values (only for log10(3))
+    c_a_list_log = [ c_a_log for c_a_log in np.arange(-11+np.log10(Lambda),-0.999+np.log10(Lambda),c_a_bin_width)]
+    m_a_list_log = [ m_a_log for m_a_log in np.arange(-4,np.log10(3.05),m_a_bin_width)]
     if args.varX == "ma":
         x_axis_list_log = m_a_list_log
         y_axis_list_log = c_a_list_log
@@ -138,7 +167,7 @@ def ALP_events_exp(expName, sigRegion, Lambda, AA, BB):
         x_axis_list_log = c_a_list_log
         y_axis_list_log = c_a_list_log
 
-    process = ld.Process_data(expName,sigRegion,channels_decay,channels_production)
+    process = ld.Process_data(expName,channels_decay,channels_production, len(x_axis_list_log)*len(y_axis_list_log))
 
     #fill the table
     data_list = []
@@ -162,16 +191,19 @@ def ALP_events_exp(expName, sigRegion, Lambda, AA, BB):
 
     # export
     output_dir = this_dir+'/../tab_toPlot/'
-    outPath = output_dir + expName + '/'
+    outPath = output_dir + setup.experiments[expName] + '/'
 
-    if args.prod[0] == args.decay[0] == "": modes = ""
-    elif args.prod[0] == "": modes = "_" + "-".join(args.decay)
-    elif args.decay[0] == "": modes = "_" + "-".join(args.prod)
-    else: modes = "_" + "-".join(args.prod) + "_" + "-".join(args.decay)
+    if args.prod == args.decay == "": modes = ""
+    elif args.prod != "" and args.decay == "": modes = "_" + '-'.join(channels_production)
+    elif args.decay != "" and args.prod == "": modes = "_" + '-'.join(channels_decay)
+    else: modes = "_" + '-'.join(channels_production) + "_" + '-'.join(channels_decay)
 
     fixedNames = ""
     for fixed in fixedValues.keys():
-        fixedNames = fixedNames + "-" + fixed + str(int(fixedValues[fixed]))
+        if fixed == "ma":
+            fixedNames = fixedNames + "-" + fixed + str(int(fixedValues[fixed]*1000)) + "MeV"
+        else:
+            fixedNames = fixedNames + "-" + fixed + str(int(fixedValues[fixed]))
     if fixedNames != "":
         fixedNames = "_fixed" + fixedNames
 
@@ -187,12 +219,13 @@ def ALP_events_exp(expName, sigRegion, Lambda, AA, BB):
     if yscaledNames != "":
         yscaledNames = "_scaleWith" + args.varY + yscaledNames
 
-    outfileName = expName + "_" + args.varX + "_" + args.varY + fixedNames + xscaledNames + yscaledNames + modes + sigRegion + '.dat'
+    outfileName = expName + "_" + args.varX + "_" + args.varY + fixedNames + xscaledNames + yscaledNames + modes + '.dat'
     np.savetxt(outPath + outfileName,data)
-    print('file ' + outfileName + ' saved to ' + outPath)
+    print('\n[Info:] \t', 'File ' + outfileName + ' saved to ' + outPath)
 
     return
 
 for exp in experiments:
-    for sigReg in regions:
-        ALP_events_exp(exp,sigReg,args.lam, args.a, args.b)
+    if not regions == [""]:
+        mergeSigReg = MergeInput(exp,regions,channels_decay,channels_production)
+    ALP_events_exp(exp,args.lam, args.a, args.b)

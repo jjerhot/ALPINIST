@@ -3,7 +3,7 @@ ALP_rescale module for ALPINIST
 
 ALP_rescale loads the tables from /tab_decay for the experiment, production and decay mode selected from the lists stored in alp_setup.py and calculates the number of predicted events for the following model-dependent parameters:
 C<sub>BB</sub>, C<sub>WW</sub>, C<sub>gg</sub>, C<sub>&#8467;&#8467;</sub>, &#923;, A, B
-(all relations used for the calculations are described in appendices of J. Jerhot et al. [arXiv:2201.xxxxx][2201.xxxxx] and references therein).
+(all relations used for the calculations are described in appendices of J. Jerhot et al. [arXiv:2201.05170][2201.05170] and references therein).
 Output tables in format [m_ALP g_ALP nEvents] are stored in /tab_toPlot for each experiment.
 
 For general Yukawa coupling C<sub>&#8467;&#8467;</sub>=C<sub>qq</sub> a separate module alp_2mu_rescale.py can be used for rescaling for ALP &#8594; 2&#956; decay (using relations from B. Dobrich et al., [arXiv:1810.11336][1810.11336]).
@@ -27,6 +27,7 @@ ALP_rescale contains the following files:
   * alp_setup.py: Lists and dictionaries of experiments, production and decay modes covered by ALP_rescale
   * alp_functions.py: Contains several universal functions
   * alp_constants.py: Contains several universal constants
+  * alp_mergeSigRegions.py: Allows merging results from several signal regions with given weights
   * alp_2mu_rescale.py: Separate main module for Yukawa coupling
 
 Requirements
@@ -40,22 +41,25 @@ ALP_rescale requires the following to run:
 Usage
 -----
 
-To run with default settings, run the alp_rescale.py with your installed version of [python][python], e.g.:
+To run with default settings, run the alp_rescale.py with your installed version of [python][python] with arguments -varX and -varY for selected X- and Y-axis variables, e.g. for X-axis ma and Y-axis CBB coupling run:
 
 ```sh
-python3 alp_rescale.py
+python3 alp_rescale.py -varX ma -varY CBB
 ```
 
 The default settings are:
-C<sub>BB</sub> = 1, C<sub>WW</sub> = 1, C<sub>gg</sub> = 1, C<sub>&#8467;&#8467;</sub> = 0, &#923; = 1000, A = 0, B = 0 and running over all experiments available and summing over all production and decay modes.
-
-All these parameters can be modified, e.g.:
-
+&#923; = 1000, A = 0, B = 0 and running over all experiments available and summing over all production and decay modes. The setup of couplings is specified later on but can also be skipped by running with -only option for the coupling selected for varY (other couplings are then set to a fixed 0) as e.g.:
 ```sh
-python3 alp_rescale.py -e NA62 --prod BmesonK --decay 2Gamma -cbb 0 -cww 0 -cgg 1 -l 10000 -a 3 -b -3 
+python3 alp_rescale.py -varX ma -varY CBB-only
 ```
 
-To list all options run:
+All the parameters can be modified and multiple experiments, decay and production modes can be ran simultaneously, e.g.:
+
+```sh
+python3 alp_rescale.py -varX ma -varY CWW -e NA62 CHARM --prod BmesonK BmesonKstar --decay 2Gamma 2El --lambda 10000 -a 3 -b -3 
+```
+
+To list all options and parameters run:
 
 ```sh
 python3 alp_rescale.py -h
@@ -101,6 +105,6 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-[2201.xxxxx]: https://arxiv.org/
+[2201.05170]: https://arxiv.org/abs/2201.05170
 [1810.11336]: https://arxiv.org/abs/1810.11336
 [python]: https://www.python.org/
