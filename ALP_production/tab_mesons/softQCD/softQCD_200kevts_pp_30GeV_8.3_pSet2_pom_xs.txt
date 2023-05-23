@@ -1,0 +1,31 @@
+ *-------  PYTHIA Event and Cross Section Statistics  -------------------------------------------------------------*
+ |                                                                                                                 |
+ | Subprocess                                    Code |            Number of events       |      sigma +- delta    |
+ |                                                    |       Tried   Selected   Accepted |     (estimated) (mb)   |
+ |                                                    |                                   |                        |
+ |-----------------------------------------------------------------------------------------------------------------|
+ |                                                    |                                   |                        |
+ | non-diffractive                                101 |      135826     135826     135826 |   2.658e+01  1.446e-07 |
+ | A B -> A B elastic                             102 |       38578      38578      38578 |   7.509e+00  1.499e-08 |
+ | A B -> X B single diffractive                  103 |       11380      11380      11380 |   2.218e+00  1.385e-08 |
+ | A B -> A X single diffractive                  104 |       11407      11407      11407 |   2.218e+00  1.387e-08 |
+ | A B -> X X double diffractive                  105 |        2809       2809       2809 |   5.323e-01  1.849e-09 |
+ |                                                    |                                   |                        |
+ | sum                                                |      200000     200000     200000 |   3.905e+01  1.467e-07 |
+ |                                                                                                                 |
+ *-------  End PYTHIA Event and Cross Section Statistics ----------------------------------------------------------*
+
+ *-------  PYTHIA Error and Warning Messages Statistics  ----------------------------------------------------------* 
+ |                                                                                                                 | 
+ |  times   message                                                                                                | 
+ |                                                                                                                 | 
+ |  25630   Error in BeamRemnants::setKinematics: kinematics construction failed                                   | 
+ |   8396   Error in BeamRemnants::setKinematics: no momentum left for beam remnants                               | 
+ |      9   Error in MiniStringFragmentation::fragment: no 1- or 2-body state found above mass threshold           | 
+ |     17   Error in Pythia::next: hadronLevel failed; try again                                                   | 
+ |    902   Error in Pythia::next: partonLevel failed; try again                                                   | 
+ |      8   Error in StringFragmentation::fragment: stuck in joining                                               | 
+ |    224   Warning in SimpleSpaceShower::branch: used up beam momentum; retrying parton level                     | 
+ |    208   Warning in StringFragmentation::fragmentToJunction: bad convergence junction rest frame                | 
+ |                                                                                                                 | 
+ *-------  End PYTHIA Error and Warning Messages Statistics  ------------------------------------------------------* 

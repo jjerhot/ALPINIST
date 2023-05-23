@@ -1,0 +1,40 @@
+CATCH! 99999 108 22 0.004 0.111 2.211 91
+CATCH! 99999 109 22 -0.080 0.163 23.275 91
+CATCH! 99999 110 22 0.042 0.020 8.722 91
+CATCH! 99999 111 22 -0.062 -0.099 5.107 91
+CATCH! 99999 112 22 0.019 0.033 2.246 91
+CATCH! 99999 113 22 -0.018 -0.059 0.422 91
+CATCH! 99999 114 22 0.120 -0.112 0.495 91
+
+ *-------  PYTHIA Event and Cross Section Statistics  -------------------------------------------------------------*
+ |                                                                                                                 |
+ | Subprocess                                    Code |            Number of events       |      sigma +- delta    |
+ |                                                    |       Tried   Selected   Accepted |     (estimated) (mb)   |
+ |                                                    |                                   |                        |
+ |-----------------------------------------------------------------------------------------------------------------|
+ |                                                    |                                   |                        |
+ | non-diffractive                                101 |       50172      50172      50172 |   1.996e+01  1.320e-07 |
+ | A B -> A B elastic                             102 |       16410      16410      16410 |   6.585e+00  3.944e-08 |
+ | A B -> X B single diffractive                  103 |        9584       9584       9584 |   3.894e+00  0.000e+00 |
+ | A B -> A X single diffractive                  104 |        9801       9801       9801 |   3.894e+00  0.000e+00 |
+ | A B -> X X double diffractive                  105 |       12804      12804      12804 |   5.050e+00  0.000e+00 |
+ | A B -> A X B central diffractive               106 |        1229       1229       1229 |   4.716e-01  0.000e+00 |
+ |                                                    |                                   |                        |
+ | sum                                                |      100000     100000     100000 |   3.985e+01  1.378e-07 |
+ |                                                                                                                 |
+ *-------  End PYTHIA Event and Cross Section Statistics ----------------------------------------------------------*
+
+ *-------  PYTHIA Error and Warning Messages Statistics  ----------------------------------------------------------* 
+ |                                                                                                                 | 
+ |  times   message                                                                                                | 
+ |                                                                                                                 | 
+ |  11870   Error in BeamRemnants::setKinematics: kinematics construction failed                                   | 
+ |      6   Error in MiniStringFragmentation::fragment: no 1- or 2-body state found above mass threshold           | 
+ |      7   Error in Pythia::next: hadronLevel failed; try again                                                   | 
+ |     73   Error in Pythia::next: partonLevel failed; try again                                                   | 
+ |      1   Error in StringFragmentation::fragment: stuck in joining                                               | 
+ |      3   Warning in MultipartonInteractions::init: maximum increased                                            | 
+ |    162   Warning in MultipartonInteractions::pTnext: weight above unity                                         | 
+ |    418   Warning in StringFragmentation::fragmentToJunction: bad convergence junction rest frame                | 
+ |                                                                                                                 | 
+ *-------  End PYTHIA Error and Warning Messages Statistics  ------------------------------------------------------* 

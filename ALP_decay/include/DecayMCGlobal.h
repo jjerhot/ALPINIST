@@ -8,10 +8,10 @@
 const std::vector<TString> prodmodeNames{"primakoff","photonfrommeson","mixingPi0","mixingEta","mixingEtaPrim","BmesonK","BmesonKstar","DmesonPi"};
 
 // decay modes
-const std::vector<TString> decaymodeNames{"2Gamma","2El","2Mu","3Pi0","3Pi","2PiGamma","2Pi0Eta","2PiEta","2Pi0EtaPrim","2PiEtaPrim"};
+const std::vector<TString> decaymodeNames{"2Gamma","2El","2Mu","3Pi0","3Pi","2PiGamma","2Pi0Eta","2PiEta","2Pi0EtaPrim","2PiEtaPrim","2Pi","2K"};
 
 // experiments
-const std::vector<TString> expLabels{"NA62","CHARM","NuCal","SHiP","DarkQuest","DUNE","SHADOWS","KOTOdump","KOTOpnn","KOTO2dump","KOTO2pnn","KOTOexclPnn"};
+const std::vector<TString> expLabels{"NA62","CHARM","NuCal","SHiP","DarkQuest","DUNE","SHADOWS","KOTOdump","KOTOpnn","KOTO2dump","KOTO2pnn","KOTOexclPnn","SHiPecn3"};
 
 // paths
 const TString sourcePath = "../../tab_prod";

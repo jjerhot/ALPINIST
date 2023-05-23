@@ -4,35 +4,20 @@
 
 ExpParameters::ExpParameters(){
 	//Intitializing common values:
-	energyMinInFile = 5.;
-	energyMaxInFile = 295.;
-	energyValuesInFile = 30;// check: one more than steps in ALP Mathematica output
-	energyWid = (energyMaxInFile-energyMinInFile)/(energyValuesInFile-1); // used to be log scale
-
-	thetaMinInFile = 0.00018;
-	thetaMaxInFile = 0.01098;
-	thetaValuesInFile = 31;// check: one more than steps in ALP Mathematica output
-	thetaWid = (thetaMaxInFile-thetaMinInFile)/(thetaValuesInFile-1); // used to be log scale
+	nMassFiles = 2;
+	minMassFile = {"01","10"};
+	maxMassFile = {"10","3010"};
 
 	nWidths = 101;
 	widthMin = log10(1.*pow(10,-25));
 	widthMax = log10(1.*pow(10,-10));
 	wdWidth = (widthMax-widthMin)/(nWidths-1);
 
+	nMX = {101,101}; //number of bins for output
 	massXMin = {log10(0.0001),log10(0.01)}; //min mass in massfile[i] //log scale output
 	massXMax = {log10(0.01),log10(3.01)}; //max mass in massfile[i] //log scale output
-	nMX = {101,101}; //number of bins for output
-	nMassFiles = 2;
-	mAMinInFile = {0.0001,0.01}; //min mass in massfile[i] //lin scale input
-	mAMaxInFile = {0.01,3.01}; //max mass in massfile[i] //lin scale input
-	mAValuesInFile = {101,601};//number of bins for input //check: one more than steps in ALP Mathematica output
-	minMassFile = {"01","10"};
-	maxMassFile = {"10","3010"};
-
-	for (Int_t ifile=0; ifile < nMassFiles; ifile++){
+	for (Int_t ifile=0; ifile < nMassFiles; ifile++)
 		massXWid[ifile] = (massXMax[ifile]-massXMin[ifile])/(nMX[ifile]-1); //log scale output
-		mAWid[ifile] = (mAMaxInFile[ifile]-mAMinInFile[ifile])/(mAValuesInFile[ifile]-1); //lin scale input
-	}
 
 	rndm = new TRandom3(0);
 	rndm->SetSeed(0);
@@ -58,6 +43,8 @@ ExpParameters::ExpParameters(Int_t Experiment_, Int_t ProductionMode_, Int_t Dec
 		case 7: mFinState={MPiCh, MPiCh, MEta}; chargeFinState={1,-1,0}; break;
 		case 8: mFinState={MPi0, MPi0, MEtaPrim}; chargeFinState={0,0,0}; break;
 		case 9: mFinState={MPiCh, MPiCh, MEtaPrim}; chargeFinState={1,-1,0}; break;
+		case 10: mFinState={MPiCh, MPiCh, 0}; chargeFinState={1,-1,0}; break;
+		case 11: mFinState={MKCh, MKCh, 0}; chargeFinState={1,-1,0}; break;
 		default: mFinState={0., 0., 0.}; chargeFinState={0,0,0}; break;
 	}
 	switch(Experiment_){
@@ -91,8 +78,14 @@ ExpParameters::ExpParameters(Int_t Experiment_, Int_t ProductionMode_, Int_t Dec
 			//POT = 1.3*1.E16; // 1 day
 			//POT = 1.*1.E18; // 2021-2023
 			POT = 1.*1.E19; //2026-2030 period (possible x4 update beyond)
+
+			energyMinInFile = 5.5;
+			energyMaxInFile = 324.5;
+			energyWid = (energyMaxInFile-energyMinInFile)/(energyValuesInFile-1); // used to be log scale
+
 			switch(ProductionMode_){
-				case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				// case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				case 0: normCrossSec = 1/(39.85*1E9*TMath::Power(ATarget,2./3)); break;
 				case 1: normCrossSec = 1/(6.*1e12); break;
 				case 2: normCrossSec = 1; break;
 				case 3: normCrossSec = 1; break;
@@ -133,7 +126,8 @@ ExpParameters::ExpParameters(Int_t Experiment_, Int_t ProductionMode_, Int_t Dec
 			energyWid = (energyMaxInFile-energyMinInFile)/(energyValuesInFile-1); // used to be log scale
 
 			switch(ProductionMode_){
-				case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				// case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				case 0: normCrossSec = 1/(39.85*1E9*TMath::Power(ATarget,2./3)); break;
 				case 1: normCrossSec = 1/(6.*1e12); break;
 				case 2: normCrossSec = 1; break;
 				case 3: normCrossSec = 1; break;
@@ -174,7 +168,8 @@ ExpParameters::ExpParameters(Int_t Experiment_, Int_t ProductionMode_, Int_t Dec
 			energyWid = (energyMaxInFile-energyMinInFile)/(energyValuesInFile-1); // used to be log scale
 
 			switch(ProductionMode_){
-				case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				// case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				case 0: normCrossSec = 1/(39.85*1E9*TMath::Power(ATarget,2./3)); break;
 				case 1: normCrossSec = 1/(5.1*1e12); break;
 				case 2: normCrossSec = 1; break;
 				case 3: normCrossSec = 1; break;
@@ -224,7 +219,8 @@ ExpParameters::ExpParameters(Int_t Experiment_, Int_t ProductionMode_, Int_t Dec
 			energyWid = (energyMaxInFile-energyMinInFile)/(energyValuesInFile-1); // used to be log scale
 
 			switch(ProductionMode_){
-				case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				// case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				case 0: normCrossSec = 1/(39.85*1E9*TMath::Power(ATarget,2./3)); break;
 				case 1: normCrossSec = 1/(12.66*1e12); break;
 				case 2: normCrossSec = 1; break;
 				case 3: normCrossSec = 1; break;
@@ -275,7 +271,8 @@ ExpParameters::ExpParameters(Int_t Experiment_, Int_t ProductionMode_, Int_t Dec
 			energyWid = (energyMaxInFile-energyMinInFile)/(energyValuesInFile-1); // used to be log scale
 
 			switch(ProductionMode_){
-				case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				// case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				case 0: normCrossSec = 1/(39.85*1E9*TMath::Power(ATarget,2./3)); break;
 				case 1: normCrossSec = 1/(5.1*1e12); break;
 				case 2: normCrossSec = 1; break;
 				case 3: normCrossSec = 1; break;
@@ -309,7 +306,8 @@ ExpParameters::ExpParameters(Int_t Experiment_, Int_t ProductionMode_, Int_t Dec
 			POT = 1.1*1.E21; //1 year of data taking
 //				POT = 1.1*1.E22; //10 years of data taking?
 			switch(ProductionMode_){
-				case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				// case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				case 0: normCrossSec = 1/(39.85*1E9*TMath::Power(ATarget,2./3)); break;
 				case 1: normCrossSec = 1/(0.35*1e12); break; //from https://www.nist.gov/pml/xcom-photon-cross-sections-database
 				case 2: normCrossSec = 1; break;
 				case 3: normCrossSec = 1; break;
@@ -357,7 +355,8 @@ ExpParameters::ExpParameters(Int_t Experiment_, Int_t ProductionMode_, Int_t Dec
 			thetaValuesInFile = 31;// check: one more than steps in ALP Mathematica output
 			thetaWid = (thetaMaxInFile-thetaMinInFile)/(thetaValuesInFile-1); // used to be log scale
 			switch(ProductionMode_){
-				case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				// case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				case 0: normCrossSec = 1/(39.85*1E9*TMath::Power(ATarget,2./3)); break;
 				case 1: normCrossSec = 1/(6.*1e12); break;
 				case 2: normCrossSec = 1; break;
 				case 3: normCrossSec = 1; break;
@@ -408,7 +407,8 @@ ExpParameters::ExpParameters(Int_t Experiment_, Int_t ProductionMode_, Int_t Dec
 			energyMaxInFile = 29.5;
 			energyWid = (energyMaxInFile-energyMinInFile)/(energyValuesInFile-1); // used to be log scale
 			switch(ProductionMode_){
-				case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				// case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				case 0: normCrossSec = 1/(39.85*1E9*TMath::Power(ATarget,2./3)); break;
 				case 1: normCrossSec = 1/(38.1*1e12); break; // for Au, 4GeV photons
 				case 2: normCrossSec = 1; break;
 				case 3: normCrossSec = 1; break;
@@ -462,7 +462,8 @@ ExpParameters::ExpParameters(Int_t Experiment_, Int_t ProductionMode_, Int_t Dec
 			nRegions = 8;
 
 			switch(ProductionMode_){
-				case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				// case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				case 0: normCrossSec = 1/(39.85*1E9*TMath::Power(ATarget,2./3)); break;
 				case 1: normCrossSec = 1/(38.1*1e12); break; // for Au, 4GeV photons
 				case 2: normCrossSec = 1; break;
 				case 3: normCrossSec = 1; break;
@@ -512,7 +513,8 @@ ExpParameters::ExpParameters(Int_t Experiment_, Int_t ProductionMode_, Int_t Dec
 			energyMaxInFile = 29.5;
 			energyWid = (energyMaxInFile-energyMinInFile)/(energyValuesInFile-1); // used to be log scale
 			switch(ProductionMode_){
-				case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				// case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				case 0: normCrossSec = 1/(39.85*1E9*TMath::Power(ATarget,2./3)); break;
 				case 1: normCrossSec = 1/(38.1*1e12); break; // for Au, 4GeV photons
 				case 2: normCrossSec = 1; break;
 				case 3: normCrossSec = 1; break;
@@ -565,7 +567,8 @@ ExpParameters::ExpParameters(Int_t Experiment_, Int_t ProductionMode_, Int_t Dec
 			nRegions = 1; //we will work with one signal region for now (pT>400MeV/c and zVtx < 15m, with some expected 1.5 background events; possible also pT>350 MeV/c with 3 background events)
 
 			switch(ProductionMode_){
-				case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				// case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				case 0: normCrossSec = 1/(39.85*1E9*TMath::Power(ATarget,2./3)); break;
 				case 1: normCrossSec = 1/(38.1*1e12); break; // for Au, 4GeV photons
 				case 2: normCrossSec = 1; break;
 				case 3: normCrossSec = 1; break;
@@ -619,7 +622,8 @@ ExpParameters::ExpParameters(Int_t Experiment_, Int_t ProductionMode_, Int_t Dec
 			nRegions = 1;
 
 			switch(ProductionMode_){
-				case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				// case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				case 0: normCrossSec = 1/(39.85*1E9*TMath::Power(ATarget,2./3)); break;
 				case 1: normCrossSec = 1/(38.1*1e12); break; // for Au, 4GeV photons
 				case 2: normCrossSec = 1; break;
 				case 3: normCrossSec = 1; break;
@@ -628,6 +632,57 @@ ExpParameters::ExpParameters(Int_t Experiment_, Int_t ProductionMode_, Int_t Dec
 	//			case 6: normCrossSec = 1.866*1E3/(39.85*1E9)*TMath::Power(ATarget,1./3); break; //TO BE ADAPTED
 	//			case 7: normCrossSec = 3.601*1E6/(39.85*1E9)*TMath::Power(ATarget,1./3); break; //TO BE ADAPTED
 	//			case 8: normCrossSec = 1; break;
+	//			case 8: normCrossSec = 1/(39.85*1e9); break; //39.85*10^9 [pb]: sigma_pp @ 400GeV (from meson sx file)
+				default: std::cout << "Invalid production mode: " <<  ProductionMode_ << " for experiment " << expName << std::endl; std::exit(1);
+			}
+			break;
+		case 12:
+			expLabel = expLabels[Experiment_];
+			expName = "SHiP";
+			beamEnergy = 400;
+			ATarget = 95;//molybdenum?
+			ZTarget = 42.; //molybdenum?
+			ZTAX = 0;
+			X0 = 0.;  // m
+			Y0 = 0.;  // m straight for mathematica comparison
+			Z0 = 0.; //was 20 m
+			ZFVIn = 38.; //m
+			zStraw1 = ZFVIn+50; // m, position of 1st straw chamber
+			zStraw4 = ZFVIn+60; // m, position of 4th straw chamber
+			ZMagnet     = ZFVIn + 55;//
+			MagnetZLength       = 1;
+			MagnetFieldStrength = 0.5; // Tesla
+			MagKick = MagnetFieldStrength*MagnetZLength*0.3; //
+			ZLKR = zStraw4 + 0.5; //m
+			ZFVEnd = zStraw1;
+			if(chargeFinState[0] == 0)	ZFVEnd = zStraw1;
+			ZMUV3 = ZFVEnd + 18.; // not condition
+
+			acceptanceHole = 0. ; // m, half the hole length
+			acceptanceSide = 4; // too big. In reality it's egg-shaped but the inCaloAcceptance is correct for ship
+
+			Sigacceptance = 1;
+			Sigacceptancemumu = 1;
+
+			POT = 2*1.E20;
+
+			thetaMinInFile = 0.00078; 
+			thetaMaxInFile = 0.04758; // factor 5 w.r.t. shadows
+			thetaWid = (thetaMaxInFile-thetaMinInFile)/(thetaValuesInFile-1); //same binning as SHADOWS
+			energyMinInFile = 5.5;
+			energyMaxInFile = 324.5;
+			energyWid = (energyMaxInFile-energyMinInFile)/(energyValuesInFile-1); // used to be log scale
+
+			switch(ProductionMode_){
+				// case 0: normCrossSec = 1/(53.*TMath::Power(ATarget,0.77)*1E9); break;
+				case 0: normCrossSec = 1/(39.85*1E9*TMath::Power(ATarget,2./3)); break;
+				case 1: normCrossSec = 1/(12.66*1e12); break;
+				case 2: normCrossSec = 1; break;
+				case 3: normCrossSec = 1; break;
+				case 4: normCrossSec = 1; break;
+				case 5: normCrossSec = 1.866*1E3/(39.85*1E9)*TMath::Power(ATarget,1./3); break; //39.85*10^9 [pb]: sigma_pp @ 400GeV (from sx file), 1.866*10^3 [pb]: sigma_bb @ 400 GeV (from Pythia)
+				case 6: normCrossSec = 1.866*1E3/(39.85*1E9)*TMath::Power(ATarget,1./3); break; //39.85*10^9 [pb]: sigma_pp @ 400GeV (from sx file), 1.866*10^3 [pb]: sigma_bb @ 400 GeV (from Pythia)
+				case 7: normCrossSec = 3.601*1E6/(39.85*1E9)*TMath::Power(ATarget,1./3); break; //39.85*10^9 [pb]: sigma_pp @ 400GeV (from sx file), 3.601*10^6 [pb]: sigma_cc @ 400 GeV (from Pythia)
 	//			case 8: normCrossSec = 1/(39.85*1e9); break; //39.85*10^9 [pb]: sigma_pp @ 400GeV (from meson sx file)
 				default: std::cout << "Invalid production mode: " <<  ProductionMode_ << " for experiment " << expName << std::endl; std::exit(1);
 			}
@@ -709,6 +764,10 @@ Bool_t ExpParameters::inCaloAcceptance(TVector3 posFVEnd, TVector3 posLKr, Doubl
 		if(pow(xa*xa+ya*ya,0.5)>1500) return kFALSE; //3m diameter
 		if (abs(xa) < 100. && abs(ya) < 100.) return kFALSE; //20x20cm central hole
 	}
+	else if (expNum == 12) { // ship ecn3
+		if (xa > 2000.) return kFALSE; // 4 m by
+		if (ya > 4000.) return kFALSE; // 8 m
+	}
 	// else if (expNum == 7) {
 	// 	if (xa > 100000.) return kFALSE; // 200 m by
 	// 	if (ya > 100000.) return kFALSE; // 200 m
@@ -769,6 +828,10 @@ Bool_t ExpParameters::inCaloOuterEdgeAcceptance(TVector3 posLKr){
 	else if (expNum == 9 || expNum == 10) { //KOTO2
 		if(pow(xa*xa+ya*ya,0.5)>1500) return kFALSE; //3m diameter
 	}
+	else if (expNum == 12) { // ship ecn3
+		if (xa > 2000.) return kFALSE; // 4 m by
+		if (ya > 4000.) return kFALSE; // 8 m
+	}
 	// else if (expNum == 7) {
 	// 	if (xa > 100000.) return kFALSE; // 200 m by
 	// 	if (ya > 100000.) return kFALSE; // 200 m
@@ -793,6 +856,9 @@ Bool_t ExpParameters::inSpectrometerAcceptance(TVector3 posStraw){
 	if(expNum == 5) return kFALSE; //no straws
 	if(expNum == 6){ // SHADOWS is a rectangle, 2.5 by 2.5
 		if((abs(posStraw.X())<1.25) && (abs(posStraw.Y())<1.25))	return kTRUE;
+	}
+	if (expNum == 12) { // ship ecn3
+		if((abs(posStraw.X())<2) && (abs(posStraw.Y())<4))	return kTRUE;
 	}
 
 	return kFALSE;
@@ -825,7 +891,9 @@ Bool_t ExpParameters::inMuonVetoAcceptance(TVector3 posFVEnd, TVector3 posMUV, D
 	if(expNum == 6){ // SHADOWS, assume the same size as calo: 2.5 by 2.5
 		if((abs(posMUV.X())<1.25) && (abs(posMUV.Y())<1.25))	return kTRUE;
 	}
-
+	if (expNum == 12) { // ship ecn3
+		if((abs(posMUV.X())<2) && (abs(posMUV.Y())<4))	return kTRUE;
+	}
 	return kFALSE;
 }
 
@@ -1029,6 +1097,10 @@ Int_t ExpParameters::twoPhotonCondition(Int_t iOnLKr, Double_t totalEnergyAccept
 		} else return 0;
 
 	}
+	else if(expNum == 12){ //SHiP in ecn3 same as original ship
+		if(iOnLKr==2 && distance > 0.1 && energy0>1. && energy1 > 1. && totalEnergyAcceptance >3) return 1; //ship
+		return 0;
+	}
 	return 0;
 }
 
@@ -1084,7 +1156,7 @@ Bool_t ExpParameters::multiplePhotonCondition(Int_t nGammas, Double_t totalEnerg
 	}
 
 	//exp. conditions
-	if(expNum == 0 || expNum == 3 || expNum == 4 || expNum == 6){ //NA62, SHiP, SHADOWS, DarkQuest
+	if(expNum == 0 || expNum == 3 || expNum == 4 || expNum == 6 || expNum == 12){ //NA62, SHiP, SHADOWS, DarkQuest
 		if(nGammas==iOnLKr && totalEnergyAcceptance>3) return kTRUE; // a minimum requirement on the individual gamma energy should be probably added here ?
 		return kFALSE;
 	}
@@ -1185,7 +1257,7 @@ Bool_t ExpParameters::multiplePhotonCondition(Int_t nGammas, Double_t totalEnerg
 }
 
 Bool_t ExpParameters::twoMuonCondition(Int_t iOnStraw1, Int_t iOnStraw4, Int_t iOnLKr, Int_t iOnMUV3, Double_t zDecay, TLorentzVector pCA[2]){
-	if(expNum == 0|| expNum == 3 || expNum == 6){ // NA62, ship and SHADOWS
+	if(expNum == 0|| expNum == 3 || expNum == 6 || expNum == 12){ // NA62, ship and SHADOWS
 		if( pCA[0].E() > 5 && pCA[1].E() > 5  && iOnStraw1 == 2 && iOnStraw4 == 2) return kTRUE; //similar spectrometers
 		return kFALSE;
 	}
@@ -1213,16 +1285,16 @@ Bool_t ExpParameters::twoMuonCondition(Int_t iOnStraw1, Int_t iOnStraw4, Int_t i
 }
 
 Bool_t ExpParameters::twoHadronCondition(Int_t iOnStraw1, Int_t iOnStraw4, Int_t iChOnLKr, Int_t iOnMUV3, Double_t zDecay, TLorentzVector pCA[6]){
-	if(expNum == 0|| expNum == 3 || expNum == 6){ // NA62, ship and SHADOWS
+	if(expNum == 0|| expNum == 3 || expNum == 6 || expNum == 12){ // NA62, ship and SHADOWS
 		if(pCA[0].E() > 5 && pCA[1].E() > 5  && iOnStraw1 == 2 && iOnStraw4 == 2 && iChOnLKr == 2) return kTRUE;
 		return kFALSE;
 	}
 	else if(expNum == 1){
-		if(iChOnLKr==0) return kTRUE; //Charm vetos hadronic showers in (https://inspirehep.net/literature/214233)
+		// if(iChOnLKr==0) return kTRUE; //Charm vetos hadronic showers in (https://inspirehep.net/literature/214233)
 		return kFALSE;
 	}
 	else if(expNum == 2){
-		if(iChOnLKr==0) return kTRUE;  //Nucal explicitely comments on vetoing hadronic showers above 1.5GeV
+		// if(iChOnLKr==0) return kTRUE;  //Nucal explicitely comments on vetoing hadronic showers above 1.5GeV
 		return kFALSE;
 	}
 	else if(expNum == 4){ // DarkQuest. in phase 1 0 sensi to hadrons because of background. will chance for phase 2, see paper 2008.08108

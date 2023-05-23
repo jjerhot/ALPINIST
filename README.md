@@ -12,7 +12,7 @@ For using each module, please follow the instructions in the corresponding subdi
 Citation
 -----------------
 
-This code has been published together with [arXiv:2201.05170][2201.05170] and [arXiv:2303.xxxxx][2303.xxxxx] and uses values and equations cited there.
+This code has been published together with [arXiv:2201.05170][2201.05170] and [arXiv:2303.01521][2303.01521] and uses values and equations cited there.
 
 When using this framework, please cite
 
@@ -20,7 +20,7 @@ When using this framework, please cite
 
 and when using for reinterpretation for KOTO experment, please cite
 
-- <em>Probing Long-lived Axions at the KOTO Experiment</em>, Y. Afik, et al., [arXiv:2303.xxxxx][2303.xxxxx].
+- <em>Probing Long-lived Axions at the KOTO Experiment</em>, Y. Afik, et al., [arXiv:2303.01521][2303.01521].
 
 The following external software is used by this framework
 
@@ -33,5 +33,5 @@ The following external software is used by this framework
 - <em>Python 3 Reference Manual</em>, G. Van Rossum and F. L. Drake,  CreateSpace, Scotts Valley,CA, 2009.
 
 [2201.05170]: https://arxiv.org/abs/2201.05170
-[2303.xxxxx]: https://arxiv.org/abs/2303.xxxxx
+[2303.01521]: https://arxiv.org/abs/2303.01521
 [1410.3012]: https://arxiv.org/abs/1410.3012v1

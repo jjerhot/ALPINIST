@@ -26,36 +26,48 @@ public:
 
 //	ClassDef(ExpParameters,1);
 
-    //parameters
+    //parameters input
+	Int_t GetNMassFiles() const             		{return nMassFiles; }
+	std::array<TString,2> GetMinMassFile() const    {return minMassFile; }
+	std::array<TString,2> GetMaxMassFile() const    {return maxMassFile; }
+	
+	Int_t GetValuesEnergyInFile() const   	{return energyValuesInFile; }
 	Double_t GetMinEnergyInFile() const   	{return energyMinInFile; }
 	Double_t GetMaxEnergyInFile() const   	{return energyMaxInFile; }
-	Int_t GetValuesEnergyInFile() const   	{return energyValuesInFile; }
+	Double_t GetWdEnergy() const			{return energyWid; }
+	void SetValuesEnergyInFile (Int_t n)    { energyValuesInFile = n; }
+	void SetMinEnergyInFile (Double_t min)  { energyMinInFile = min; }
+	void SetMaxEnergyInFile (Double_t max)  { energyMaxInFile = max; }
+	void SetWdEnergy (Double_t wd)     		{ energyWid = wd; }
 
+	Int_t GetValuesThetaInFile() const    	{return thetaValuesInFile; }
 	Double_t GetMinThetaInFile() const    	{return thetaMinInFile; }
 	Double_t GetMaxThetaInFile() const    	{return thetaMaxInFile; }
-	Int_t GetValuesThetaInFile() const    	{return thetaValuesInFile; }
+	Double_t GetWdTheta() const             {return thetaWid; }
+	void SetValuesThetaInFile (Int_t n)    	{ thetaValuesInFile = n; }
+	void SetMinThetaInFile (Double_t min)  	{ thetaMinInFile = min; }
+	void SetMaxThetaInFile (Double_t max)  	{ thetaMaxInFile = max; }
+	void SetWdTheta (Double_t wd)     		{ thetaWid = wd; }
 
+	std::array<Int_t,2> GetValuesMassAInFile() const	{return mAValuesInFile; }
+    std::array<Double_t,2> GetMinMassAInFile() const    {return mAMinInFile; }
+    std::array<Double_t,2> GetMaxMassAInFile() const    {return mAMaxInFile; }
+	std::array<Double_t,2> GetWdMassA() const      		{return mAWid; }
+	void SetValuesMassAInFile (Int_t iFile,Int_t n)     { mAValuesInFile.at(iFile) = n; }
+	void SetMinMassAInFile (Int_t iFile,Double_t min)   { mAMinInFile.at(iFile) = min; }
+	void SetMaxMassAInFile (Int_t iFile,Double_t max)   { mAMaxInFile.at(iFile) = max; }
+	void SetWdMassA (Int_t iFile,Double_t wd)     		{ mAWid.at(iFile) = wd; }
+
+    //parameters output
 	Int_t GetNWidths() const              	{return nWidths; }
 	Double_t GetMinWidth() const          	{return widthMin; }
 	Double_t GetMaxWidth() const          	{return widthMax; }
 	Double_t GetWdWidth() const           	{return wdWidth; }
 
-	std::array<Int_t,2> GetValuesMassAInFile() const	{return mAValuesInFile; }
-
-	Int_t GetNMassFiles() const                       	{return nMassFiles; }
 	std::array<Int_t,2> GetNMassX() const               {return nMX; }
 	std::array<Double_t,2> GetMinMassX() const        	{return massXMin; }
-    std::array<Double_t,2> GetMinMassAInFile() const    {return mAMinInFile; }
 	std::array<Double_t,2> GetMaxMassX() const        	{return massXMax; }
-    std::array<Double_t,2> GetMaxMassAInFile() const    {return mAMaxInFile; }
-	std::array<TString,2> GetMinMassFile() const      	{return minMassFile; }
-	std::array<TString,2> GetMaxMassFile() const      	{return maxMassFile; }
-
-	Double_t GetWdEnergy() const         	{return energyWid; }
-	Double_t GetWdTheta() const             {return thetaWid; }
-
 	std::array<Double_t,2> GetWdMassX() const  			{return massXWid; }
-	std::array<Double_t,2> GetWdMassA() const      		{return mAWid; }
 
 	Int_t GetExpNum() const                	{return expNum; }
 	TString GetExpName() const              {return expName; }
@@ -117,62 +129,62 @@ public:
 private:
 
 	//Declarations
-	Double_t energyMinInFile;
-	Double_t energyMaxInFile;
-	Int_t energyValuesInFile;
+	Double_t energyMinInFile = 0;
+	Double_t energyMaxInFile = 0;
+	Int_t energyValuesInFile = 0;
 
-	Double_t thetaMinInFile;
-	Double_t thetaMaxInFile;
-	Int_t thetaValuesInFile;
+	Double_t thetaMinInFile = 0;
+	Double_t thetaMaxInFile = 0;
+	Int_t thetaValuesInFile = 0;
 
-	Int_t nWidths;
-	Double_t widthMin;
-	Double_t widthMax;
-	Double_t wdWidth;
+	Int_t nWidths = 0;
+	Double_t widthMin = 0;
+	Double_t widthMax = 0;
+	Double_t wdWidth = 0;
 
-	std::array<Int_t,2> mAValuesInFile;
+	std::array<Int_t,2> mAValuesInFile = {0,0};
 
-	Int_t nMassFiles;
-	std::array<Int_t,2> nMX;
-	std::array<Double_t,2> massXMin, mAMinInFile;
-	std::array<Double_t,2> massXMax, mAMaxInFile;
-	std::array<TString,2> minMassFile;
-	std::array<TString,2> maxMassFile;
+	Int_t nMassFiles = 0;
+	std::array<Int_t,2> nMX = {0,0};
+	std::array<Double_t,2> massXMin, mAMinInFile = {0,0};
+	std::array<Double_t,2> massXMax, mAMaxInFile = {0,0};
+	std::array<TString,2> minMassFile = {"",""};
+	std::array<TString,2> maxMassFile = {"",""};
 
-	Double_t energyWid;
-	Double_t thetaWid;
+	Double_t energyWid = 0;
+	Double_t thetaWid = 0;
 
-	std::array<Double_t,2> massXWid;
-	std::array<Double_t,2> mAWid;
+	std::array<Double_t,2> massXWid = {0,0};
+	std::array<Double_t,2> mAWid = {0,0};
 
-	Int_t expNum;
-	TString expName;
-	TString expLabel;
-	Int_t beamEnergy;
-	Double_t ATarget;
-	Double_t ZTarget;
-	Double_t ZLKR;
-	Double_t ZFVEnd;
-	Double_t ZFVIn;
-	Double_t ZTAX;
-	Double_t X0;
-	Double_t Y0;
-	Double_t Z0;
-	Double_t PhiBeamEuler;   // euler phi angle of beam: rotation of beam axis about the z-axis (i.e., tranforms {x,y,z} in {x',y',z})
-	Double_t ThetaBeamEuler; // euler theta angle of beam: rotation about the x'-axis (i.e., tranforms {x',y',z} in {x',y'',z'})
-	Double_t PsiBeamEuler; // euler psi angle of beam: rotation about the z'-axis (i.e., tranforms {x',y'',z'} in {x'',y''',z'})
-	Double_t Sigacceptance; // used for gamma gamma
-	Double_t Sigacceptancemumu; // can be different from the above
-	Double_t POT;
-	Double_t normCrossSec;
+	Int_t expNum = 0;
+	TString expName = "";
+	TString expLabel = "";
+	Int_t beamEnergy = 0;
+	Double_t ATarget = 0;
+	Double_t ZTarget = 0;
+	Double_t ZLKR = 0;
+	Double_t ZFVEnd = 0;
+	Double_t ZFVIn = 0;
+	Double_t ZTAX = 0;
+	Double_t X0 = 0;
+	Double_t Y0 = 0;
+	Double_t Z0 = 0;
+	Double_t PhiBeamEuler = 0;   // euler phi angle of beam: rotation of beam axis about the z-axis (i.e., tranforms {x,y,z} in {x',y',z})
+	Double_t ThetaBeamEuler = 0; // euler theta angle of beam: rotation about the x'-axis (i.e., tranforms {x',y',z} in {x',y'',z'})
+	Double_t PsiBeamEuler = 0; // euler psi angle of beam: rotation about the z'-axis (i.e., tranforms {x',y'',z'} in {x'',y''',z'})
+	Double_t Sigacceptance = 0; // used for gamma gamma
+	Double_t Sigacceptancemumu = 0; // can be different from the above
+	Double_t POT = 0;
+	Double_t normCrossSec = 0;
 	Double_t ZMagnet = 0;
 	Double_t MagnetZLength = 0;
 	Double_t MagnetFieldStrength = 0;
 	Double_t MagKick = 0;
 	Double_t zStraw1 = 0;
 	Double_t zStraw4 = 0;
-	Double_t acceptanceHole;
-	Double_t acceptanceSide;
+	Double_t acceptanceHole = 0;
+	Double_t acceptanceSide = 0;
 	Double_t MUV3Size;
 	Double_t ZMUV3 = 0;
 

@@ -61,7 +61,7 @@ void DecayMCProcess(Int_t experiment, Int_t productionmode, Int_t decaymode, Int
 	std::vector<Double_t> valGamma,m12List,m23List;
 	std::vector<std::array<std::vector<Double_t>,3>> ALPlist; // each mALP has unique m12 and m23 axis + m12*m23 values of diff. width  (contains m12List and m23List and valGamma)
 
-	if (decaymode>2){ //width tables only for 3-body decays
+	if (decaymode>2 && decaymode < 10){ //width tables only for 3-body decays
 		std::cout << "[Info] Simulating 3-body decay, will read differential width table" << std::endl;
 		// reading diff. width tables for 3-body decays
 		ifstream widthFile;
@@ -173,6 +173,12 @@ void DecayMCProcess(Int_t experiment, Int_t productionmode, Int_t decaymode, Int
 	} else if (decaymode == 2){
 		genParam.SetMinMassA(2*MMu);
 		genParam.SetMaxMassA(genParam.GetMaxMassAInFile()[1]); //3 GeV
+	} else if (decaymode == 10){
+		genParam.SetMinMassA(2*MPiCh);
+		genParam.SetMaxMassA(genParam.GetMaxMassAInFile()[1]); //3 GeV
+	} else if (decaymode == 11){
+		genParam.SetMinMassA(2*MKCh);
+		genParam.SetMaxMassA(genParam.GetMaxMassAInFile()[1]); //3 GeV
 	} else{
 		genParam.SetMinMassA(0.);
 		genParam.SetMaxMassA(genParam.GetMaxMassAInFile()[1]);
@@ -185,14 +191,83 @@ void DecayMCProcess(Int_t experiment, Int_t productionmode, Int_t decaymode, Int
 	std::vector<std::vector<TH1D*>> beforeLog;
 	std::vector<std::vector<std::vector<TH1D*>>> afterLogMC;
 	std::vector<std::vector<TH2D*>> ExpectedNum;
+	std::vector<std::vector<TH2D*>> fHAxionETheta;
 	for (Int_t ifile=0; ifile < genParam.GetNMassFiles(); ifile++){
+		// //read in exotic spectrum
+		std::cout << "[Info] Reading axion distribution for file " << ifile << std::endl;
+		ifstream infile;
+		string infilePath = Form("%s/%s/alp_%s_beam%dGeV_%sto%sMeV_%s.dat",sourcePath.Data(),genParam.GetExpName().Data(),prodmodeName.Data(),genParam.GetBeamEnergy(),genParam.GetMinMassFile()[ifile].Data(),genParam.GetMaxMassFile()[ifile].Data(),genParam.GetExpName().Data());
+		infile.open(infilePath);
+		if (!infile.is_open()) {
+			std::cout << "[Error] Axion momentum distribution table not found" << std::endl;
+			std::cout << "[Error] with path: " << infilePath << std::endl;
+			exit(1);
+		}
+		std::vector<std::array<std::vector<Double_t>,3>> ParticleList;
+		std::vector<Double_t> MassList,EnergyList,ThetaList,ValList;
+		Double_t Mass, Energy, Theta, Val;
+		infile >> Theta >> Energy >> Mass >> Val; //first line
+		MassList.push_back(Mass);
+		EnergyList.push_back(Energy);
+		ThetaList.push_back(Theta);
+		ValList.push_back(Val);
+		while (infile >> Theta >> Energy >> Mass >> Val) {
+			if(Mass == MassList.back()){ //same mass bin
+				ValList.push_back(Val);
+				if(Energy == EnergyList.back()) //repeating theta sequence
+					ThetaList.push_back(Theta);
+				else{ //
+					EnergyList.push_back(Energy);
+					ThetaList.clear();
+					ThetaList.push_back(Theta);
+				}
+			} else{
+				//updating ALP mass
+				MassList.push_back(Mass);
+
+				//// FOR DEBUGGING /////
+				if(verbose)
+					std::cout << "Printing number of theta,energy,value points for mass " << Mass << " : " << ThetaList.size() << " " << EnergyList.size() << " " << ValList.size() << std::endl;
+				///////////
+				
+				//updating list
+				ParticleList.push_back({ThetaList,EnergyList,ValList});
+				ValList.clear();
+				ValList.push_back(Val);
+				ThetaList.clear();
+				ThetaList.push_back(Theta);
+				EnergyList.clear();
+				EnergyList.push_back(Energy);
+			}
+		}
+		if (infile.eof()){
+			ParticleList.push_back({ThetaList,EnergyList,ValList});
+			genParam.SetValuesEnergyInFile(EnergyList.size());
+			genParam.SetMinEnergyInFile(EnergyList.front());
+			genParam.SetMaxEnergyInFile(EnergyList.back());
+			genParam.SetWdEnergy((EnergyList.back()-EnergyList.front())/(EnergyList.size()-1));
+			genParam.SetValuesThetaInFile(ThetaList.size());
+			genParam.SetMinThetaInFile(ThetaList.front());
+			genParam.SetMaxThetaInFile(ThetaList.back());
+			genParam.SetWdTheta((ThetaList.back()-ThetaList.front())/(ThetaList.size()-1));
+
+			ValList.clear();
+			EnergyList.clear();
+			ThetaList.clear();
+		} else{
+			std::cout << "[Error] Did not reach EoF when reading input table" << std::endl;
+			exit(1);
+		}
+
+		infile.close();
+
 		//// FOR DEBUGGING /////
 		if(verbose)
-			std::cout << " declaration for mass file: #" << ifile << " MALP in range " << genParam.GetMinMassFile()[ifile] << "-" << genParam.GetMaxMassFile()[ifile] << " Npoints = " << genParam.GetNMassX()[ifile] << std::endl;
+			std::cout << " declaration for mass file: #" << ifile << " MALP in range " << genParam.GetMinMassFile().at(ifile) << "-" << genParam.GetMaxMassFile().at(ifile) << " Npoints = " << genParam.GetNMassX().at(ifile) << std::endl;
 		////////////////
 		std::vector<TH1D*> beforeLogFile;
 		std::vector<std::vector<TH1D*>> afterLogMCFile;
-		for (Int_t mb=0; mb < genParam.GetNMassX()[ifile]; mb++){
+		for (Int_t mb=0; mb < genParam.GetNMassX().at(ifile); mb++){
 			beforeLogFile.push_back(new TH1D(Form("beforeLog[%d]%d",ifile,mb),"beforeLog;weight in log;weight", genParam.GetNWidths(),genParam.GetMinWidth()-0.5*genParam.GetWdWidth(),genParam.GetMaxWidth()+0.5*genParam.GetWdWidth()));
 			std::vector<TH1D*> afterLogMCbin;
 			if(genParam.GetNRegions() < 1)
@@ -207,107 +282,62 @@ void DecayMCProcess(Int_t experiment, Int_t productionmode, Int_t decaymode, Int
 
 		std::vector<TH2D*> ExpectedNumFile;
 		if(genParam.GetNRegions() < 1)
-			ExpectedNumFile.push_back(new TH2D(Form("ExpectedNum[%d]",ifile),"Expected Num",genParam.GetNMassX()[ifile],genParam.GetMinMassX()[ifile]-0.5*genParam.GetWdMassX()[ifile],genParam.GetMaxMassX()[ifile]+0.5*genParam.GetWdMassX()[ifile],genParam.GetNWidths(),genParam.GetMinWidth()-0.5*genParam.GetWdWidth(),genParam.GetMaxWidth()+0.5*genParam.GetWdWidth()));
+			ExpectedNumFile.push_back(new TH2D(Form("ExpectedNum[%d]",ifile),"Expected Num",genParam.GetNMassX().at(ifile),genParam.GetMinMassX().at(ifile)-0.5*genParam.GetWdMassX().at(ifile),genParam.GetMaxMassX().at(ifile)+0.5*genParam.GetWdMassX().at(ifile),genParam.GetNWidths(),genParam.GetMinWidth()-0.5*genParam.GetWdWidth(),genParam.GetMaxWidth()+0.5*genParam.GetWdWidth()));
 		else
 			for (Int_t iReg=0; iReg < genParam.GetNRegions(); iReg++)
-				ExpectedNumFile.push_back(new TH2D(Form("ExpectedNum[%d]-reg%d",ifile,iReg+1),"Expected Num",genParam.GetNMassX()[ifile],genParam.GetMinMassX()[ifile]-0.5*genParam.GetWdMassX()[ifile],genParam.GetMaxMassX()[ifile]+0.5*genParam.GetWdMassX()[ifile],genParam.GetNWidths(),genParam.GetMinWidth()-0.5*genParam.GetWdWidth(),genParam.GetMaxWidth()+0.5*genParam.GetWdWidth()));
+				ExpectedNumFile.push_back(new TH2D(Form("ExpectedNum[%d]-reg%d",ifile,iReg+1),"Expected Num",genParam.GetNMassX().at(ifile),genParam.GetMinMassX().at(ifile)-0.5*genParam.GetWdMassX().at(ifile),genParam.GetMaxMassX().at(ifile)+0.5*genParam.GetWdMassX().at(ifile),genParam.GetNWidths(),genParam.GetMinWidth()-0.5*genParam.GetWdWidth(),genParam.GetMaxWidth()+0.5*genParam.GetWdWidth()));
 		ExpectedNum.push_back(ExpectedNumFile);
-	} //massFiles
 
-	std::cout << "[Info] Plots declared." << std::endl << std::endl << "[Info] Reading axion distribution now:" << std::endl;
-	// read in axion spectrum
-	TH2D*** fHAxionETheta = new TH2D**[genParam.GetNMassFiles()];
-	for (Int_t ifile=0; ifile < genParam.GetNMassFiles(); ifile++){
-		//// FOR DEBUGGING /////
-		if(verbose)
-			std::cout << std::endl << " reading mass file: #" << ifile << " MALP in range " << genParam.GetMinMassFile()[ifile] << "-" << genParam.GetMaxMassFile()[ifile] << " Npoints = " << genParam.GetNMassX()[ifile] << std::endl;
-		///////////////
+		genParam.SetValuesMassAInFile(ifile,MassList.size());
+		genParam.SetMinMassAInFile(ifile,MassList.front());
+		genParam.SetMaxMassAInFile(ifile,MassList.back());
+		genParam.SetWdMassA(ifile,(MassList.back()-MassList.front())/(MassList.size()-1));
 
-		fHAxionETheta[ifile] = new TH2D*[genParam.GetNMassX()[ifile]];
-
-		ifstream infile;
-		string infilePath = Form("%s/%s/alp_%s_beam%dGeV_%sto%sMeV_%s.dat",sourcePath.Data(),genParam.GetExpName().Data(),prodmodeName.Data(),genParam.GetBeamEnergy(),genParam.GetMinMassFile()[ifile].Data(),genParam.GetMaxMassFile()[ifile].Data(),genParam.GetExpName().Data());
-		infile.open(infilePath);
-		if (!infile.is_open()) {
-			std::cout << "[Error] Axion momentum distribution table not found" << std::endl;
-			std::cout << "[Error] with path: " << infilePath << std::endl;
-			exit(1);
-		}
-
-		Double_t Theta, Energy, Mass, Val;
-		std::vector<Double_t> valV;
-		while (infile >> Theta >> Energy >> Mass >> Val) {
-			//// FOR DEBUGGING /////
-			if(verbose)
-				std::cout << "\r" << "  ReadAxionETheta >> reading from file to memory. Line: " << valV.size() << std::flush;
-			///////////////////////
-			if (Energy<0 || Theta <0 || Mass <0 ){
-				std::cout << "[Error] Negative value encountered in dat file " << std::endl;
-				exit(1);
-			}
-			valV.push_back(Val);
-		}
-		//// FOR DEBUGGING /////
-		if(verbose)
-			std::cout << std::endl << "  ReadAxionETheta >> reading from file to memory completed" << std::endl;
-		/////////////////////
-		infile.close();
-
-		for (Int_t mb=0; mb < genParam.GetNMassX()[ifile]; mb++){ //loop over output mass bins //mapping linear input on log output
-			Double_t logMassX = genParam.GetMinMassX()[ifile] + genParam.GetWdMassX()[ifile]*mb;
+		std::cout << "[Info] Writing axion distribution for file " << ifile << std::endl;
+		std::vector<TH2D*> fHAxionEThetaFile;
+		for (Int_t mb=0; mb < genParam.GetNMassX().at(ifile); mb++){ //loop over output mass bins //mapping linear input on log output
+			Double_t logMassX = genParam.GetMinMassX().at(ifile) + genParam.GetWdMassX().at(ifile)*mb;
 			Double_t massX = TMath::Power(10.,logMassX);
 
 			//reading axion files
-			Int_t mbIn = TMath::Floor((massX-genParam.GetMinMassAInFile()[ifile])/genParam.GetWdMassA()[ifile] + 0.5);//corresponding input bin for output bin mb //avoid issues with C++ not correctly rounding
+			Int_t mbIn = TMath::Floor((massX-genParam.GetMinMassAInFile().at(ifile))/genParam.GetWdMassA().at(ifile) + 0.5);//corresponding input bin for output bin mb //avoid issues with C++ not correctly rounding
 			if (mbIn < 0) {
 				std::cout << "[Error] Mass specified for Axion is out of range. Input mass bin is " << mbIn << std::endl;
-				std::cout << "[Error] problem occured with masswid= " << genParam.GetWdMassA()[ifile] << " mAMinInFile " << genParam.GetMinMassAInFile()[ifile] << " and mass: " << massX << std::endl;
+				std::cout << "[Error] problem occured with masswid= " << genParam.GetWdMassA().at(ifile) << " mAMinInFile " << genParam.GetMinMassAInFile().at(ifile) << " and mass: " << massX << std::endl;
 				exit(1);
 			}
-			if (mbIn >= genParam.GetValuesMassAInFile()[ifile]){
+			if (mbIn >= genParam.GetValuesMassAInFile().at(ifile)){
 				std::cout << "[Error] Mass specified for Axion is out of range. Input mass bin is " << mbIn << std::endl;
-				std::cout << "[Error] problem occured with masswid= " << genParam.GetWdMassA()[ifile] << " mAMinInFile " << genParam.GetMinMassAInFile()[ifile] << " and mass: " << massX << std::endl;
+				std::cout << "[Error] problem occured with masswid= " << genParam.GetWdMassA().at(ifile) << " mAMinInFile " << genParam.GetMinMassAInFile().at(ifile) << " and mass: " << massX << std::endl;
 				exit(1);
 			}
 
-			fHAxionETheta[ifile][mb] = new TH2D(Form("AxionETheta[%d]%d",ifile,mb), Form("AxionETheta for ALP mass %f GeV (bin:%d)",massX,mb),
+			fHAxionEThetaFile.push_back(new TH2D(Form("AxionETheta[%d]%d",ifile,mb), Form("AxionETheta for ALP mass %f GeV (bin:%d)",massX,mb),
 					genParam.GetValuesThetaInFile(), genParam.GetMinThetaInFile()-0.5*genParam.GetWdTheta(),genParam.GetMaxThetaInFile()+0.5*genParam.GetWdTheta(),
-					genParam.GetValuesEnergyInFile(), genParam.GetMinEnergyInFile()-0.5*genParam.GetWdEnergy(),genParam.GetMaxEnergyInFile()+0.5*genParam.GetWdEnergy()); // Assure that Bin spacing does not overshoot to negative bin edge!
+					genParam.GetValuesEnergyInFile(), genParam.GetMinEnergyInFile()-0.5*genParam.GetWdEnergy(),genParam.GetMaxEnergyInFile()+0.5*genParam.GetWdEnergy())); // Assure that Bin spacing does not overshoot to negative bin edge!
 			if((genParam.GetMinEnergyInFile()-0.5*genParam.GetWdEnergy())<0){std::cout << "WARNING " << (genParam.GetMinEnergyInFile()-0.5*genParam.GetWdEnergy()) << std::endl;}
 			if((genParam.GetMinThetaInFile()-0.5*genParam.GetWdTheta())<0){std::cout << "WARNING " << (genParam.GetMinThetaInFile()-0.5*genParam.GetWdTheta()) << std::endl;}
 
-			Int_t offset = genParam.GetValuesThetaInFile()*genParam.GetValuesEnergyInFile();
-
-			Double_t massVal = genParam.GetMinMassAInFile()[ifile] + genParam.GetWdMassA()[ifile]*mbIn;
-			//// FOR DEBUGGING /////
-			if(verbose)
-				std::cout << "\r" << "  ReadAxionETheta >> reading from line " << offset*mbIn + 1 << " to " << offset*(mbIn+1) << " for mb: " << mb << " (mass " << massX << " GeV) selected massBin: " << mbIn << " (original mass " << massVal << " GeV)" << "          " << std::flush;
-			////////////
-			for (Int_t lineCounter = offset*mbIn+1; lineCounter < offset*(mbIn+1); lineCounter++){
-				if(lineCounter>valV.size()){
-					std::cout << "[Error] Line " << lineCounter << " is out of buffer size." << std::endl;
-					exit(1);
+			Int_t linecounter=0;
+			for (Int_t iEnergy=1; iEnergy <= ParticleList[mbIn][1].size(); iEnergy++){
+				for (Int_t iTheta=1; iTheta <= ParticleList[mbIn][0].size(); iTheta++){
+					fHAxionEThetaFile.back()->SetBinContent(iTheta, iEnergy, ParticleList[mbIn][2][linecounter]);
+					linecounter+=1;
+					//// FOR DEBUGGING /////
+					if(verbose)
+						cout << "Line: " << linecounter << " corresponds to theta bin: " << iTheta << " | energy bin: " << iEnergy << " | mass bin: " << mb << " | and value: " << ParticleList[mb][2][linecounter] << std::endl;
+					//////
 				}
-				Int_t iEnergy = (lineCounter - offset*mbIn)/genParam.GetValuesThetaInFile();
-				Int_t iTheta = lineCounter - offset*mbIn - iEnergy*genParam.GetValuesThetaInFile();
-				//// FOR DEBUGGING /////
-				if(verbose)
-					cout << "Line: " << lineCounter << " corresponds to theta bin: " << iTheta << " | energy bin: " << iEnergy << " | mass bin: " << mb << " | and value: " << valV[lineCounter] << std::endl;
-				//////
-				fHAxionETheta[ifile][mb]->SetBinContent(iTheta+1, iEnergy+1, valV[lineCounter-1]);
 			}
 		}
-		//// FOR DEBUGGING /////
-		if(verbose)
-			std::cout << std::endl << "  ReadAxionETheta >> reading completed " << std::endl;
-		//////////////
-		valV.clear();
-	}
+		fHAxionETheta.push_back(fHAxionEThetaFile);
+		fHAxionEThetaFile.clear();
+		ParticleList.clear();
 
-	std::cout << std::endl << "[Info] Finished reading axion momentum distribution" << std::endl;
+	} //massFiles
 
 	Double_t massXprevisous = 0;
-	for (Int_t ifile=1; ifile < genParam.GetNMassFiles(); ifile++){
+	for (Int_t ifile=0; ifile < genParam.GetNMassFiles(); ifile++){
 
 		std::cout << std::endl << "[Info] Entering MC for mass range " << genParam.GetMinMassAInFile()[ifile] << " - " << genParam.GetMaxMassAInFile()[ifile] << std::endl;
 
@@ -318,14 +348,16 @@ void DecayMCProcess(Int_t experiment, Int_t productionmode, Int_t decaymode, Int
 
 		//mass loop
 		Int_t mbTrue = -1;
-		Int_t mbTot = genParam.GetNMassX()[ifile];
-		for (Int_t mb=0; mb < mbTot; mb++){
+		for (Int_t mb=0; mb < genParam.GetNMassX()[ifile]; mb++){
 			//progress bar:
 			std::cout << "\r" << " Simulating evts for mass bin: " << mb << "    " << std::flush;
 
+			alpParam.crossSecA = fHAxionETheta[ifile][mb]->Integral("width");
+			if(alpParam.crossSecA <= 0) continue;
 			Double_t logMassX = genParam.GetMinMassX()[ifile] + genParam.GetWdMassX()[ifile]*mb;
 			alpParam.massA = TMath::Power(10.,logMassX);
-			if (alpParam.massA < genParam.GetMinMassA() || alpParam.massA > genParam.GetMaxMassA()) continue; //ALP mass constraint
+			if (alpParam.massA < genParam.GetMinMassA() || (genParam.GetMaxMassA() != 0 && alpParam.massA > genParam.GetMaxMassA())) continue; //ALP mass constraint
+			if (alpParam.massA < genParam.GetMinMassAInFile()[ifile] || alpParam.massA > genParam.GetMaxMassAInFile()[ifile]) continue;
 			mbTrue+=1;
 
 			for(Int_t iEv=0; iEv< numberOfMCevents; iEv++){ //MC loop
@@ -338,10 +370,6 @@ void DecayMCProcess(Int_t experiment, Int_t productionmode, Int_t decaymode, Int
 				if(pA2<0) pA2 = 0.; //can happen since we pick randomly from the energy table
 				alpParam.pA = TMath::Sqrt(pA2);
 				alpParam.betaA = alpParam.pA/alpParam.energyA;
-
-				int iEnergy = (alpParam.energyA-genParam.GetMinEnergyInFile())/genParam.GetWdEnergy(); //bin
-				int iTheta  = (alpParam.thetaA-genParam.GetMinThetaInFile())/genParam.GetWdTheta(); //bin
-				alpParam.crossSecA = fHAxionETheta[ifile][mb]->GetBinContent(iTheta+1,iEnergy+1);
 
 				if (genParam.GetPhiBeamEuler() != 0 || genParam.GetThetaBeamEuler() != 0 || genParam.GetPsiBeamEuler() != 0){
 					TVector3 oldAlp(TMath::Sin(alpParam.thetaA)*TMath::Cos(alpParam.phiA),
@@ -381,7 +409,7 @@ void DecayMCProcess(Int_t experiment, Int_t productionmode, Int_t decaymode, Int
 						continue;
 					}
 					alpParam.decayLengthA = alpParam.pA/alpParam.massA*hc* 1./TMath::Power(10.,alpParam.widthExpA); // [m] beta*gamma/(Gamma/hc)
-					if (decaymode <= 2) decayTo2Body(genParam,alpParam,*beforeLog[ifile][mb],afterLogMC[ifile][mb],rndmGen);
+					if (decaymode <= 2 || decaymode >= 10) decayTo2Body(genParam,alpParam,*beforeLog[ifile][mb],afterLogMC[ifile][mb],rndmGen);
 					else decayTo3Body(genParam,alpParam,*beforeLog[ifile][mb],afterLogMC[ifile][mb],rescaleDalitz[mbTrue],rndmGen,originalDalitz[mbTrue]);
 				} // width loop
 
@@ -417,11 +445,10 @@ void DecayMCProcess(Int_t experiment, Int_t productionmode, Int_t decaymode, Int
 				if(verbose)
 				cout << "Output mass:" << TMath::Power(10,logMassX) << " bin:" << mb << std::endl;
 			////////////////////////
-			for (Int_t i=0; i< beforeLog[ifile][mb]->GetNbinsX(); i++) {
-				Double_t widthExp = beforeLog[ifile][mb]->GetBinCenter(i+1);
-				for(Int_t iReg = 0; iReg < genParam.GetNRegions(); iReg++) ExpectedNum[ifile].at(iReg)->Fill(logMassX,widthExp, eff1Log[mb][iReg]->GetBinContent(i+1));
+			for (Int_t i=1; i<=beforeLog[ifile][mb]->GetNbinsX(); i++) {
+				Double_t widthExp = beforeLog[ifile][mb]->GetBinCenter(i);
+				for(Int_t iReg = 0; iReg < genParam.GetNRegions(); iReg++) ExpectedNum[ifile].at(iReg)->Fill(logMassX,widthExp, eff1Log[mb][iReg]->GetBinContent(i));
 			} // massbins
-
 		} // mass
 
 		std::cout << "[Info] Writing root output " << std::endl;
@@ -567,7 +594,7 @@ void decayTo2Body(ExpParameters &gen, AxionParameters &alp, TH1D &before, std::v
 	Double_t deltar= (decaypoint-FVentrance).Mag();
 	///// <- from gamma
 
-	Double_t pStar_a = TMath::Sqrt(alp.massA*alp.massA-4.*gen.GetMassFinState()[0]*gen.GetMassFinState()[0])/2;
+	Double_t pStar_a = TMath::Sqrt(alp.massA*alp.massA-4.*gen.GetMassFinState()[0]*gen.GetMassFinState()[1])/2;
 	TVector3 bb2(alp.betaA*TMath::Sin(alp.thetaA)*TMath::Cos(alp.phiA), alp.betaA*TMath::Sin(alp.thetaA)*TMath::Sin(alp.phiA), alp.betaA*TMath::Cos(alp.thetaA));
 	Double_t cTheta = -1. + 2.*randoms[3]; // flat distribution on costheta
 	Double_t thetaProduction_a = TMath::ACos(cTheta);  // theta value in (0,pi);

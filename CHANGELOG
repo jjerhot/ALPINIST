@@ -30,3 +30,14 @@ March 2023
 - Improve argument parser for ALP_decay
 - Add flags for verbosity and for requiring all final states to be in acceptance
 - Other smaller improvements and bug fixes
+
+
+v1.3.0
+------
+May 2023
+- ALP_production python interface for meson mixing and decay production
+- Improvement in exotic production interpolation and sampling
+- Add Dark Scalar interpretation and new DS decay modes (2Pi, 2K)
+- Allow combining sensitivity bounds of various experiments
+- Re-generate all tables with fixed production and produce new plots
+- Fix temporarily UV scale for B meson production at 1TeV

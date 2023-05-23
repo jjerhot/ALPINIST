@@ -1,0 +1,40 @@
+CATCH! 99999 110 22 0.155 -0.075 1.540 91
+CATCH! 99999 111 22 0.029 -0.083 0.619 91
+CATCH! 99999 112 22 -0.118 -0.106 1.459 91
+CATCH! 99999 113 22 0.006 -0.090 0.286 91
+CATCH! 99999 114 22 0.057 0.027 0.094 91
+
+ *-------  PYTHIA Event and Cross Section Statistics  -------------------------------------------------------------*
+ |                                                                                                                 |
+ | Subprocess                                    Code |            Number of events       |      sigma +- delta    |
+ |                                                    |       Tried   Selected   Accepted |     (estimated) (mb)   |
+ |                                                    |                                   |                        |
+ |-----------------------------------------------------------------------------------------------------------------|
+ |                                                    |                                   |                        |
+ | non-diffractive                                101 |       58765      58765      58765 |   2.266e+01  1.789e-07 |
+ | A B -> A B elastic                             102 |       17065      17065      17065 |   6.541e+00  3.287e-08 |
+ | A B -> X B single diffractive                  103 |        8921       8921       8921 |   3.433e+00  0.000e+00 |
+ | A B -> A X single diffractive                  104 |        8812       8812       8812 |   3.433e+00  0.000e+00 |
+ | A B -> X X double diffractive                  105 |        5855       5855       5855 |   2.251e+00  0.000e+00 |
+ | A B -> A X B central diffractive               106 |         582        582        582 |   2.195e-01  1.283e-09 |
+ |                                                    |                                   |                        |
+ | sum                                                |      100000     100000     100000 |   3.854e+01  1.819e-07 |
+ |                                                                                                                 |
+ *-------  End PYTHIA Event and Cross Section Statistics ----------------------------------------------------------*
+
+ *-------  PYTHIA Error and Warning Messages Statistics  ----------------------------------------------------------* 
+ |                                                                                                                 | 
+ |  times   message                                                                                                | 
+ |                                                                                                                 | 
+ |  10914   Error in BeamRemnants::setKinematics: kinematics construction failed                                   | 
+ |    143   Error in BeamRemnants::setKinematics: no momentum left for beam remnants                               | 
+ |     20   Error in MiniStringFragmentation::fragment: no 1- or 2-body state found above mass threshold           | 
+ |     21   Error in Pythia::next: hadronLevel failed; try again                                                   | 
+ |     30   Error in Pythia::next: partonLevel failed; try again                                                   | 
+ |      1   Error in StringFragmentation::fragment: stuck in joining                                               | 
+ |      3   Warning in MultipartonInteractions::init: maximum increased                                            | 
+ |     16   Warning in MultipartonInteractions::pTnext: weight above unity                                         | 
+ |      7   Warning in SpaceShower::branch: used up beam momentum; retrying parton level                           | 
+ |    357   Warning in StringFragmentation::fragmentToJunction: bad convergence junction rest frame                | 
+ |                                                                                                                 | 
+ *-------  End PYTHIA Error and Warning Messages Statistics  ------------------------------------------------------* 
