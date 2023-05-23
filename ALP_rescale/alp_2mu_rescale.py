@@ -1,10 +1,12 @@
+#!/usr/bin/env python3
+
 import numpy as np
 from scipy.interpolate import RectBivariateSpline, interp1d
 from os import path
 import mpmath as mp
-import alp_setup as setup
-import alp_constants as c
-import decay_widths as width
+from alp import alp_setup as setup
+from general import alp_constants as c
+from alp import decay_widths as width
 import argparse
 
 # Derived from load_data.py for cross-check of B meson mode with 2mu decay
@@ -193,8 +195,8 @@ def ALP_events_exp(expName, Lambda):
     elif args.decay != "" and args.prod == "": modes = "_" + '-'.join(channels_decay)
     else: modes = "_" + '-'.join(channels_production) + "_" + '-'.join(channels_decay)
 
-    outfileName = expName + '_gY' + modes + '_new.dat'
-    np.savetxt(outPath + outfileName,data_gY)
+    outfileName = expName + '_mX_gY' + modes + '.dat'
+    np.savetxt(outPath + outfileName,data_gY,fmt='%.4e')
     print('\n[Info:] \t', 'File ' + outfileName + ' saved to ' + outPath)
 
     return
