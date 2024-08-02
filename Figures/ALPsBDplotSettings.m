@@ -17,17 +17,26 @@ cropVector::usage="Crop for vector graphics"
 CleanContourPlot::usage="Remove reduntant data in contour plots (effectively decreases size for contour plots)"
 
 baseLegend90CL::usage="Basic setup for 90CL legend"
+baseLegendKLEVER90CL::usage="Basic setup for 90CL legend"
+baseLegendKLEVERPart90CL::usage="Basic setup for 90CL legend"
 baseLegendPart90CL::usage="Basic setup for 90CL legend"
+baseLegendHIKE90CL::usage="Basic setup for 90CL legend"
+baseLegendFullFermions90CL::usage="Basic setup for 90CL legend"
 baseLegendFull90CL::usage="Basic setup for 90CL legend"
 baseLegendCombined90CL::usage="Basic setup for HIKE+SHADOWS 90CL legend"
 dashedLegend90CL::usage="90CL legend for dashed contours (2\[Gamma]s)"
 gridLines3mesons::usage="Mask mass region around \[Pi],\[Eta],\[Eta]'"
 gridLines2mesons::usage="Mask mass region around \[Eta],\[Eta]'"
+gridLines2mesonsThin::usage="Mask mass region around \[Eta],\[Eta]'"
 yLabelxMass::usage="Setup for axis labels. ylabel as input, xlabel fixed as ALP mass."
 plotSettings90CL::usage="Basic setup for 90CL plots"
 plotReducedSettings90CL::usage="Basic setup for 90CL plots for ALP mass > 500 MeV"
 
 plotSettings90CLNA62::usage="setup for NA62 90CL plots"
+plotSettings90CLHIKE::usage="setup for HIKE 90CL plots"
+plotSettings90CLHIKE5::usage="setup for HIKE 90CL plots"
+plotSettings90CLKLEVER::usage="setup for KLEVER 90CL plots"
+plotSettings90CLKLEVERext::usage="setup for KLEVERext 90CL plots"
 plotSettings90CLCHARM::usage="setup for CHARM 90CL plots"
 plotSettings90CLNuCal::usage="setup for NuCal 90CL plots"
 plotSettings90CLSHiP::usage="setup for SHiP 90CL plots"
@@ -37,6 +46,10 @@ plotSettings90CLSHADOWS::usage="setup for SHADOWS 90CL plots"
 plotSettings90CLE137::usage="recast for E137 90CL plots"
 
 plotSettings90CLReducedNA62::usage="setup for NA62 90CL plots for ALP mass > 500 MeV"
+plotSettings90CLReducedHIKE::usage="setup for HIKE 90CL plots for ALP mass > 500 MeV"
+plotSettings90CLReducedHIKE5::usage="setup for HIKE 90CL plots for ALP mass > 500 MeV"
+plotSettings90CLReducedKLEVER::usage="setup for KLEVER 90CL plots for ALP mass > 500 MeV"
+plotSettings90CLReducedKLEVERext::usage="setup for KLEVER 90CL plots for ALP mass > 500 MeV"
 plotSettings90CLReducedCHARM::usage="setup for CHARM 90CL plots for ALP mass > 500 MeV"
 plotSettings90CLReducedNuCal::usage="setup for NuCal 90CL plots for ALP mass > 500 MeV"
 plotSettings90CLReducedSHiP::usage="setup for SHiP 90CL plots for ALP mass > 500 MeV"
@@ -46,6 +59,10 @@ plotSettings90CLReducedSHADOWS::usage="setup for SHADOWS 90CL plots for ALP mass
 plotSettings90CLReducedE137::usage="setup for E137 90CL plots for ALP mass > 500 MeV"
 
 plotSettings90CLDashedNA62::usage="setup for NA62 90CL plots for 2\[Gamma] decay for ALP mass > 500 MeV"
+plotSettings90CLDashedHIKE::usage="setup for HIKE 90CL plots for 2\[Gamma] decay for ALP mass > 500 MeV"
+plotSettings90CLDashedHIKE5::usage="setup for HIKE 90CL plots for 2\[Gamma] decay for ALP mass > 500 MeV"
+plotSettings90CLDashedKLEVER::usage="setup for KLEVER 90CL plots for 2\[Gamma] decay for ALP mass > 500 MeV"
+plotSettings90CLDashedKLEVERext::usage="setup for KLEVER 90CL plots for 2\[Gamma] decay for ALP mass > 500 MeV"
 plotSettings90CLDashedCHARM::usage="setup for CHARM 90CL plots for 2\[Gamma] decay for ALP mass > 500 MeV"
 plotSettings90CLDashedNuCal::usage="setup for NuCal 90CL plots for 2\[Gamma] decay for ALP mass > 500 MeV"
 plotSettings90CLDashedSHiP::usage="setup for SHiP 90CL plots for 2\[Gamma] decay for ALP mass > 500 MeV"
@@ -246,15 +263,21 @@ graph=Graph[UndirectedEdge@@@cover];
 lines=Cases[cp,_Tooltip,Infinity];
 Graphics[GraphicsComplex[points,{regions,lines}],Sequence@@Options[cp]]];
 (*setup for 90CL plots*)
-
+baseLegendFullFermions90CL=LineLegend[{{Thickness[0.05],Opacity[0.6,Lighter[Gray,0.3]]},{Thickness[0.05],Opacity[0.6,Darker[Gray,0.3]]},{Thickness[0.05],Lighter[Blue,0.8]},Opacity[0.5,Darker[Green,0.5]],Opacity[0.5,Red],Opacity[0.5,Darker[Red,0.6]],Opacity[0.5,Black],Opacity[0.5,Lighter[RGBColor[0.05,0.2,0.75],0.3]]},{"NuCal","CHARM","E137, E141","DarkQuest","DUNE","HIKE (5\!\(\*SuperscriptBox[\(\[Times]10\), \(19\)]\))","SHADOWS (5\!\(\*SuperscriptBox[\(\[Times]10\), \(19\)]\))","SHiP (2\!\(\*SuperscriptBox[\(\[Times]10\), \(20\)]\))"},Spacings-> 0.15,LabelStyle->baseStyleLeg90CL];
 baseLegendFull90CL=LineLegend[{{Thickness[0.05],Opacity[0.6,Lighter[Gray,0.3]]},{Thickness[0.05],Opacity[0.6,Darker[Gray,0.3]]},{Thickness[0.05],Lighter[Blue,0.8]},Opacity[0.5,Darker[Red,0.6]],Opacity[0.5,Lighter[RGBColor[0.05,0.2,0.75],0.3]],Opacity[0.5,Darker[Green,0.5]],Opacity[0.5,Red],Opacity[0.5,Black]},{"NuCal","CHARM","E137, E141","NA62 (5\!\(\*SuperscriptBox[\(\[Times]10\), \(19\)]\))","SHiP (2\!\(\*SuperscriptBox[\(\[Times]10\), \(20\)]\))","DarkQuest","DUNE","SHADOWS (5\!\(\*SuperscriptBox[\(\[Times]10\), \(19\)]\))"},Spacings-> 0.15,LabelStyle->baseStyleLeg90CL];
 baseLegendCombined90CL=LineLegend[{{Thickness[0.05],Opacity[0.6,Lighter[Gray,0.3]]},{Thickness[0.05],Opacity[0.6,Darker[Gray,0.3]]},{Thickness[0.05],Lighter[Blue,0.8]},Opacity[0.5,Darker[Red,0.6]],Opacity[0.5,Lighter[RGBColor[0.05,0.2,0.75],0.3]]},{"NuCal","CHARM","E137, E141","HIKE+SHADOWS","SHiP (2\!\(\*SuperscriptBox[\(\[Times]10\), \(20\)]\))"},Spacings-> 0.15,LabelStyle->baseStyleLeg90CL];
 baseLegend90CL=LineLegend[{{Thickness[0.05],Lighter[Blue,0.8]},{Thickness[0.05],Opacity[0.6,Lighter[Gray,0.3]]},{Thickness[0.05],Opacity[0.6,Darker[Gray,0.3]]},Opacity[0.5,Darker[Red,0.6]]},{"E137, E141","NuCal","CHARM","NA62 (\!\(\*SuperscriptBox[\(10\), \(18\)]\) POT)"},Spacings-> 0.15,LabelStyle->baseStyleLeg90CL];
+baseLegendKLEVER90CL=LineLegend[{{Thickness[0.05],Lighter[Blue,0.8]},{Thickness[0.05],Opacity[0.6,Lighter[Gray,0.3]]},{Thickness[0.05],Opacity[0.6,Darker[Gray,0.3]]},Opacity[0.5,Darker[Red,0.6]],Opacity[0.5,Darker[Yellow,0.7]],Opacity[0.5,Darker[Yellow,0.4]]},{"E137, E141","NuCal","CHARM","HIKE-BD (5\!\(\*SuperscriptBox[\(\[Times]10\), \(19\)]\) POT)","HIKE-KLEVER (6\!\(\*SuperscriptBox[\(\[Times]10\), \(19\)]\) POT)","HIKE-\!\(\*SubscriptBox[\(KLEVER\), 
+StyleBox[\"ext\",\nFontSlant->\"Italic\"]]\) (6\!\(\*SuperscriptBox[\(\[Times]10\), \(19\)]\) POT)"},Spacings-> 0.15,LabelStyle->baseStyleLeg90CL];
+baseLegendKLEVERPart90CL=LineLegend[{{Thickness[0.05],Lighter[Blue,0.8]},{Thickness[0.05],Opacity[0.6,Lighter[Gray,0.3]]},{Thickness[0.05],Opacity[0.6,Darker[Gray,0.3]]},Opacity[0.5,Darker[Red,0.6]],Opacity[0.5,Darker[Yellow,0.7]],Opacity[0.5,Darker[Yellow,0.4]]},{"E137, E141","NuCal","CHARM","HIKE-BD","HIKE-KLEVER","HIKE-\!\(\*SubscriptBox[\(KLEVER\), 
+StyleBox[\"ext\",\nFontSlant->\"Italic\"]]\)"},Spacings-> 0.15,LabelStyle->baseStyleLeg90CL];
 baseLegendPart90CL=LineLegend[{{Thickness[0.05],Lighter[Blue,0.8]},{Thickness[0.05],Opacity[0.6,Lighter[Gray,0.3]]},{Thickness[0.05],Opacity[0.6,Darker[Gray,0.3]]},Opacity[0.5,Darker[Red,0.6]]},{"E137, E141","NuCal","CHARM","NA62 (1.4\!\(\*SuperscriptBox[\(\[Times]10\), \(17\)]\))"},Spacings-> 0.15,LabelStyle->baseStyleLeg90CL];
+baseLegendHIKE90CL=LineLegend[{{Thickness[0.05],Lighter[Blue,0.8]},{Thickness[0.05],Opacity[0.6,Lighter[Gray,0.3]]},{Thickness[0.05],Opacity[0.6,Darker[Gray,0.3]]},Opacity[0.4,Darker[Red,0.6]],Opacity[0.7,Darker[Red,0.6]]},{"E137, E141","NuCal","CHARM","HIKE (\!\(\*SuperscriptBox[\(10\), \(19\)]\))","HIKE (5\[Times]\!\(\*SuperscriptBox[\(10\), \(19\)]\))"},Spacings-> 0.15,LabelStyle->baseStyleLeg90CL];
 dashedLegend90CL=LineLegend[{Dashed,Darker[Gray,0.9]},{"2\[Gamma] only"},Spacings-> 0.2,LabelStyle->baseStyleLeg90CL];
 
 gridLines3mesons={Method->{"GridLinesInFront"->True},GridLines->{{0.135,0.547,0.957},{}},GridLinesStyle->{{Darker[Gray,0.4],Thickness->0.01},{}}};
 gridLines2mesons={Method->{"GridLinesInFront"->True},GridLines->{{0.547,0.94},{}},GridLinesStyle->{{Darker[Gray,0.4],Thickness->0.025},{}}};
+gridLines2mesonsThin={Method->{"GridLinesInFront"->True},GridLines->{{0.547,0.94},{}},GridLinesStyle->{{Darker[Gray,0.4],Thickness->0.01},{}}};
 
 yLabelxMass[ylabel_]:=FrameLabel->{StringForm["`` [GeV]",Subscript[Style["m",Italic],Style["a",Italic]]],StringForm["`` [``]",ylabel,Superscript["GeV",-1]]};
 plotSettings90CL={PlotRange->{{0.0001,3.},{1*10^-9,1*10^-1},{10^-8,Full}},PlotRangePadding-> None,ScalingFunctions->{"Log10","Log10"},ImageSize->Medium,BaseStyle-> Thickness[0.005],FrameTicks->{{LogTick[-11,-1],None},{LogTick[-4,0],None}},LabelStyle->Directive[baseStyle]};
@@ -263,6 +286,10 @@ plotReducedSettings90CL={PlotRange->{{0.4,2.},{1*10^-10,1*10^-5},{10^-8,Full}},P
 (*Colors and contours for 90CL plots:*)
 
 plotSettings90CLNA62={Contours->{0.46},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.5,Darker[Red,0.6]],Evaluate[plotSettings90CL]};
+plotSettings90CLHIKE={Contours->{2.3},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.4,Darker[Red,0.6]],Evaluate[plotSettings90CL]};
+plotSettings90CLHIKE5={Contours->{0.46},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.7,Darker[Red,0.6]],Evaluate[plotSettings90CL]};
+plotSettings90CLKLEVER={Contours->{2.3},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.5,Darker[Yellow,0.7]],Evaluate[plotSettings90CL]};
+plotSettings90CLKLEVERext={Contours->{2.3},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.5,Darker[Yellow,0.4]],Evaluate[plotSettings90CL]};
 plotSettings90CLCHARM={Contours->{2.3},ContourShading->{Transparent,Opacity[0.5,Darker[Gray,0.2]]},ContourStyle->None,Evaluate[plotSettings90CL]};
 plotSettings90CLNuCal={Contours->{3.6},ContourShading->{Transparent,Opacity[0.6,Lighter[Gray,0.3]]},ContourStyle->None,Evaluate[plotSettings90CL]};
 plotSettings90CLSHiP={Contours-> {1.15},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.5,Lighter[RGBColor[0.05,0.2,0.75],0.3]],Evaluate[plotSettings90CL]};
@@ -272,6 +299,10 @@ plotSettings90CLSHADOWS={Contours->{0.46},ContourShading->{Transparent,Transpare
 plotSettings90CLE137={Contours->{2.3},ContourShading->{Transparent,Lighter[Blue,0.8]},ContourStyle->Transparent,Evaluate[plotSettings90CL]};
 
 plotSettings90CLReducedNA62={Contours->{0.46},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.5,Darker[Red,0.6]],Evaluate[plotReducedSettings90CL]};
+plotSettings90CLReducedHIKE={Contours->{2.3},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.4,Darker[Red,0.6]],Evaluate[plotReducedSettings90CL]};
+plotSettings90CLReducedHIKE5={Contours->{0.46},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.7,Darker[Red,0.6]],Evaluate[plotReducedSettings90CL]};
+plotSettings90CLReducedKLEVER={Contours->{2.3},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.5,Darker[Yellow,0.7]],Evaluate[plotReducedSettings90CL]};
+plotSettings90CLReducedKLEVERext={Contours->{2.3},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.5,Darker[Yellow,0.4]],Evaluate[plotReducedSettings90CL]};
 plotSettings90CLReducedCHARM={Contours->{2.3},ContourShading->{Transparent,Opacity[0.5,Darker[Gray,0.2]]},ContourStyle->None,Evaluate[plotReducedSettings90CL]};
 plotSettings90CLReducedNuCal={Contours->{3.6},ContourShading->{Transparent,Opacity[0.6,Lighter[Gray,0.3]]},ContourStyle->None,Evaluate[plotReducedSettings90CL]};
 plotSettings90CLReducedSHiP={Contours-> {1.15},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.5,RGBColor[0.05,0.2,0.75]],Evaluate[plotReducedSettings90CL]};
@@ -281,6 +312,10 @@ plotSettings90CLReducedSHADOWS={Contours->{0.46},ContourShading->{Transparent,Tr
 plotSettings90CLReducedE137={Contours->{2.3},ContourShading->{Transparent,Lighter[Blue,0.8]},ContourStyle->Transparent,Evaluate[plotReducedSettings90CL]};
 
 plotSettings90CLDashedNA62={Contours->{0.46},ContourShading->{Transparent,Transparent},ContourStyle->{Dashed,Opacity[0.5,Darker[Red,0.6]]},Evaluate[plotReducedSettings90CL]};
+plotSettings90CLDashedHIKE={Contours->{2.3},ContourShading->{Transparent,Transparent},ContourStyle->{Dashed,Opacity[0.4,Darker[Red,0.6]]},Evaluate[plotReducedSettings90CL]};
+plotSettings90CLDashedHIKE5={Contours->{0.46},ContourShading->{Transparent,Transparent},ContourStyle->{Dashed,Opacity[0.7,Darker[Red,0.6]]},Evaluate[plotReducedSettings90CL]};
+plotSettings90CLDashedKLEVER={Contours->{2.3},ContourShading->{Transparent,Transparent},ContourStyle->{Dashed,Opacity[0.5,Darker[Yellow,0.7]]},Evaluate[plotReducedSettings90CL]};
+plotSettings90CLDashedKLEVERext={Contours->{2.3},ContourShading->{Transparent,Transparent},ContourStyle->{Dashed,Opacity[0.5,Darker[Yellow,0.4]]},Evaluate[plotReducedSettings90CL]};
 plotSettings90CLDashedCHARM={Contours->{2.3},ContourShading->{Transparent,Transparent},ContourStyle->{Dashed,Opacity[0.5,Darker[Gray,0.3]]},Evaluate[plotReducedSettings90CL]};
 plotSettings90CLDashedNuCal={Contours->{3.6},ContourShading->{Transparent,Transparent},ContourStyle->{Dashed,Opacity[0.5,Lighter[Gray,0.2]]},Evaluate[plotReducedSettings90CL]};
 plotSettings90CLDashedSHiP={Contours-> {1.15},ContourShading->{Transparent,Transparent},ContourStyle->{Dashed,Opacity[0.5,RGBColor[0.05,0.2,0.75]]},Evaluate[plotReducedSettings90CL]};

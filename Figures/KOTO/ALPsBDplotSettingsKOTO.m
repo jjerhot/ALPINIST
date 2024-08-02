@@ -231,7 +231,7 @@ lines=Cases[cp,_Tooltip,Infinity];
 Graphics[GraphicsComplex[points,{regions,lines}],Sequence@@Options[cp]]];
 (*setup for 90CL plots*)
 
-baseLegend90CL=LineLegend[{{Thickness[0.1],Opacity[0.7,Orange]},{Thickness[0.008],Opacity[0.7,Orange]},Opacity[0.7,Lighter[Green,0.5]],{Thickness[0.008],Opacity[0.7,Darker[Orange,0.5]]},Opacity[0.7,Darker[Green,0.5]]},{StringForm["``-``","Step","1 kaon 2015"],StringForm["``-``","Step","1 kaon future"],StringForm["``-``","Step","1 dump"],StringForm["``-``","Step","2 kaon"],StringForm["``-``","Step","2 dump"]},Spacings-> {0.15,0.04},LegendMarkerSize->{25,10},LabelStyle->baseStyleLeg90CL];
+baseLegend90CL=LineLegend[{{Thickness[0.1],Opacity[0.7,Orange]},{Thickness[0.008],Opacity[0.7,Red]},Opacity[0.7,Lighter[Green,0.5]],{Thickness[0.008],Opacity[0.7,Darker[Orange,0.5]]},Opacity[0.7,Darker[Green,0.5]]},{StringForm["``-``","Step","1 kaon 2015"],StringForm["``-``","Step","1 kaon future"],StringForm["``-``","Step","1 dump"],StringForm["``-``","Step","2 kaon"],StringForm["``-``","Step","2 dump"]},Spacings-> {0.15,0.04},LegendMarkerSize->{25,10},LabelStyle->baseStyleLeg90CL];
 
 gridLines3mesons={Method->{"GridLinesInFront"->True},GridLines->{{0.135,0.547,0.957},{}},GridLinesStyle->{{Darker[Gray,0.4],Thickness->0.01},{}}};
 gridLines2mesons={Method->{"GridLinesInFront"->True},GridLines->{{0.547,0.94},{}},GridLinesStyle->{{Darker[Gray,0.4],Thickness->0.025},{}}};
@@ -250,7 +250,7 @@ plotSettings90CLDarkQuest={Contours->{10.0},ContourShading->{Transparent,Transpa
 plotSettings90CLDUNE={Contours->{0.23},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.5,Red],Evaluate[plotSettings90CL]};
 plotSettings90CLSHADOWS={Contours->{2.3},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.5,Black],Evaluate[plotSettings90CL]};
 plotSettings90CLKOTOpnn={Contours->{2.3},ContourShading->{Transparent,Opacity[0.7,Orange]},ContourStyle-> None,Evaluate[plotSettings90CL]};
-plotSettings90CLKOTOexclPnn={Contours->{4.2},ContourShading->{Transparent,Transparent},ContourStyle->{Thickness[0.008],Opacity[0.7,Orange]},Evaluate[plotSettings90CL]};
+plotSettings90CLKOTOexclPnn={Contours->{4.2},ContourShading->{Transparent,Transparent},ContourStyle->{Thickness[0.008],Opacity[0.7,Red]},Evaluate[plotSettings90CL]};
 plotSettings90CLKOTO2pnn={Contours->{3.14},ContourShading->{Transparent,Transparent},ContourStyle->{Thickness[0.008],Opacity[0.7,Darker[Orange,0.5]]},Evaluate[plotSettings90CL]};
 plotSettings90CLKOTOdump={Contours->{0.23},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.7,Green],Evaluate[plotSettings90CL]};
 plotSettings90CLKOTO2dump={Contours->{0.23},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.7,Darker[Green,0.5]],Evaluate[plotSettings90CL]};

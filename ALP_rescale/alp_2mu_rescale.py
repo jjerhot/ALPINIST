@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 
+ ##
+ # @file alp_2mu_rescale.py
+ # @brief Separate main module for Yukawa-coupled pseudoscalars
+
 import numpy as np
 from scipy.interpolate import RectBivariateSpline, interp1d
-from os import path
+from os import path, makedirs
 import mpmath as mp
-from alp import alp_setup as setup
-from general import alp_constants as c
-from alp import decay_widths as width
 import argparse
+
+from ALP_rescale.general import constants as c
+from ALP_rescale.alp import alp_setup as setup
+from ALP_rescale.alp import decay_widths as width
 
 # Derived from load_data.py for cross-check of B meson mode with 2mu decay
 
@@ -90,7 +95,7 @@ for exp in experiments:
     for chan_dec in channels_decay:
         for chan_prod in channels_production:
 
-            filename_dat = path.dirname(path.realpath(__file__))+"/../tab_decay/"+setup.experiments[exp]+"/"+exp+'_'+chan_prod+'_'+chan_dec+'.dat'
+            filename_dat = path.dirname(path.realpath(__file__))+"/../tab_decay/"+setup.experiments[exp]+"/alp/"+exp+'_'+chan_prod+'_'+chan_dec+'.dat'
 
         # filename_dat = path.dirname(path.realpath(__file__))+"/../tab_decay/"+exp+"/"+exp+'_'+chan_prod+'_2mu'+'.dat'
 
@@ -109,7 +114,7 @@ for exp in experiments:
                 experimental_constraint_data = np.log(experimental_constraint_data)
                 # Fast interpolation on rectangular grid
                 experimental_constraint_data_inter = RectBivariateSpline(experimental_constraint_data[:,0,0],experimental_constraint_data[0,:,1],experimental_constraint_data[:,:,2])
-
+                # experimental_constraint_data_inter = interp2d(experimental_constraint_data[:,0,0],experimental_constraint_data[0,:,1],np.transpose(experimental_constraint_data[:,:,2]))
                 constraint_dictionary[exp+'_'+chan_prod+'_'+chan_dec] = experimental_constraint_data_inter
 
             else:
@@ -130,11 +135,9 @@ def ALP_decays_single_channel(experiment, production_channel, decay_channel, Gam
     if boundary[0,0] <= m_a <= boundary[0,1] and boundary[1,0] <= Gamma_a <= boundary[1,1]:
 
         # return (coupling_production[production_channel] / reference_couplings[production_channel])**scaling_exponent[production_channel] * (np.exp(constraint_dictionary[experiment+'_'+production_channel](np.log(m_a),np.log(Gamma_a))[0,0]) - c.epsilon)
-        return BR_a * (coupling_production[production_channel] / setup.reference_couplings[production_channel])**setup.scaling_exponent[production_channel] * (np.exp(constraint_dictionary[experiment+'_'+production_channel+'_'+decay_channel](np.log(float(m_a)),np.log(float(Gamma_a)))[0,0]) - c.epsilon)
+        return BR_a * (coupling_production[production_channel])**setup.scaling_exponent[production_channel] * (np.exp(constraint_dictionary[experiment+'_'+production_channel+'_'+decay_channel](np.log(float(m_a)),np.log(float(Gamma_a)))[0,0]) - c.epsilon)
 
-    else:
-
-        return 0
+    else: return 0
 
 # Model-independent part
 
@@ -160,11 +163,15 @@ def ALP_events_EFT(experiment, m_a, g_Y, Lambda):
     #define B decay branching fraction
     V_qb = [c.V_ub, c.V_cb, c.V_tb]
     V_qs = [c.V_us, c.V_cs, c.V_ts]
+    xi_q = [c.m_q[0]**2/c.m_W**2, c.m_q[3]**2/c.m_W**2, c.m_q[5]**2/c.m_W**2]
 
-    h_bs = c.alpha_EM*g_Y*c.m_q[5]**2/(4*np.pi*c.m_W**2*mp.sin(c.theta_w)**2*c.v) * np.log(Lambda**2/c.m_q[5]**2) * sum([np.prod(q) for q in zip(V_qb, V_qs)])
+    h_bs = c.alpha_EM*g_Y/(4*np.pi*mp.sin(c.theta_w)**2*c.v) * np.log(Lambda**2/c.m_q[5]**2) * sum([np.prod(q) for q in zip(xi_q,V_qb, V_qs)])
 
-    BR_B_K_a = width.B_K_a(m_a,h_bs) / c.Gamma_B
-    BR_B_Kstar_a = width.B_Kstar_a(m_a,h_bs) / c.Gamma_B
+    h_bs_s = h_bs*(c.m_q[4]+c.m_q[2])/2
+    h_bs_p = h_bs*(c.m_q[4]-c.m_q[2])/2
+
+    BR_B_K_a = width.B_K_a_Y(m_a,h_bs_s) / c.Gamma_B
+    BR_B_Kstar_a = width.B_Kstar_a_Y(m_a,h_bs_p) / c.Gamma_B
 
     global coupling_production
     coupling_production = { 'BmesonK':      BR_B_K_a,
@@ -188,7 +195,7 @@ def ALP_events_exp(expName, Lambda):
 
     # export
     output_dir = this_dir+'/../tab_toPlot/'
-    outPath = output_dir + setup.experiments[expName] + '/'
+    outPath = output_dir + setup.experiments[expName] + '/alp/'
 
     if args.prod == args.decay == "": modes = ""
     elif args.prod != "" and args.decay == "": modes = "_" + '-'.join(channels_production)
@@ -196,6 +203,8 @@ def ALP_events_exp(expName, Lambda):
     else: modes = "_" + '-'.join(channels_production) + "_" + '-'.join(channels_decay)
 
     outfileName = expName + '_mX_gY' + modes + '.dat'
+
+    if not path.isdir(outPath): makedirs(outPath)
     np.savetxt(outPath + outfileName,data_gY,fmt='%.4e')
     print('\n[Info:] \t', 'File ' + outfileName + ' saved to ' + outPath)
 

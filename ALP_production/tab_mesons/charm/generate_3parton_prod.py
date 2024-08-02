@@ -1,0 +1,41 @@
+import sys
+import pythia8
+import numpy as np
+def number_to_3sigfigs_str(number):
+    assert 0 <= number < 1e12, f"number {number} outside of interpretation range (0, 999e9)"
+    translator = ['','k','M','B']
+    number_split = f"{number:3.3e}".split("e")
+    order_1000 = int(int(number_split[1])/3)
+    raise_by = int(number_split[1])%3
+    sigfigs = str(float(f"{(float(number_split[0])):.2e}")*10**raise_by)
+    while '.' in sigfigs and sigfigs[-1] in ['0','.']: sigfigs = sigfigs[:-1]
+    return sigfigs+translator[order_1000]
+
+pythia_dir = "/Users/Jonathan/misc/Pythia"
+
+cfg = open(pythia_dir+"/examples/Makefile.inc")
+lib = pythia_dir+"/lib"
+for line in cfg:
+    if line.startswith("PREFIX_LIB="): lib = line[11:-1]; break
+sys.path.insert(0, lib)
+nprod = 10000000
+
+for p_beam in [70,120,400,800]:
+    print("Prdouction for impact on fixed proton by proton with momentum",p_beam,"GeV for",nprod,"events")
+    pythia = pythia8.Pythia("-v", False)
+    pythia_modifiers = ["PhaseSpace:pTHat3Min = 3","PhaseSpace:pTHat5Min = 0.5","MultipartonInteractions:ecmRef = 30","HardQCD:nQuarkNew = 4", "HardQCD:3parton = on", "Beams:idA = 2212","Beams:idB = 2212","Beams:eA = " + str(np.sqrt(p_beam**2+0.93827**2)), "Beams:eB = "+str(0.93827), "Beams:frameType = 2"]
+    for modifier in pythia_modifiers+["Next:numberShowEvent = 5"]:
+        pythia.readString(modifier)
+
+    pythia.init() # initialize
+    meson_list = []
+    for _ in range(nprod):
+        pythia.next()
+        for isubEvent in range(pythia.event.size()):
+            evt = pythia.event[isubEvent]
+            if abs(evt.id()) not in [411,421,431]: continue
+            meson_list.append([evt.id(),evt.px(),evt.py(),evt.pz()])
+    pythia.stat()
+    file_info  =  "Charmed meson momenta as generated for " + str(nprod) +" impining protons, with PYTHIA"+str(pythia.parm("Pythia:versionNumber"))+" and modifiers [" + ', '.join(pythia_modifiers)+']'
+    # np.savetxt(f"./3partoncc_{active_3_set}_{p_beam}GeV_{number_to_3sigfigs_str(nprod)}.dat", meson_list, header=file_info, fmt='%i %4f %4f %3f')
+    np.savetxt(f"./3partonccbar_{p_beam}GeV_{number_to_3sigfigs_str(nprod)}.dat", meson_list, header=file_info, fmt='%i %4f %4f %3f')

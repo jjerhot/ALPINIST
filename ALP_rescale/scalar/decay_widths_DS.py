@@ -2,19 +2,19 @@ import numpy as np
 import mpmath as mp #for polylog
 from scipy.interpolate import interp1d
 from os import path
-from general import alp_constants as c
-from general import alp_functions as f
+from ALP_rescale.general import constants as c
+from ALP_rescale.general import functions as f
 
 # S production: https://arxiv.org/pdf/1809.01876.pdf
 
 def B_K_S(m_S, y): #B -> K + S
     f_0 = 0.330/(1-m_S**2/37.46) #hep-ph/0406232
-    if c.m_B > m_S + c.m_K: return mp.fabs(y)**2 * mp.fabs((3 * c.m_q[4] * c.m_q[5]**2 * c.V_ts * c.V_tb)/(c.v**3 * 16 * np.pi**2 * (c.m_q[4] - c.m_q[2])**2))**2 /(64*np.pi*c.m_B**3)*(c.m_B**2 - c.m_K**2)**2 * np.sqrt(f.lambda_Kallen(c.m_B,c.m_K,m_S)) * f_0**2
+    if c.m_B > m_S + c.m_K: return mp.fabs(y)**2 * mp.fabs((3 * c.m_q[5]**2 * c.V_ts * c.V_tb)/(c.v**3 * 16 * np.pi**2 ))**2 /(16*np.pi*c.m_B**3)*(c.m_B**2 - c.m_K**2)**2 * np.sqrt(f.lambda_Kallen(c.m_B,c.m_K,m_S)) * f_0**2
     return 0.
 
 def B_Kstar_S(m_S, y): #B -> K* + S
     A_0 = 1.364/(1-m_S**2/(c.m_B**2)) - 0.990/(1-m_S**2/36.78) #hep-ph/0412079
-    if c.m_B > m_S + c.m_Kstar: return mp.fabs(y)**2 * mp.fabs((3 * c.m_q[4] * c.m_q[5]**2 * c.V_ts * c.V_tb)/(c.v**3 * 16 * np.pi**2 * (c.m_q[4] + c.m_q[2])**2))**2 /(64*np.pi*c.m_B**3) * np.sqrt(f.lambda_Kallen(c.m_B,c.m_Kstar,m_S)**3) * A_0**2
+    if c.m_B > m_S + c.m_Kstar: return mp.fabs(y)**2 * mp.fabs((3 * c.m_q[5]**2 * c.V_ts * c.V_tb)/(c.v**3 * 16 * np.pi**2 ))**2 /(16*np.pi*c.m_B**3) * np.sqrt(f.lambda_Kallen(c.m_B,c.m_Kstar,m_S)**3) * A_0**2
     return 0.
 
 # S decay: https://arxiv.org/pdf/1809.01876.pdf
@@ -162,6 +162,12 @@ class DS_widths:
         C = 5.1*1E-9
         if m_S > 4*c.m_pi and m_S < 2.: return y**2. * C * m_S**3 * np.sqrt(1 - 16*c.m_pi**2 / m_S**2)
         return 0.
+    
+    def S_2Pi2Pi0(self, m_S, y): #S -> 2pi+2pi0 assuming it's the only hadronic channel + accounting for symmetry factor
+        return self.S_2hadrest(m_S, y)*2/3
+
+    def S_4Pi(self, m_S, y): #S -> 4pi assuming it's the only hadronic channel + accounting for symmetry factor
+        return self.S_2hadrest(m_S, y)*1/3
 
     def S_ss(self, m_S, y):
         m_s = 0.095
@@ -195,13 +201,18 @@ class DS_widths:
         if m_S > 2: return (y**2 * (f.alpha_s(m_S)/1.6)**2 * m_S**3)/(32 * np.pi**3 * c.v**2) * np.absolute(sum([_r(m_q) for m_q in c.m_q]) )**2
         return 0.
 
-    _DS_widths ={'2El':  S_2El,
-                '2Mu':  S_2Mu,
-                '2Pi':  S_2Pi,
-                '2K':   S_2K
+    _DS_widths ={'2El':     S_2El,
+                '2Mu':      S_2Mu,
+                '2Pi':      S_2Pi,
+                '2K':       S_2K,
+                '2Pi2Pi0':  S_2Pi2Pi0,
+                '4Pi':      S_4Pi,
                 }
 
     def get_width(self,channel,m_S,y): return self._DS_widths[channel].__get__(self, type(self))(m_S,y)
 
     def S_total(self, m_S, y):
         return self.S_below2El(m_S, y) + self.S_2El(m_S, y) + self.S_2Mu(m_S, y) + self.S_2Pi(m_S, y) + self.S_2K(m_S, y) + self.S_2hadrest(m_S, y) + self.S_ss(m_S, y) + self.S_cc(m_S, y) + self.S_bb(m_S, y) + self.S_2Tau(m_S, y) + self.S_2gluon(m_S, y)
+
+    def S_total_hadrons(self, m_S, y):
+        return self.S_2Pi(m_S, y) + self.S_2K(m_S, y) + self.S_2hadrest(m_S, y) + self.S_ss(m_S, y) + self.S_cc(m_S, y) + self.S_bb(m_S, y) + self.S_2gluon(m_S, y)

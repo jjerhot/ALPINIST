@@ -1,9 +1,9 @@
 import numpy as np
-from scipy.interpolate import RectBivariateSpline, interp1d
+# from scipy.interpolate import RectBivariateSpline, interp1d
 from os import path
 import mpmath as mp #for polylog
-from general import alp_constants as c
-from general import alp_functions as f
+from ALP_rescale.general import constants as c
+from ALP_rescale.general import functions as f
 
 class mixing:
 
@@ -16,14 +16,21 @@ class mixing:
         self._kappa_d = (1./c.m_q[1])*1./self._inv_mass_sum
         self._kappa_s = (1./c.m_q[2])*1./self._inv_mass_sum
 
-        self._K_a_pi0 = -(self._kappa_u - self._kappa_d)/2.
-        self._K_a_eta = - 0.5 * ( (self._kappa_u +self._kappa_d) * (1/np.sqrt(3.) * np.cos(c.th_eta_etap) - np.sqrt(2/3.) * np.sin(c.th_eta_etap)) - self._kappa_s *  (2/np.sqrt(3.) * np.cos(c.th_eta_etap) + np.sqrt(2/3.) * np.sin(c.th_eta_etap))  )
-        self._K_a_etap = - 0.5 * ( (self._kappa_u +self._kappa_d) * (1/np.sqrt(3.) * np.sin(c.th_eta_etap) + np.sqrt(2/3.) * np.cos(c.th_eta_etap)) - self._kappa_s *  (2/np.sqrt(3.) * np.sin(c.th_eta_etap) - np.sqrt(2/3.) * np.cos(c.th_eta_etap))  )
+    def _c_q(self, kappa, cg, cq):
+        return cq + 64 * np.pi**2 * kappa * cg
 
-        #define mass mixing parameters
+    def _K_a_pi0(self,cg,cu,cd,cs):
+        return - 0.5 * (self._c_q(self._kappa_u,cg,cu) - self._c_q(self._kappa_d,cg,cd))
+    def _K_a_eta(self,cg,cu,cd,cs):
+        return - 0.5 * ( (self._c_q(self._kappa_u,cg,cu) + self._c_q(self._kappa_d,cg,cd)) * (1/np.sqrt(3.) * np.cos(c.th_eta_etap) - np.sqrt(2/3.) * np.sin(c.th_eta_etap)) - self._c_q(self._kappa_s,cg,cs) * (2/np.sqrt(3.) * np.cos(c.th_eta_etap) + np.sqrt(2/3.) * np.sin(c.th_eta_etap))  )
+    def _K_a_etap(self,cg,cu,cd,cs):
+        return - 0.5 * ( (self._c_q(self._kappa_u,cg,cu) + self._c_q(self._kappa_d,cg,cd)) * (1/np.sqrt(3.) * np.sin(c.th_eta_etap) + np.sqrt(2/3.) * np.cos(c.th_eta_etap)) - self._c_q(self._kappa_s,cg,cs) * (2/np.sqrt(3.) * np.sin(c.th_eta_etap) - np.sqrt(2/3.) * np.cos(c.th_eta_etap))  )
 
-        self._m_a_eta_Squared = - np.sqrt(6.)*c.B0*np.sin(c.th_eta_etap)/self._inv_mass_sum
-        self._m_a_etap_Squared = np.sqrt(6.)*c.B0*np.cos(c.th_eta_etap)/self._inv_mass_sum
+    #define mass mixing parameters
+    def _m_a_eta_Squared(self,cg):
+        return - 64 * np.pi**2 * cg * np.sqrt(6.)*c.B0*np.sin(c.th_eta_etap)/self._inv_mass_sum
+    def _m_a_etap_Squared(self,cg):
+        return 64 * np.pi**2 * cg * np.sqrt(6.)*c.B0*np.cos(c.th_eta_etap)/self._inv_mass_sum
 
     def _FVMD(self,m_a): # implementation of VMD-F-function. Intermediate regime for 1.4GeV < m_a < 2GeV is based on a cubic fit
         if m_a <= 1.4:
@@ -34,17 +41,15 @@ class mixing:
 
         else:
             return (1.4/m_a)**4
-        print("Error: FVMD function - something went wrong")
-        return 0
 
     #define ALP-meson mixing parameters
 
-    def pi(self, C_GG, m_a):
-        return self._FVMD(m_a) * f.alpha_s(m_a) * c.fpi * (-32*np.pi**2 * C_GG / self._lambda_a) * self._K_a_pi0 * m_a**2/(m_a**2 - c.m_pi0**2)
-    def eta(self, C_GG, m_a):
-        return self._FVMD(m_a) * f.alpha_s(m_a) * c.fpi * (-32*np.pi**2 * C_GG / self._lambda_a) * (self._K_a_eta * m_a**2 + self._m_a_eta_Squared)/(m_a**2 - c.m_eta**2)
-    def etap(self, C_GG, m_a):
-        return self._FVMD(m_a) * f.alpha_s(m_a) * c.fpi * (-32*np.pi**2 * C_GG / self._lambda_a) * (self._K_a_etap * m_a**2 + self._m_a_etap_Squared)/(m_a**2 - c.m_etap**2)
+    def pi(self, m_a, cg, cu, cd, cs):
+        return self._FVMD(m_a) * f.alpha_s(m_a) * (- c.fpi ) / ( 2 * self._lambda_a) * self._K_a_pi0(cg,cu,cd,cs) * m_a**2/(m_a**2 - c.m_pi0**2)
+    def eta(self, m_a, cg, cu, cd, cs):
+        return self._FVMD(m_a) * f.alpha_s(m_a) * (- c.fpi ) / ( 2 * self._lambda_a) * (self._K_a_eta(cg,cu,cd,cs) * m_a**2 + self._m_a_eta_Squared(cg))/(m_a**2 - c.m_eta**2)
+    def etap(self, m_a, cg, cu, cd, cs):
+        return self._FVMD(m_a) * f.alpha_s(m_a) * (- c.fpi ) / ( 2 * self._lambda_a) * (self._K_a_etap(cg,cu,cd,cs) * m_a**2 + self._m_a_etap_Squared(cg))/(m_a**2 - c.m_etap**2)
 
 class gluon_coupling:
     def __init__(self, Lambda):
@@ -72,7 +77,7 @@ class photon_coupling: #using (22) [1708.00443]
         C_gg_eff = C_BB + C_WW + C_WW*(2* c.alpha_EM * self._B2(4*c.m_W**2/m_a**2))/(np.pi*mp.sin(c.theta_w)**2) + self._chiC(m_a, C_GG) #contributions of gauge boson couplings to photon coupling (up to 1 loop)
         C_gg_eff = C_gg_eff + C_ll/(16 * np.pi**2)*(self._B1(4*c.m_el**2/m_a**2)+self._B1(4*c.m_mu**2/m_a**2)+self._B1(4*c.m_tau**2/m_a**2)) # + leptonic 1-loop contribution
         C_gg_eff = C_gg_eff + C_qq/(16 * np.pi**2)*(4/3*self._B1(4*c.m_q[3]**2/m_a**2)+1/3*self._B1(4*c.m_q[4]**2/m_a**2)) # + quark 1-loop contribution, b and c quarks
-        C_gg_eff = C_gg_eff + self._lambda*(self._th.pi(C_GG,m_a)/(16*np.pi**2 * c.fpi) + self._th.eta(C_GG,m_a)/(16*np.pi**2 * c.feta) + self._th.etap(C_GG,m_a)/(16*np.pi**2 * c.fetap)) # + meson mixing contributions
+        C_gg_eff = C_gg_eff + self._lambda*(self._th.pi(m_a,C_GG,C_qq,C_qq,C_qq)/(16*np.pi**2 * c.fpi) + self._th.eta(m_a,C_GG,C_qq,C_qq,C_qq)/(16*np.pi**2 * c.feta) + self._th.etap(m_a,C_GG,C_qq,C_qq,C_qq)/(16*np.pi**2 * c.fetap)) # + meson mixing contributions
 
         return C_gg_eff / self._lambda
 
