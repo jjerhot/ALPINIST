@@ -17,6 +17,9 @@ cropVector::usage="Crop for vector graphics"
 CleanContourPlot::usage="Remove reduntant data in contour plots (effectively decreases size for contour plots)"
 
 baseLegend90CL::usage="Basic setup for 90CL legend"
+baseLegendHIKE90CL::usage="Basic setup for 90CL legend"
+baseLegendBC5HIKE90CL::usage="Basic setup for 90CL legend"
+baseLegendext90CL::usage="Basic setup for 90CL extended legend"
 baseLegendCombined90CL::usage="Setup for combined experiments 90CL legend"
 dashedLegend90CL::usage="90CL legend for dashed contours (2\[Gamma]s)"
 gridLines3mesons::usage="Mask mass region around \[Pi],\[Eta],\[Eta]'"
@@ -34,6 +37,14 @@ plotSettings90CLDarkQuest::usage="setup for DarkQuest 90CL plots"
 plotSettings90CLDUNE::usage="setup for DUNE 90CL plots"
 plotSettings90CLSHADOWS::usage="setup for SHADOWS 90CL plots"
 plotSettings90CLSHADOWS5::usage="setup for SHADOWSx5 90CL plots"
+
+plotSettings90CLHIKEDashed::usage="setup for HIKE 90CL plots"
+plotSettings90CLHIKE5Dashed::usage="setup for HIKEx5 90CL plots"
+plotSettings90CLSHiPDashed::usage="setup for SHiP 90CL plots"
+plotSettings90CLDarkQuestDashed::usage="setup for DarkQuest 90CL plots"
+plotSettings90CLDUNEDashed::usage="setup for DUNE 90CL plots"
+plotSettings90CLSHADOWSDashed::usage="setup for SHADOWS 90CL plots"
+plotSettings90CLSHADOWS5Dashed::usage="setup for SHADOWSx5 90CL plots"
 
 Begin["`Private`"]
 
@@ -229,20 +240,29 @@ lines=Cases[cp,_Tooltip,Infinity];
 Graphics[GraphicsComplex[points,{regions,lines}],Sequence@@Options[cp]]];
 (*setup for 90CL plots*)
 
-baseLegend90CL=LineLegend[{Opacity[0.7,Darker[Red,0.6]],Opacity[0.8,Black],Opacity[0.5,Lighter[RGBColor[0.05,0.2,0.75],0.3]],{Thickness[0.05],Lighter[Orange,0.8]},{Thickness[0.05],Opacity[0.6,Darker[Gray,0.3]]},{Thickness[0.05],Lighter[Blue,0.8]}},{"HIKE (5\[Times]\!\(\*SuperscriptBox[\(10\), \(19\)]\))","SHADOWS (5\[Times]\!\(\*SuperscriptBox[\(10\), \(19\)]\))","SHiP (2\[Times]\!\(\*SuperscriptBox[\(10\), \(20\)]\))","LHCb","CHARM","NA62 Run1 (\!\(\*
+baseLegend90CL=LineLegend[{Opacity[0.5,Red],Opacity[0.7,Darker[Red,0.6]],Opacity[0.8,Black],Opacity[0.5,Lighter[RGBColor[0.05,0.2,0.75],0.3]],{Thickness[0.05],Lighter[Orange,0.8]},{Thickness[0.05],Opacity[0.6,Darker[Gray,0.3]]},{Thickness[0.05],Lighter[Blue,0.8]}},{"DUNE","HIKE (5\[Times]\!\(\*SuperscriptBox[\(10\), \(19\)]\))","SHADOWS (5\[Times]\!\(\*SuperscriptBox[\(10\), \(19\)]\))","SHiP (2\[Times]\!\(\*SuperscriptBox[\(10\), \(20\)]\))","LHCb","CHARM","NA62 Run1 (\!\(\*
 StyleBox[\"K\",\nFontSlant->\"Italic\"]\)\[RightArrow]\[Pi]\[Nu]\[Nu], \!\(\*SuperscriptBox[
 StyleBox[\"\[Pi]\",\nFontSlant->\"Italic\"], \(0\)]\)\[RightArrow]inv)"},Spacings-> 0.15,LabelStyle->baseStyleLeg90CL];
-baseLegendext90CL=LineLegend[{{Thickness[0.05],Opacity[0.6,Darker[Gray,0.3]]},Opacity[0.4,Darker[Red,0.6]],Opacity[0.7,Darker[Red,0.6]],Opacity[0.5,Lighter[RGBColor[0.05,0.2,0.75],0.3]],Opacity[0.5,Darker[Green,0.5]],Opacity[0.5,Red],Opacity[0.5,Black],Opacity[0.8,Black]},{"CHARM","HIKE (\!\(\*SuperscriptBox[\(10\), \(19\)]\))","HIKE (5\[Times]\!\(\*SuperscriptBox[\(10\), \(19\)]\))","SHiP","DarkQuest","DUNE","SHADOWS (\!\(\*SuperscriptBox[\(10\), \(19\)]\))","SHADOWS (5\[Times]\!\(\*SuperscriptBox[\(10\), \(19\)]\))"},Spacings-> 0.15,LabelStyle->baseStyleLeg90CL];
-baseLegendCombined90CL=LineLegend[{{Thickness[0.05],Lighter[Orange,0.8]},{Thickness[0.05],Opacity[0.6,Darker[Gray,0.3]]},{Thickness[0.05],Lighter[Blue,0.8]},Opacity[0.7,Darker[Red,0.6]],Opacity[0.5,Lighter[RGBColor[0.05,0.2,0.75],0.3]]},{"LHCb","CHARM","NA62 Run1 (\!\(\*
+baseLegendHIKE90CL=LineLegend[{Opacity[0.7,Darker[Red,0.6]],{Dashed,Opacity[0.4,Darker[Red,0.6]]},{Thickness[0.05],Lighter[Orange,0.8]},{Thickness[0.05],Opacity[0.6,Darker[Gray,0.3]]},{Thickness[0.05],Lighter[Blue,0.8]}},{"HIKE BC4 (5\[Times]\!\(\*SuperscriptBox[\(10\), \(19\)]\))","HIKE BC5 (5\[Times]\!\(\*SuperscriptBox[\(10\), \(19\)]\))","LHCb","CHARM","NA62 Run1 (\!\(\*
 StyleBox[\"K\",\nFontSlant->\"Italic\"]\)\[RightArrow]\[Pi]\[Nu]\[Nu], \!\(\*SuperscriptBox[
-StyleBox[\"\[Pi]\",\nFontSlant->\"Italic\"], \(0\)]\)\[RightArrow]inv)","HIKE+SHADOWS (5\[Times]\!\(\*SuperscriptBox[\(10\), \(19\)]\))","SHiP"},Spacings-> 0.15,LabelStyle->baseStyleLeg90CL];
+StyleBox[\"\[Pi]\",\nFontSlant->\"Italic\"], \(0\)]\)\[RightArrow]inv)"},Spacings-> 0.15,LabelStyle->baseStyleLeg90CL];
+baseLegendBC5HIKE90CL=LineLegend[{Opacity[0.7,Darker[Red,0.6]],{Dashed,Opacity[0.4,Darker[Red,0.6]]},{Thickness[0.05],Lighter[Orange,0.8]},{Thickness[0.05],Opacity[0.6,Darker[Gray,0.3]]},{Thickness[0.05],Lighter[Blue,0.8]}},{"HIKE (\!\(\*SubscriptBox[\(\[Lambda]\), \(S\)]\)=3.9\[Times]\!\(\*SuperscriptBox[\(10\), \(-3\)]\))","HIKE (\!\(\*SubscriptBox[\(\[Lambda]\), \(S\)]\)=5\[Times]\!\(\*SuperscriptBox[\(10\), \(-4\)]\))","LHCb","CHARM","NA62 Run1 (\!\(\*
+StyleBox[\"K\",\nFontSlant->\"Italic\"]\)\[RightArrow]\[Pi]\[Nu]\[Nu], \!\(\*SuperscriptBox[
+StyleBox[\"\[Pi]\",\nFontSlant->\"Italic\"], \(0\)]\)\[RightArrow]inv)"},Spacings-> 0.15,LabelStyle->baseStyleLeg90CL];
+baseLegendext90CL=LineLegend[{Opacity[0.4,Darker[Red,0.6]],Opacity[0.7,Darker[Red,0.6]],Opacity[0.5,Lighter[RGBColor[0.05,0.2,0.75],0.3]],Opacity[0.5,Darker[Green,0.5]],Opacity[0.5,Black],Opacity[0.8,Black],{Thickness[0.05],Lighter[Orange,0.8]},{Thickness[0.05],Opacity[0.6,Darker[Gray,0.3]]},{Thickness[0.05],Lighter[Blue,0.8]}},{"HIKE (\!\(\*SuperscriptBox[\(10\), \(19\)]\))","HIKE (5\[Times]\!\(\*SuperscriptBox[\(10\), \(19\)]\))","SHiP","DarkQuest (DS\[RightArrow]\!\(\*
+StyleBox[\"ee\",\nFontSlant->\"Italic\"]\))","SHADOWS (\!\(\*SuperscriptBox[\(10\), \(19\)]\))","SHADOWS (5\[Times]\!\(\*SuperscriptBox[\(10\), \(19\)]\))","LHCb","CHARM","NA62 Run1 (\!\(\*
+StyleBox[\"K\",\nFontSlant->\"Italic\"]\)\[RightArrow]\[Pi]\[Nu]\[Nu], \!\(\*SuperscriptBox[
+StyleBox[\"\[Pi]\",\nFontSlant->\"Italic\"], \(0\)]\)\[RightArrow]inv)"},Spacings-> 0.15,LabelStyle->baseStyleLeg90CL];
+baseLegendCombined90CL=LineLegend[{Opacity[0.7,Darker[Red,0.6]],Opacity[0.5,Lighter[RGBColor[0.05,0.2,0.75],0.3]],{Thickness[0.05],Lighter[Orange,0.8]},{Thickness[0.05],Opacity[0.6,Darker[Gray,0.3]]},{Thickness[0.05],Lighter[Blue,0.8]}},{"HIKE+SHADOWS (5\[Times]\!\(\*SuperscriptBox[\(10\), \(19\)]\))","SHiP","LHCb","CHARM","NA62 Run1 (\!\(\*
+StyleBox[\"K\",\nFontSlant->\"Italic\"]\)\[RightArrow]\[Pi]\[Nu]\[Nu], \!\(\*SuperscriptBox[
+StyleBox[\"\[Pi]\",\nFontSlant->\"Italic\"], \(0\)]\)\[RightArrow]inv)"},Spacings-> 0.15,LabelStyle->baseStyleLeg90CL];
 dashedLegend90CL=LineLegend[{Dashed,Darker[Gray,0.9]},{"2\[Gamma] only"},Spacings-> 0.2,LabelStyle->baseStyleLeg90CL];
 
 gridLines3mesons={Method->{"GridLinesInFront"->True},GridLines->{{0.135,0.547,0.957},{}},GridLinesStyle->{{Darker[Gray,0.4],Thickness->0.01},{}}};
 gridLines2mesons={Method->{"GridLinesInFront"->True},GridLines->{{0.547,0.94},{}},GridLinesStyle->{{Darker[Gray,0.4],Thickness->0.025},{}}};
 
 yLabelxMass[ylabel_]:=FrameLabel->{StringForm["`` [GeV]",Subscript[Style["m",Italic],Style["S",Italic]]],StringForm["``",ylabel]};
-plotSettings90CL={PlotRange->{{0.001,3.},{1*10^-13,1*10^-3},{10^-8,Full}},PlotRangePadding-> None,ScalingFunctions->{"Log10","Log10"},ImageSize->Medium,BaseStyle-> Thickness[0.005],FrameTicks->{{LogTick[-13,-3],None},{LogTick[-3,0],None}},LabelStyle->Directive[baseStyle]};
+plotSettings90CL={PlotRange->{{0.001,3.},{1*10^-14,1*10^-3},{10^-8,Full}},PlotRangePadding-> None,ScalingFunctions->{"Log10","Log10"},ImageSize->Medium,BaseStyle-> Thickness[0.005],FrameTicks->{{LogTick[-14,-3],None},{LogTick[-3,0],None}},LabelStyle->Directive[baseStyle]};
 plotReducedSettings90CL={PlotRange->{{0.4,2.},{1*10^-10,1*10^-5},{10^-8,Full}},PlotRangePadding-> None,ScalingFunctions->{"Log10","Log10"},ImageSize->Medium,BaseStyle-> Thick,FrameTicks->{{LogTick[-11,-1],None},{LogTick[-4,0],None}},LabelStyle->Directive[baseStyle]};
 
 (*Colors and contours for 90CL plots:*)
@@ -256,6 +276,13 @@ plotSettings90CLDarkQuest={Contours->{10.0},ContourShading->{Transparent,Transpa
 plotSettings90CLDUNE={Contours->{0.23},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.5,Red],Evaluate[plotSettings90CL]};
 plotSettings90CLSHADOWS={Contours->{2.3},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.5,Black],Evaluate[plotSettings90CL]};
 plotSettings90CLSHADOWS5={Contours->{0.46},ContourShading->{Transparent,Transparent},ContourStyle->Opacity[0.8,Black],Evaluate[plotSettings90CL]};
+plotSettings90CLHIKEDashed={Contours->{2.3},ContourShading->{Transparent,Transparent},ContourStyle->{Dashed,Opacity[0.4,Darker[Red,0.6]]},Evaluate[plotSettings90CL]};
+plotSettings90CLHIKE5Dashed={Contours->{0.46},ContourShading->{Transparent,Transparent},ContourStyle->{Dashed,Opacity[0.7,Darker[Red,0.6]]},Evaluate[plotSettings90CL]};
+plotSettings90CLSHiPDashed={Contours-> {1.15},ContourShading->{Transparent,Transparent},ContourStyle->{Dashed,Opacity[0.5,Lighter[RGBColor[0.05,0.2,0.75],0.3]]},Evaluate[plotSettings90CL]};
+plotSettings90CLDarkQuestDashed={Contours->{10.0},ContourShading->{Transparent,Transparent},ContourStyle->{Dashed,Opacity[0.5,Darker[Green,0.5]]},Evaluate[plotSettings90CL]};
+plotSettings90CLDUNEDashed={Contours->{0.23},ContourShading->{Transparent,Transparent},ContourStyle->{Dashed,Opacity[0.5,Red]},Evaluate[plotSettings90CL]};
+plotSettings90CLSHADOWSDashed={Contours->{2.3},ContourShading->{Transparent,Transparent},ContourStyle->{Dashed,Opacity[0.5,Black]},Evaluate[plotSettings90CL]};
+plotSettings90CLSHADOWS5Dashed={Contours->{0.46},ContourShading->{Transparent,Transparent},ContourStyle->{Dashed,Opacity[0.8,Black]},Evaluate[plotSettings90CL]};
 
 End[]
 
