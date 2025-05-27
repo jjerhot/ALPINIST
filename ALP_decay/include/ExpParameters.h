@@ -1,13 +1,12 @@
 #ifndef EXPPARAMETERS_H
 #define EXPPARAMETERS_H
 
-#include "DecayMCGlobal.h"
+#include "Particle.h"
 
 #include <iostream>
 #include <array>
 #include <fstream>
 #include "TMath.h"
-#include "TRandom3.h"
 #include "TVector3.h"
 #include "TVector2.h"
 #include "TLorentzVector.h"
@@ -16,17 +15,53 @@
 #include <TROOT.h>
 #include "Rtypes.h"
 
+ /// \class Magnet
+ /// \Brief
+ /// Magnet object with field strengh and length
+ /// \EndBrief
+ class Magnet{
+	
+	private:
+		Bool_t   _IsTorroidal; // refers to a torroidal magnet with a coil in the center
+		Double_t _FieldInfo; //rad
+		Double_t _ZMagnet; //m
+		Double_t _ZLengthMagnet; //m
+		Double_t _MagKick; //GeV
+	public:
+		Magnet() : _IsTorroidal(0), _FieldInfo(TMath::PiOver2()), _ZMagnet(0.), _MagKick(0.){}
+		Magnet(Double_t ZMagnet, Double_t MagnetZLength, Double_t MagnetFieldStrength): _IsTorroidal(0), _FieldInfo(TMath::PiOver2()){
+			_ZMagnet		= ZMagnet;
+			_ZLengthMagnet  = MagnetZLength;
+			_MagKick		= c*1E-9*MagnetZLength*MagnetFieldStrength;
+		}
+		Magnet(Double_t ZMagnet, Double_t MagnetZLength, Double_t MagnetFieldStrength, Double_t MagnetFieldPhi) : Magnet(ZMagnet, MagnetZLength, MagnetFieldStrength) {
+			_FieldInfo	= MagnetFieldPhi;
+			_IsTorroidal= 0;
+		}
+		Magnet(Double_t ZMagnet, Double_t MagnetZLength, Double_t MagnetFieldStrength, Bool_t IsToroidal, Double_t DetectorRadius) : Magnet(ZMagnet, MagnetZLength, MagnetFieldStrength) {
+			_IsTorroidal	= IsToroidal;
+			_FieldInfo		= DetectorRadius;
+		}
+		virtual ~Magnet(){}
+		Double_t GetZ()				const {return _ZMagnet;}
+		Double_t GetZLength()		const {return _ZLengthMagnet;}
+		Double_t GetMagKick()		const {return _MagKick;}
+		Double_t GetMagFieldInfo()	const {return _FieldInfo;}
+		Double_t GetMagRadius()		const {return _FieldInfo;}
+		Double_t GetIsToroidal()	const {return _IsTorroidal;}
+	};
 class ExpParameters{
 
 public:
 
-	ExpParameters();
-	ExpParameters(Int_t Experiment_, Int_t ProductionMode_, Int_t DecayMode_);
+	ExpParameters(Int_t nBinsX, Int_t nBinsY, Bool_t xIsLin, Bool_t yIsLin, Int_t yVar);
+	ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString ProductionMode_, Int_t DecayMode_,
+					Int_t nBinsX, Int_t nBinsY, Bool_t xIsLin, Bool_t yIsLin, Int_t yVar);
 	virtual ~ExpParameters();
 
 //	ClassDef(ExpParameters,1);
 
-    //parameters input
+	//parameters input
 	Int_t GetNMassFiles() const             		{return nMassFiles; }
 	std::array<TString,2> GetMinMassFile() const    {return minMassFile; }
 	std::array<TString,2> GetMaxMassFile() const    {return maxMassFile; }
@@ -49,16 +84,18 @@ public:
 	void SetMaxThetaInFile (Double_t max)  	{ thetaMaxInFile = max; }
 	void SetWdTheta (Double_t wd)     		{ thetaWid = wd; }
 
-	std::array<Int_t,2> GetValuesMassAInFile() const	{return mAValuesInFile; }
-    std::array<Double_t,2> GetMinMassAInFile() const    {return mAMinInFile; }
-    std::array<Double_t,2> GetMaxMassAInFile() const    {return mAMaxInFile; }
-	std::array<Double_t,2> GetWdMassA() const      		{return mAWid; }
+	std::array<Int_t,2> GetValuesMassAInFile() const	{ return mAValuesInFile; }
+	std::array<Double_t,2> GetMinMassAInFile() const    { return mAMinInFile; }
+	std::array<Double_t,2> GetMaxMassAInFile() const    { return mAMaxInFile; }
+	std::array<Double_t,2> GetWdMassA() const      		{ return mAWid; }
+	std::array<Double_t,2> GetLogWdMassA() const 		{ return logMAWid; }
 	void SetValuesMassAInFile (Int_t iFile,Int_t n)     { mAValuesInFile.at(iFile) = n; }
 	void SetMinMassAInFile (Int_t iFile,Double_t min)   { mAMinInFile.at(iFile) = min; }
 	void SetMaxMassAInFile (Int_t iFile,Double_t max)   { mAMaxInFile.at(iFile) = max; }
 	void SetWdMassA (Int_t iFile,Double_t wd)     		{ mAWid.at(iFile) = wd; }
+	void SetLogWdMassA (Int_t iFile, Double_t logwd)	{ logMAWid.at(iFile) = logwd; }
 
-    //parameters output
+	//parameters output
 	Int_t GetNWidths() const              	{return nWidths; }
 	Double_t GetMinWidth() const          	{return widthMin; }
 	Double_t GetMaxWidth() const          	{return widthMax; }
@@ -67,18 +104,19 @@ public:
 	std::array<Int_t,2> GetNMassX() const               {return nMX; }
 	std::array<Double_t,2> GetMinMassX() const        	{return massXMin; }
 	std::array<Double_t,2> GetMaxMassX() const        	{return massXMax; }
-	std::array<Double_t,2> GetWdMassX() const  			{return massXWid; }
+	std::array<Double_t,2> GetWdMassX() const  			{return massXWid; }	
 
+
+	Int_t GetExoNum() const					{return exoNum; }
+	// TString GetExoName() const 				{return exoName; }
 	Int_t GetExpNum() const                	{return expNum; }
 	TString GetExpName() const              {return expName; }
-	TString GetExpLabel() const              {return expLabel; }
+	TString GetExpLabel() const             {return expLabel; }
 	Int_t GetBeamEnergy() const             {return beamEnergy; }
-	Double_t GetATarget() const             {return ATarget; }
-	Double_t GetZTarget() const             {return ZTarget; }
-	Double_t GetZLKR() const                {return ZLKR; }
+	Double_t GetZECal() const                {return ZECal; }
 	Double_t GetZFVEnd() const              {return ZFVEnd; }
 	Double_t GetZFVIn() const               {return ZFVIn; }
-	Double_t GetZTAX() const                {return ZTAX; }
+	Double_t GetZTarget() const                {return ZTarget; }
 	Double_t GetX0() const                  {return X0; }
 	Double_t GetY0() const                  {return Y0; }
 	Double_t GetZ0() const                  {return Z0; }
@@ -89,46 +127,68 @@ public:
 	Double_t GetSigacceptancemumu() const   {return Sigacceptancemumu; } // can be different from the above
 	Double_t GetPOT() const                 {return POT; }
 	Double_t GetNormCrossSec() const        {return normCrossSec; }
-	Double_t GetZMagnet() const             {return ZMagnet; }
-	Double_t GetMagnetZLength() const       {return MagnetZLength; }
-	Double_t GetMagnetFieldStrength() const {return MagnetFieldStrength; }
-	Double_t GetMagKick() const             {return MagKick; }
-	Double_t GetZStraw1() const             {return zStraw1; }
-	Double_t GetZStraw4() const             {return zStraw4; }
+	Double_t GetZTracker1() const             {return ZTracker1; }
+	Double_t GetZTracker4() const             {return ZTracker4; }
 	Double_t GetAcceptanceHole() const      {return acceptanceHole; }
 	Double_t GetAcceptanceSide() const      {return acceptanceSide; }
-	Double_t GetMUV3Size() const            {return MUV3Size; }
-	Double_t GetZMUV3() const               {return ZMUV3; }
+	Double_t GetMuonDetectorSize() const            {return MuonDetectorSize; }
+	Double_t GetZTrigger() const               {return ZTrigger; }
+	Double_t GetZMuonDetector() const               {return ZMuonDetector; }
+	std::vector<Magnet> Get_Magnets() const	{return Magnets;}
 
 	Double_t GetZDist() const               {return ZDist; }
 	Double_t GetBeamDecayLength() const     {return BeamDecayLength; }
 
 	Double_t GetMinMassA() const            {return mAMin; }
-    Double_t GetMaxMassA() const            {return mAMax; } //when there is a kinematic restriction on ALP mass
+	Double_t GetMaxMassA() const            {return mAMax; } //when there is a kinematic restriction on ALP mass
 
 	void SetMinMassA     (Double_t	ma)     { mAMin = ma; }
 	void SetMaxMassA     (Double_t	ma)     { mAMax = ma; }
 
+	Int_t GetDecayMode() const {return decayMode; }
+	TString GetDecayModeName() const {return decayModeName;}
+	Bool_t GetDecayModeOpen() const {return decayModeOpen; }
+
 	std::array<Double_t,3> GetMassFinState() const   	{return mFinState; } //final state particles masses
-	std::array<Int_t,3> GetChargeFinState() const     	{return chargeFinState; } //final state particles charges    
+	std::array<Int_t,3> GetChargeFinState() const     	{return chargeFinState; } //final state particles charges 
 
 	Int_t GetNRegions() const 				{return nRegions;}
 
-    //detector geometry methods
-    Bool_t  inCaloAcceptance(TVector3 posFVEnd, TVector3 posLKr, Double_t zDecay); //detector calorimeter geometries
-	Bool_t  inCaloOuterEdgeAcceptance(TVector3); //detector calorimeter geometries
-    Bool_t  inSpectrometerAcceptance(TVector3 posStraw); //detector spectrometer geometries
-    Bool_t  inMuonVetoAcceptance(TVector3 posFVEnd, TVector3 posMUV, Double_t zDecay); //detector muon veto geometries
+	//detector geometry methods
+	Bool_t inCaloAcceptance(TVector3 posFVEnd, TVector3 posECal, Double_t zDecay); //detector calorimeter geometries
+	Bool_t inTriggerAcceptance(TVector3 posTrigger); //detector Trigger geometries
+	Bool_t inCaloOuterEdgeAcceptance(TVector3); //detector calorimeter geometries
+	Bool_t inSpectrometerAcceptance(TVector3 posTracker); //detector spectrometer geometries
+	Bool_t inMuonDetectorAcceptance(TVector3 posFVEnd, TVector3 posMuDet, TVector3 posDecay); //detector muon veto geometries
 
     //experimental conditions methods
-    Int_t  twoPhotonCondition(Int_t iOnLKr, Double_t totalEnergyAcceptance, Double_t zDecay, TVector3 posFVEnd[2], TVector3 posLKr[2], TLorentzVector pgA[2]);
-    Bool_t  multiplePhotonCondition(Int_t nGammas, Double_t totalEnergyAcceptance, Double_t zDecay, TVector3 posFVEnd[6], TVector3 posLKr[6], TLorentzVector pgA[6]);	
-    Bool_t  twoMuonCondition(Int_t iOnStraw1, Int_t iOnStraw4, Int_t iOnLKr, Int_t iOnMUV3, Double_t zDecay, TLorentzVector pCA[2]);    
-	Bool_t  twoHadronCondition(Int_t iOnStraw1, Int_t iOnStraw4, Int_t iOnLKr, Int_t iOnMUV3, Double_t zDecay, TLorentzVector pCA[2]);
+    Int_t   twoPhotonCondition(Int_t iOnECal, Double_t totalEnergyAcceptance, TVector3 posDecay, TVector3 posFVEnd[2], TVector3 posECal[2], TLorentzVector pgA[2]);
+    Bool_t  multiplePhotonCondition(Int_t nGammas, Double_t totalEnergyAcceptance, TVector3 posDecay, TVector3 posFVEnd[6], TVector3 posECal[6], TLorentzVector pgA[6]);	
+    Bool_t  twoMuonCondition(Int_t iOnTracker1, Int_t iOnTracker4, Int_t iOnECal, Int_t iOnMuonDetector, TVector3 posDecay, TLorentzVector pCA[2]);    
+	Bool_t  twoHadronCondition(Int_t iOnTracker1, Int_t iOnTracker4, Int_t iChOnECal, Int_t iOnMuonDetector, TVector3 posDecay, TLorentzVector pCA[2]);
+	Bool_t  muonHadronCondition(Int_t iOnTracker1, Int_t iOnTracker4, Int_t iChOnECal, Int_t iOnMuonDetector, TVector3 posDecay, TLorentzVector pCA[2]);
+	Bool_t  electronMuonCondition(Double_t totalEnergyAcceptance, Int_t iOnTracker1, Int_t iOnTracker4, Int_t iChOnECal, Int_t iOnMuonDetector,  TVector3 posDecay, TVector3 posECal[2], TLorentzVector pCA[2]);
+	Bool_t	electronHadronCondition(Int_t iOnTracker1, Int_t iOnTracker4, Int_t iChOnECal,  TVector3 posDecay, TVector3 posECal[2], TLorentzVector pCA[2]);
+	Bool_t	twoElectronCondition(Int_t iOnTracker1, Int_t iOnTracker4, Int_t iOnECal, Double_t totalEnergyAcceptance, TVector3 posDecay, TVector3 posFVEnd[2], TVector3 posECal[2], TLorentzVector pCA[2]);
+	std::vector<SMParticleProperty*> finState; //final state particles masses
 
+	// Int_t ncTau = 0;
+	// Double_t cTauMin = 0;
+	// Double_t cTauMax = 0;
+	// Double_t cTauWidth = 0;
+	
+	Int_t nY = 0;
+	Double_t minY = 0;
+	Double_t maxY = 0;
+	Double_t wdY = 0;
+	
 private:
 
 	//Declarations
+	Int_t decayMode = -1;
+	TString decayModeName = "";
+	Bool_t decayModeOpen = 0;
+
 	Double_t energyMinInFile = 0;
 	Double_t energyMaxInFile = 0;
 	Int_t energyValuesInFile = 0;
@@ -155,18 +215,22 @@ private:
 	Double_t thetaWid = 0;
 
 	std::array<Double_t,2> massXWid = {0,0};
+	std::array<Double_t,2> logMassXWid = {0,0};
 	std::array<Double_t,2> mAWid = {0,0};
+	std::array<Double_t,2> logMAWid = {0,0};
 
+	Int_t exoNum = 0;
 	Int_t expNum = 0;
+	// TString exoName = "";
 	TString expName = "";
 	TString expLabel = "";
 	Int_t beamEnergy = 0;
-	Double_t ATarget = 0;
-	Double_t ZTarget = 0;
-	Double_t ZLKR = 0;
+	std::array<Double_t,3> target;
+	std::array<Double_t,3> refTarget;
+	Double_t ZECal = 0;
 	Double_t ZFVEnd = 0;
 	Double_t ZFVIn = 0;
-	Double_t ZTAX = 0;
+	Double_t ZTarget = 0;
 	Double_t X0 = 0;
 	Double_t Y0 = 0;
 	Double_t Z0 = 0;
@@ -177,17 +241,14 @@ private:
 	Double_t Sigacceptancemumu = 0; // can be different from the above
 	Double_t POT = 0;
 	Double_t normCrossSec = 0;
-	Double_t ZMagnet = 0;
-	Double_t MagnetZLength = 0;
-	Double_t MagnetFieldStrength = 0;
-	Double_t MagKick = 0;
-	Double_t zStraw1 = 0;
-	Double_t zStraw4 = 0;
+	Double_t ZTracker1 = 0;
+	Double_t ZTracker4 = 0;
 	Double_t acceptanceHole = 0;
 	Double_t acceptanceSide = 0;
-	Double_t MUV3Size;
-	Double_t ZMUV3 = 0;
-
+	Double_t MuonDetectorSize;
+	Double_t ZTrigger = 0;
+	Double_t ZMuonDetector = 0;
+	std::vector<Magnet> Magnets = {};
 
 	Double_t ZDist;
 	Double_t BeamDecayLength;
@@ -197,10 +258,7 @@ private:
 	std::array<Double_t,3> mFinState; //final state particles masses
 	std::array<Int_t,3> chargeFinState; //final state particles charges
 
-	TRandom3 *rndm;
-
 	Int_t nRegions;
 
 };
-
 #endif

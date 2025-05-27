@@ -1,8 +1,10 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.5)
 project(DecayMC)
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 set(CMAKE_INSTALL_INCLUDEDIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
@@ -28,6 +30,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 # set_target_properties(ExpParameters PROPERTIES LINKER_LANGUAGE CXX)
 # target_link_libraries(ExpParameters ${ROOT_LIBRARIES})
 
-add_executable(DecayMC src/DecayMC.C src/ExpParameters.C)
+add_executable(DecayMC src/DecayMC.C src/ExpParameters.C src/Particle.C)
 # target_link_libraries(DecayMC ExpParameters ${ROOT_LIBRARIES})
 target_link_libraries(DecayMC ${ROOT_LIBRARIES})

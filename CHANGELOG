@@ -41,3 +41,25 @@ May 2023
 - Allow combining sensitivity bounds of various experiments
 - Re-generate all tables with fixed production and produce new plots
 - Fix temporarily UV scale for B meson production at 1TeV
+
+v1.3.1
+------
+July 2023
+- ALP_decay uses Particle class for kinematics
+- Add KLEVER for pinunu reinterpretation
+- Add Dark Photons
+
+v1.4
+------
+May 2025
+- Release including HNLs
+- Added BEBC, NuTeV, ORCA experiments
+- Added new layouts for DarkQuest and SHiP
+- Change the default to log mass steps
+- Change yield coupling normalisations
+- Move Primakoff production to python + fix typo migrated from the Mathematica script + allow various numerical integration methods
+- Add Bremsstrahlung production according to 2108.05900 
+- Change all ALP FCNC to use 2110.10698 + include kaon decays
+- Add headers for tabulated datasets
+- Move all tabulated datasets to external repository to reduce the size of the git repo
+- Move Dalitz tables from .dat to rootfiles

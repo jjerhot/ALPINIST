@@ -1,0 +1,2527 @@
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[         0,          0]
+NotebookDataLength[    109099,       2526]
+NotebookOptionsPosition[    107186,       2485]
+NotebookOutlinePosition[    107611,       2502]
+CellTagsIndexPosition[    107568,       2499]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Initial settings", "Section",
+ CellChangeTimes->{{3.796533877596461*^9, 3.796533878908628*^9}, {
+  3.815290655044984*^9, 3.815290657896138*^9}, {3.943687064031869*^9, 
+  3.943687064833809*^9}},ExpressionUUID->"a127dbf0-800f-4d1e-b1ad-\
+70bd8ae5a063"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Dir", "=", 
+   RowBox[{"NotebookDirectory", "[", "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"SetDirectory", "[", 
+   RowBox[{"StringJoin", "[", 
+    RowBox[{"Dir", ",", "\"\<..\>\""}], "]"}], "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"<<", "BDplotSettings`"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"SetDirectory", "[", 
+   RowBox[{"ToString", "[", 
+    RowBox[{"StringForm", "[", 
+     RowBox[{"\"\<``../../tab_toPlot/\>\"", ",", "Dir"}], "]"}], "]"}], "]"}],
+   ";"}]}], "Input",
+ CellChangeTimes->{{3.8444024148273697`*^9, 3.844402469087092*^9}, {
+  3.844402517310341*^9, 3.844402531766367*^9}, {3.844402628063117*^9, 
+  3.844402641336465*^9}, {3.849087260156732*^9, 3.849087260871932*^9}, {
+  3.954821866957037*^9, 3.9548218674006453`*^9}, {3.956235543147167*^9, 
+  3.95623554333596*^9}, {3.9562356956830187`*^9, 3.95623574353518*^9}, {
+  3.9562357750478477`*^9, 3.9562357786745977`*^9}, {3.956235852487383*^9, 
+  3.956235880559381*^9}},
+ CellLabel->"In[1]:=",ExpressionUUID->"72a5ddde-4ab1-4c11-9b39-6761bc9c922a"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Load datasets", "Section",
+ CellChangeTimes->{{3.796533877596461*^9, 3.796533878908628*^9}, {
+  3.815290655044984*^9, 3.815290657896138*^9}, {3.839997435959012*^9, 
+  3.8399974380242553`*^9}},ExpressionUUID->"b574aa55-379e-4e70-a041-\
+fa822b2c6a9a"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"dataALPBBPast", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<E137\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<E137/alp/E137_mX_CBB_fixed-CWW0-CGG0-Cll0-Cqq0_recast_2Gamma.dat\>\
+\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<E141\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<E141/alp/E141_mX_CBB_fixed-CWW0-CGG0-Cll0-Cqq0_recast_2Gamma.dat\>\
+\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<CHARM\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<CHARM/alp/CHARM_mX_CBB_fixed-CWW0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"(*", 
+      RowBox[{
+       RowBox[{"\"\<BEBC\>\"", "->", 
+        RowBox[{"Import", "[", 
+         RowBox[{
+         "\"\<BEBC/alp/BEBC_mX_CBB_fixed-CWW0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ","}], "*)"}], 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<NuCal\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NuCal/alp/NuCal_mX_CBB_fixed-CWW0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], 
+    RowBox[{"(*", 
+     RowBox[{",", "\[IndentingNewLine]", 
+      RowBox[{"\"\<NuTeV\>\"", "->", 
+       RowBox[{"Import", "[", 
+        RowBox[{
+        "\"\<NuTeV/alp/NuTeV_mX_CBB_fixed-CWW0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], "*)"}], "\[IndentingNewLine]", 
+    "|>"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPWWPast", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<E137\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<E137/alp/E137_mX_CWW_fixed-CBB0-CGG0-Cll0-Cqq0_recast_2Gamma.dat\>\
+\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<E141\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<E141/alp/E141_mX_CWW_fixed-CBB0-CGG0-Cll0-Cqq0_recast_2Gamma.dat\>\
+\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<CHARM\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<CHARM/alp/CHARM_mX_CWW_fixed-CBB0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"(*", 
+      RowBox[{
+       RowBox[{"\"\<BEBC\>\"", "->", 
+        RowBox[{"Import", "[", 
+         RowBox[{
+         "\"\<BEBC/alp/BEBC_mX_CWW_fixed-CBB0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ","}], "*)"}], 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<NuCal\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NuCal/alp/NuCal_mX_CWW_fixed-CBB0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], 
+    RowBox[{"(*", 
+     RowBox[{",", "\[IndentingNewLine]", 
+      RowBox[{"\"\<NuTeV\>\"", "->", 
+       RowBox[{"Import", "[", 
+        RowBox[{
+        "\"\<NuTeV/alp/NuTeV_mX_CWW_fixed-CBB0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], "*)"}], "\[IndentingNewLine]", 
+    "|>"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPGG2GammaPast", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<E137\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<E137/alp/E137_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_recast_2Gamma.dat\>\
+\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<E141\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<E141/alp/E141_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_recast_2Gamma.dat\>\
+\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<CHARM\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<CHARM/alp/CHARM_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"(*", 
+      RowBox[{
+       RowBox[{"\"\<BEBC\>\"", "->", 
+        RowBox[{"Import", "[", 
+         RowBox[{
+         "\"\<BEBC/alp/BEBC_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ","}], "*)"}], 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<NuCal\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NuCal/alp/NuCal_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], 
+    RowBox[{"(*", 
+     RowBox[{",", "\[IndentingNewLine]", 
+      RowBox[{"\"\<NuTeV\>\"", "->", 
+       RowBox[{"Import", "[", 
+        RowBox[{
+        "\"\<NuTeV/alp/NuTeV_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], "*)"}], "\[IndentingNewLine]", 
+    "|>"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPGGPast", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<E137\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<E137/alp/E137_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_recast_2Gamma.dat\>\
+\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<E141\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<E141/alp/E141_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_recast_2Gamma.dat\>\
+\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<CHARM\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<CHARM/alp/CHARM_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma-\
+2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-2KPi0-2Pi2Pi0-\
+4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"(*", 
+      RowBox[{
+       RowBox[{"\"\<BEBC\>\"", "->", 
+        RowBox[{"Import", "[", 
+         RowBox[{
+         "\"\<BEBC/alp/BEBC_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma-\
+2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-2KPi0-2Pi2Pi0-\
+4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ","}], 
+      "*)"}], "\[IndentingNewLine]", 
+     RowBox[{"\"\<NuCal\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NuCal/alp/NuCal_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma-\
+2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-2KPi0-2Pi2Pi0-\
+4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], 
+    RowBox[{"(*", 
+     RowBox[{",", "\[IndentingNewLine]", 
+      RowBox[{"\"\<NuTeV\>\"", "->", 
+       RowBox[{"Import", "[", 
+        RowBox[{
+        "\"\<NuTeV/alp/NuTeV_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma-\
+2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-2KPi0-2Pi2Pi0-\
+4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], "*)"}], 
+    "\[IndentingNewLine]", "|>"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPCOD2GammaPast", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<E137\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<E137/alp/E137_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<E141\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<E141/alp/E141_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<CHARM\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<CHARM/alp/CHARM_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"(*", 
+      RowBox[{
+       RowBox[{"\"\<BEBC\>\"", "->", 
+        RowBox[{"Import", "[", 
+         RowBox[{
+         "\"\<BEBC/alp/BEBC_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ","}], "*)"}], 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<NuCal\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NuCal/alp/NuCal_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], 
+    RowBox[{"(*", 
+     RowBox[{",", "\[IndentingNewLine]", 
+      RowBox[{"\"\<NuTeV\>\"", "->", 
+       RowBox[{"Import", "[", 
+        RowBox[{
+        "\"\<NuTeV/alp/NuTeV_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], "*)"}], 
+    "\[IndentingNewLine]", "|>"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPCODPast", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<E137\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<E137/alp/E137_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<E141\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<E141/alp/E141_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<CHARM\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<CHARM/alp/CHARM_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma-\
+2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-2KPi0-2Pi2Pi0-\
+4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"(*", 
+      RowBox[{
+       RowBox[{"\"\<BEBC\>\"", "->", 
+        RowBox[{"Import", "[", 
+         RowBox[{
+         "\"\<BEBC/alp/BEBC_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-\
+2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], 
+         "]"}]}], ","}], "*)"}], "\[IndentingNewLine]", 
+     RowBox[{"\"\<NuCal\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NuCal/alp/NuCal_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-\
+2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], 
+       "]"}]}]}], 
+    RowBox[{"(*", 
+     RowBox[{",", "\[IndentingNewLine]", 
+      RowBox[{"\"\<NuTeV\>\"", "->", 
+       RowBox[{"Import", "[", 
+        RowBox[{
+        "\"\<NuTeV/alp/NuTeV_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-\
+2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], 
+        "]"}]}]}], "*)"}], "\[IndentingNewLine]", "|>"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPFFPast", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<E137\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<E137/alp/E137_mX_Cqq_fixed-CBB0-CWW0-CGG0_scaleWithCqq-Cll1_\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<E141\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<E141/alp/E141_mX_Cqq_fixed-CBB0-CWW0-CGG0_scaleWithCqq-Cll1_\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<CHARM\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<CHARM/alp/CHARM_mX_Cqq_fixed-CBB0-CWW0-CGG0_scaleWithCqq-Cll1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-\
+2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], 
+       "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<BEBC\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<BEBC/alp/BEBC_mX_Cqq_fixed-CBB0-CWW0-CGG0_scaleWithCqq-Cll1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-\
+2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], 
+       "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<NuCal\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NuCal/alp/NuCal_mX_Cqq_fixed-CBB0-CWW0-CGG0_scaleWithCqq-Cll1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-\
+2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], 
+       "]"}]}]}], 
+    RowBox[{"(*", 
+     RowBox[{",", "\[IndentingNewLine]", 
+      RowBox[{"\"\<NuTeV\>\"", "->", 
+       RowBox[{"Import", "[", 
+        RowBox[{
+        "\"\<NuTeV/alp/NuTeV_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-\
+2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], 
+        "]"}]}]}], "*)"}], "\[IndentingNewLine]", "|>"}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.955594041746842*^9, 3.955594224132131*^9}, {
+  3.955594264687214*^9, 3.9555942731030188`*^9}, {3.9555944057789373`*^9, 
+  3.955594459435298*^9}, {3.9555950207512083`*^9, 3.955595034793194*^9}, {
+  3.955596215062398*^9, 3.955596257655794*^9}, {3.9562919937241087`*^9, 
+  3.9562920968796864`*^9}},
+ CellLabel->"In[5]:=",ExpressionUUID->"1d956c2b-ee02-4484-a6fd-a981ad574628"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"dataALPBBFuture", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<NA62\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NA62/alp/NA62_mX_CBB_fixed-CWW0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<DarkQuest\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DarkQuest/alp/DarkQuest_mX_CBB_fixed-CWW0-CGG0-Cll0-Cqq0_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<DUNE\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DUNE/alp/DUNE_mX_CBB_fixed-CWW0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHiP\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHiP/alp/SHiP_mX_CBB_fixed-CWW0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], "\[IndentingNewLine]", "|>"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPWWFuture", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<NA62\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NA62/alp/NA62_mX_CWW_fixed-CBB0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<DarkQuest\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DarkQuest/alp/DarkQuest_mX_CWW_fixed-CBB0-CGG0-Cll0-Cqq0_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<DUNE\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DUNE/alp/DUNE_mX_CWW_fixed-CBB0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHiP\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHiP/alp/SHiP_mX_CWW_fixed-CBB0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], "\[IndentingNewLine]", "|>"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPGG2GammaFuture", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<NA62\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NA62/alp/NA62_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<DarkQuest\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DarkQuest/alp/DarkQuest_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<DUNE\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DUNE/alp/DUNE_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHiP\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHiP/alp/SHiP_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], "\[IndentingNewLine]", "|>"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPGGFuture", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<NA62\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NA62/alp/NA62_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma-\
+2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-2KPi0-2Pi2Pi0-\
+4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<DarkQuest\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DarkQuest/alp/DarkQuest_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-\
+2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], 
+       "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<DUNE\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DUNE/alp/DUNE_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma-\
+2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-2KPi0-2Pi2Pi0-\
+4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHiP\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHiP/alp/SHiP_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma-\
+2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-2KPi0-2Pi2Pi0-\
+4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], 
+    "\[IndentingNewLine]", "|>"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPCOD2GammaFuture", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<NA62\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NA62/alp/NA62_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<DarkQuest\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DarkQuest/alp/DarkQuest_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-\
+CWW1_Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-\
+Dmeson-recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<DUNE\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DUNE/alp/DUNE_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHiP\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHiP/alp/SHiP_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], 
+    "\[IndentingNewLine]", "|>"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPCODFuture", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<NA62\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NA62/alp/NA62_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-\
+2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], 
+       "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<DarkQuest\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DarkQuest/alp/DarkQuest_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-\
+CWW1_Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-\
+Dmeson-recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-\
+2PiEtaPrim-2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", 
+        "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<DUNE\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DUNE/alp/DUNE_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-\
+2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], 
+       "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHiP\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHiP/alp/SHiP_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-\
+2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], 
+       "]"}]}]}], "\[IndentingNewLine]", "|>"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPFFFuture", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<NA62\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NA62/alp/NA62_mX_Cqq_fixed-CBB0-CWW0-CGG0_scaleWithCqq-Cll1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-\
+2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], 
+       "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<DarkQuest\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DarkQuest/alp/DarkQuest_mX_Cqq_fixed-CBB0-CWW0-CGG0_scaleWithCqq-\
+Cll1_Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-\
+Dmeson-recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-\
+2PiEtaPrim-2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", 
+        "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<DUNE\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DUNE/alp/DUNE_mX_Cqq_fixed-CBB0-CWW0-CGG0_scaleWithCqq-Cll1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-\
+2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], 
+       "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHiP\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHiP/alp/SHiP_mX_Cqq_fixed-CBB0-CWW0-CGG0_scaleWithCqq-Cll1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-\
+2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], 
+       "]"}]}]}], "\[IndentingNewLine]", "|>"}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.955527200544545*^9, 3.955527285481099*^9}, {
+   3.955528005944221*^9, 3.9555281841450787`*^9}, {3.9555284516105747`*^9, 
+   3.955528501659058*^9}, {3.955528961126368*^9, 3.955529040852373*^9}, {
+   3.955534700281151*^9, 3.955534706738366*^9}, 3.955534747700041*^9, {
+   3.955535080125784*^9, 3.955535105694439*^9}, {3.955535223698566*^9, 
+   3.95553525963451*^9}, {3.9555369296210423`*^9, 3.9555370259892406`*^9}, {
+   3.955593252799631*^9, 3.955593288422333*^9}, {3.955593328190073*^9, 
+   3.955593328960164*^9}, {3.955593443514124*^9, 3.9555934743380537`*^9}, {
+   3.9555935214783688`*^9, 3.955593536781353*^9}, {3.9555940287298317`*^9, 
+   3.9555940293973103`*^9}, {3.955594281992915*^9, 3.955594330362965*^9}, {
+   3.955594527888776*^9, 3.955594542982398*^9}, {3.955597543211907*^9, 
+   3.9555975666714354`*^9}, {3.956292121816884*^9, 3.956292162364032*^9}},
+ CellLabel->"In[12]:=",ExpressionUUID->"f9c3cd22-a9a9-4ab6-b079-474914d11f15"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"dataALPBBHypothetical", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<DarkQuestPhase2\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DarkQuest/alp/DarkQuestPhase2_mX_CBB_fixed-CWW0-CGG0-Cll0-Cqq0_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<HIKE\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NA62/alp/NA62_mX_CBB_fixed-CWW0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHADOWS\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHADOWS/alp/SHADOWS_mX_CBB_fixed-CWW0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHiPecn4\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHiP/alp/SHiPecn4_mX_CBB_fixed-CWW0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], 
+    RowBox[{"(*", 
+     RowBox[{",", "\[IndentingNewLine]", 
+      RowBox[{"\"\<ORCA\>\"", "->", 
+       RowBox[{"Import", "[", 
+        RowBox[{
+        "\"\<ORCA/alp/ORCA_mX_CBB_fixed-CWW0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], "*)"}], "\[IndentingNewLine]", 
+    "|>"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPWWHypothetical", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<DarkQuestPhase2\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DarkQuest/alp/DarkQuestPhase2_mX_CWW_fixed-CBB0-CGG0-Cll0-Cqq0_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<HIKE\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NA62/alp/NA62_mX_CWW_fixed-CBB0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHADOWS\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHADOWS/alp/SHADOWS_mX_CWW_fixed-CBB0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHiPecn4\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHiP/alp/SHiPecn4_mX_CWW_fixed-CBB0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], 
+    RowBox[{"(*", 
+     RowBox[{",", "\[IndentingNewLine]", 
+      RowBox[{"\"\<ORCA\>\"", "->", 
+       RowBox[{"Import", "[", 
+        RowBox[{
+        "\"\<ORCA/alp/ORCA_mX_CWW_fixed-CBB0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], "*)"}], "\[IndentingNewLine]", 
+    "|>"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPGG2GammaHypothetical", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<DarkQuestPhase2\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DarkQuest/alp/DarkQuestPhase2_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<HIKE\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NA62/alp/NA62_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHADOWS\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHADOWS/alp/SHADOWS_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHiPecn4\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHiP/alp/SHiPecn4_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], 
+    RowBox[{"(*", 
+     RowBox[{",", "\[IndentingNewLine]", 
+      RowBox[{"\"\<ORCA\>\"", "->", 
+       RowBox[{"Import", "[", 
+        RowBox[{
+        "\"\<ORCA/alp/ORCA_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], "*)"}], "\[IndentingNewLine]", 
+    "|>"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPGGHypothetical", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<DarkQuestPhase2\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DarkQuest/alp/DarkQuestPhase2_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-\
+2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], 
+       "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<HIKE\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NA62/alp/NA62_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma-\
+2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-2KPi0-2Pi2Pi0-\
+4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHADOWS\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHADOWS/alp/SHADOWS_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma-\
+2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-2KPi0-2Pi2Pi0-\
+4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHiPecn4\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHiP/alp/SHiPecn4_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma-\
+2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-2KPi0-2Pi2Pi0-\
+4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], 
+    RowBox[{"(*", 
+     RowBox[{",", "\[IndentingNewLine]", 
+      RowBox[{"\"\<ORCA\>\"", "->", 
+       RowBox[{"Import", "[", 
+        RowBox[{
+        "\"\<ORCA/alp/ORCA_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma-\
+2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-2KPi0-2Pi2Pi0-\
+4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], "*)"}], 
+    "\[IndentingNewLine]", "|>"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPCOD2GammaHypothetical", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<DarkQuestPhase2\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DarkQuest/alp/DarkQuestPhase2_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-\
+CBB1-CWW1_Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-\
+Dmeson-recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<HIKE\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NA62/alp/NA62_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHADOWS\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHADOWS/alp/SHADOWS_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHiPecn4\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHiP/alp/SHiPecn4_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], 
+    RowBox[{"(*", 
+     RowBox[{",", "\[IndentingNewLine]", 
+      RowBox[{"\"\<ORCA\>\"", "->", 
+       RowBox[{"Import", "[", 
+        RowBox[{
+        "\"\<ORCA/alp/ORCA_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], "*)"}], 
+    "\[IndentingNewLine]", "|>"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPCODHypothetical", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<DarkQuestPhase2\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DarkQuest/alp/DarkQuestPhase2_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-\
+CBB1-CWW1_Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-\
+Dmeson-recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-\
+2PiEtaPrim-2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", 
+        "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<HIKE\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NA62/alp/NA62_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-\
+2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], 
+       "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHADOWS\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHADOWS/alp/SHADOWS_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-\
+2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], 
+       "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHiPecn4\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHiP/alp/SHiPecn4_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-\
+2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], 
+       "]"}]}]}], 
+    RowBox[{"(*", 
+     RowBox[{",", "\[IndentingNewLine]", 
+      RowBox[{"\"\<ORCA\>\"", "->", 
+       RowBox[{"Import", "[", 
+        RowBox[{
+        "\"\<ORCA/alp/ORCA_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-\
+2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], 
+        "]"}]}]}], "*)"}], "\[IndentingNewLine]", "|>"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPFFHypothetical", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<DarkQuestPhase2\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DarkQuest/alp/DarkQuestPhase2_mX_Cqq_fixed-CBB0-CWW0-CGG0_\
+scaleWithCqq-Cll1_Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-\
+Bmeson-Dmeson-recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-\
+2Pi0EtaPrim-2PiEtaPrim-2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", 
+        "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<HIKE\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NA62/alp/NA62_mX_Cqq_fixed-CBB0-CWW0-CGG0_scaleWithCqq-Cll1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-\
+2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], 
+       "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHADOWS\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHADOWS/alp/SHADOWS_mX_Cqq_fixed-CBB0-CWW0-CGG0_scaleWithCqq-Cll1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-\
+2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], 
+       "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHiPecn4\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHiP/alp/SHiPecn4_mX_Cqq_fixed-CBB0-CWW0-CGG0_scaleWithCqq-Cll1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-\
+2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], 
+       "]"}]}]}], 
+    RowBox[{"(*", 
+     RowBox[{",", "\[IndentingNewLine]", 
+      RowBox[{"\"\<ORCA\>\"", "->", 
+       RowBox[{"Import", "[", 
+        RowBox[{
+        "\"\<ORCA/alp/ORCA_mX_Cqq_fixed-CBB0-CWW0-CGG0_scaleWithCqq-Cll1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-2El-2Mu-3Pi0-3Pi-2PiGamma-2Pi0Eta-2PiEta-2Pi0EtaPrim-2PiEtaPrim-\
+2KPi0-2Pi2Pi0-4Pi-2Omega-2Kstar-2Phi.dat\>\"", ",", "\"\<Table\>\""}], 
+        "]"}]}]}], "*)"}], "\[IndentingNewLine]", "|>"}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.955597503892054*^9, 3.955597531479801*^9}, {
+  3.955598702851129*^9, 3.955599007168027*^9}, {3.955702933747445*^9, 
+  3.955702981218877*^9}, {3.9562921848811703`*^9, 3.9562922371004057`*^9}},
+ CellLabel->"In[19]:=",ExpressionUUID->"eb6f93d8-6f75-4f6e-888a-e7c9083a6cf1"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"dataALPBBKOTO", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<KOTOpnn\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO/alp/KOTOpnn_mX_CBB_fixed-CWW0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<KOTOexclPnn\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO/alp/KOTOexclPnn_mX_CBB_fixed-CWW0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<KOTOdump\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO/alp/KOTOdump_mX_CBB_fixed-CWW0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<KOTO2pnn\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO2/alp/KOTO2pnn_mX_CBB_fixed-CWW0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<KOTO2dump\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO2/alp/KOTO2dump_mX_CBB_fixed-CWW0-CGG0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], "\[IndentingNewLine]", "|>"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPGG2GammaKOTO", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<KOTOpnn\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO/alp/KOTOpnn_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<KOTOexclPnn\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO/alp/KOTOexclPnn_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<KOTOdump\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO/alp/KOTOdump_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<KOTO2pnn\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO2/alp/KOTO2pnn_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<KOTO2dump\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO2/alp/KOTO2dump_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma.\
+dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], "\[IndentingNewLine]", "|>"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPGGKOTO", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<KOTOpnn\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO/alp/KOTOpnn_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma-\
+3Pi0-2Pi0Eta-2Pi0EtaPrim.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<KOTOexclPnn\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO/alp/KOTOexclPnn_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma-\
+3Pi0-2Pi0Eta-2Pi0EtaPrim.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<KOTOdump\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO/alp/KOTOdump_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma-\
+3Pi0-2Pi0Eta-2Pi0EtaPrim.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<KOTO2pnn\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO2/alp/KOTO2pnn_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma-\
+3Pi0-2Pi0Eta-2Pi0EtaPrim.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<KOTO2dump\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO2/alp/KOTO2dump_mX_CGG_fixed-CBB0-CWW0-Cll0-Cqq0_Primakoff-\
+PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-recast_2Gamma-\
+3Pi0-2Pi0Eta-2Pi0EtaPrim.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], 
+    "\[IndentingNewLine]", "|>"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPCOD2GammaKOTO", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<KOTOpnn\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO/alp/KOTOpnn_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<KOTOexclPnn\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO/alp/KOTOexclPnn_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-\
+CWW1_Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-\
+Dmeson-recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<KOTOdump\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO/alp/KOTOdump_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<KOTO2pnn\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO2/alp/KOTO2pnn_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<KOTO2dump\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO2/alp/KOTO2dump_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], 
+    "\[IndentingNewLine]", "|>"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPCODKOTO", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<KOTOpnn\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO/alp/KOTOpnn_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-3Pi0-2Pi0Eta-2Pi0EtaPrim.dat\>\"", ",", "\"\<Table\>\""}], 
+       "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<KOTOexclPnn\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO/alp/KOTOexclPnn_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-\
+CWW1_Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-\
+Dmeson-recast_2Gamma-3Pi0-2Pi0Eta-2Pi0EtaPrim.dat\>\"", ",", 
+        "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<KOTOdump\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO/alp/KOTOdump_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-3Pi0-2Pi0Eta-2Pi0EtaPrim.dat\>\"", ",", "\"\<Table\>\""}], 
+       "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<KOTO2pnn\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO2/alp/KOTO2pnn_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-3Pi0-2Pi0Eta-2Pi0EtaPrim.dat\>\"", ",", "\"\<Table\>\""}], 
+       "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<KOTO2dump\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<KOTO2/alp/KOTO2dump_mX_CGG_fixed-Cll0-Cqq0_scaleWithCGG-CBB1-CWW1_\
+Primakoff-PhotonFromMeson-MixingPi0-MixingEta-MixingEtaPrim-Bmeson-Dmeson-\
+recast_2Gamma-3Pi0-2Pi0Eta-2Pi0EtaPrim.dat\>\"", ",", "\"\<Table\>\""}], 
+       "]"}]}]}], "\[IndentingNewLine]", "|>"}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.955594041746842*^9, 3.955594224132131*^9}, {
+  3.955594264687214*^9, 3.9555942731030188`*^9}, {3.9555944057789373`*^9, 
+  3.955594459435298*^9}, {3.9555950207512083`*^9, 3.955595034793194*^9}, {
+  3.955596215062398*^9, 3.955596257655794*^9}, {3.956141214040799*^9, 
+  3.956141403282586*^9}, {3.9561414361727047`*^9, 3.956141548873008*^9}, {
+  3.9561417530738077`*^9, 3.95614190946122*^9}},
+ CellLabel->"In[26]:=",ExpressionUUID->"a35f9114-587f-4cf7-9b3d-14824acb9665"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Make plots", "Section",
+ CellChangeTimes->{{3.796533877596461*^9, 3.796533878908628*^9}, {
+  3.815290655044984*^9, 3.815290657896138*^9}, {3.839997456807195*^9, 
+  3.83999745839121*^9}},ExpressionUUID->"ac81549a-7286-4d6c-b6a4-\
+5be12d31cca1"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"dataALPBB", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{"dataALPBBPast", ",", "dataALPBBFuture"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"listPlotALPBB", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"ALPPlotStd", "[", 
+       RowBox[{
+        RowBox[{"dataALPBB", "[", "#", "]"}], ",", "#"}], "]"}], "&"}], ",", 
+     RowBox[{"Keys", "[", "dataALPBB", "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"BB2Gamma", "=", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"plotWidth", "=", ".75"}], ",", 
+       RowBox[{"aspectRatio", "=", ".75"}]}], "}"}], ",", 
+     RowBox[{"display", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Show", "[", 
+         RowBox[{"listPlotALPBB", ",", 
+          RowBox[{"yLabelxMass", "[", 
+           RowBox[{"StringForm", "[", 
+            RowBox[{"\"\<````\>\"", ",", 
+             RowBox[{"Style", "[", 
+              RowBox[{
+               RowBox[{"Subscript", "[", 
+                RowBox[{"\"\<C\>\"", ",", "\"\<BB\>\""}], "]"}], ",", 
+               "Italic"}], "]"}], ",", "\"\</\[CapitalLambda]\>\""}], "]"}], 
+           "]"}]}], "]"}], "//", 
+        RowBox[{"at", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"0", ",", "0"}], "}"}], ",", "plotWidth"}], "]"}]}], ",", 
+       RowBox[{"AspectRatio", "\[Rule]", "aspectRatio"}], ",", 
+       RowBox[{"ImageSize", "\[Rule]", "500"}], ",", 
+       RowBox[{"Epilog", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Inset", "[", 
+           RowBox[{
+            RowBox[{"baseLegend90CL", "[", 
+             RowBox[{"DeleteCases", "[", 
+              RowBox[{
+               RowBox[{"Keys", "[", "dataALPBB", "]"}], ",", "\"\<E141\>\""}],
+               "]"}], "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.23", ",", "0.38"}], "}"}], "]"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"StringForm", "[", 
+               RowBox[{"\"\<`` = `` = 0\>\"", ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<WW\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}], ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<GG\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}]}], "]"}], ",", 
+              RowBox[{"Lighter", "[", 
+               RowBox[{"Black", ",", "0.4"}], "]"}], ",", "baseStyle"}], 
+             "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.27", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}]}], 
+         "}"}]}]}], "]"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPWW", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{"dataALPWWPast", ",", "dataALPWWFuture"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"listPlotALPWW", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"ALPPlotStd", "[", 
+       RowBox[{
+        RowBox[{"dataALPWW", "[", "#", "]"}], ",", "#"}], "]"}], "&"}], ",", 
+     RowBox[{"Keys", "[", "dataALPWW", "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"WW2Gamma", "=", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"plotWidth", "=", ".75"}], ",", 
+       RowBox[{"aspectRatio", "=", ".75"}]}], "}"}], ",", 
+     RowBox[{"display", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Show", "[", 
+         RowBox[{"listPlotALPWW", ",", 
+          RowBox[{"yLabelxMass", "[", 
+           RowBox[{"StringForm", "[", 
+            RowBox[{"\"\<````\>\"", ",", 
+             RowBox[{"Style", "[", 
+              RowBox[{
+               RowBox[{"Subscript", "[", 
+                RowBox[{"\"\<C\>\"", ",", "\"\<WW\>\""}], "]"}], ",", 
+               "Italic"}], "]"}], ",", "\"\</\[CapitalLambda]\>\""}], "]"}], 
+           "]"}]}], "]"}], "//", 
+        RowBox[{"at", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"0", ",", "0"}], "}"}], ",", "plotWidth"}], "]"}]}], ",", 
+       RowBox[{"AspectRatio", "\[Rule]", "aspectRatio"}], ",", 
+       RowBox[{"ImageSize", "\[Rule]", "500"}], ",", 
+       RowBox[{"Epilog", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Inset", "[", 
+           RowBox[{
+            RowBox[{"baseLegend90CL", "[", 
+             RowBox[{"DeleteCases", "[", 
+              RowBox[{
+               RowBox[{"Keys", "[", "dataALPWW", "]"}], ",", "\"\<E141\>\""}],
+               "]"}], "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.23", ",", "0.38"}], "}"}], "]"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"StringForm", "[", 
+               RowBox[{"\"\<`` = `` = 0\>\"", ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<BB\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}], ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<GG\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}]}], "]"}], ",", 
+              RowBox[{"Lighter", "[", 
+               RowBox[{"Black", ",", "0.4"}], "]"}], ",", "baseStyle"}], 
+             "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.26", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}]}], 
+         "}"}]}]}], "]"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Row1", "=", 
+   RowBox[{"Row", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"cropVector", "[", 
+       RowBox[{"BB2Gamma", ",", "0", ",", "0", ",", "400", ",", "375"}], 
+       "]"}], ",", 
+      RowBox[{"cropVector", "[", 
+       RowBox[{"WW2Gamma", ",", "0", ",", "0", ",", "400", ",", "375"}], 
+       "]"}]}], "}"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Export", "[", 
+  RowBox[{
+   RowBox[{"Dir", "<>", "\"\<2Gamma_BB_WW_comparison.pdf\>\""}], ",", 
+   RowBox[{"Style", "[", 
+    RowBox[{"Row1", ",", 
+     RowBox[{"LineBreakWithin", "\[Rule]", "False"}]}], "]"}]}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.955526658285603*^9, 3.9555266614920588`*^9}, 
+   3.9555275720932713`*^9, 3.9555278797190332`*^9, {3.955537051980112*^9, 
+   3.9555370614630623`*^9}, {3.9555374060273123`*^9, 3.955537406220031*^9}, {
+   3.955594646570182*^9, 3.9555946474297132`*^9}, {3.9555946788181553`*^9, 
+   3.955594681704714*^9}, {3.955595060157999*^9, 3.955595084889399*^9}, {
+   3.955597029334732*^9, 3.955597034106848*^9}, {3.9557030785535173`*^9, 
+   3.955703104106559*^9}, 3.9562344441329613`*^9, {3.956234546888259*^9, 
+   3.956234547550665*^9}},ExpressionUUID->"47c924b6-d41f-4bf8-b444-\
+17c706ee465b"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"dataALPGG2Gamma", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{"dataALPGG2GammaPast", ",", "dataALPGG2GammaFuture"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"listPlotALPGG2Gamma", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"ALPPlotStdMask", "[", 
+       RowBox[{
+        RowBox[{"dataALPGG2Gamma", "[", "#", "]"}], ",", "#"}], "]"}], "&"}], 
+     ",", 
+     RowBox[{"Keys", "[", "dataALPGG2Gamma", "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"GG2Gamma", "=", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"plotWidth", "=", ".75"}], ",", 
+       RowBox[{"aspectRatio", "=", ".75"}]}], "}"}], ",", 
+     RowBox[{"display", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Show", "[", 
+         RowBox[{"listPlotALPGG2Gamma", ",", 
+          RowBox[{"yLabelxMass", "[", 
+           RowBox[{"StringForm", "[", 
+            RowBox[{"\"\<````\>\"", ",", 
+             RowBox[{"Style", "[", 
+              RowBox[{
+               RowBox[{"Subscript", "[", 
+                RowBox[{"\"\<C\>\"", ",", "\"\<GG\>\""}], "]"}], ",", 
+               "Italic"}], "]"}], ",", "\"\</\[CapitalLambda]\>\""}], "]"}], 
+           "]"}]}], "]"}], "//", 
+        RowBox[{"at", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"0", ",", "0"}], "}"}], ",", "plotWidth"}], "]"}]}], ",", 
+       RowBox[{"AspectRatio", "\[Rule]", "aspectRatio"}], ",", 
+       RowBox[{"ImageSize", "\[Rule]", "500"}], ",", 
+       RowBox[{"Epilog", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Inset", "[", 
+           RowBox[{
+            RowBox[{"baseLegend90CL", "[", 
+             RowBox[{"DeleteCases", "[", 
+              RowBox[{
+               RowBox[{"Keys", "[", "dataALPGG2Gamma", "]"}], ",", 
+               "\"\<E141\>\""}], "]"}], "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.23", ",", "0.38"}], "}"}], "]"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"StringForm", "[", 
+               RowBox[{"\"\<`` = `` = 0\>\"", ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<BB\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}], ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<WW\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}]}], "]"}], ",", 
+              RowBox[{"Lighter", "[", 
+               RowBox[{"Black", ",", "0.4"}], "]"}], ",", "baseStyle"}], 
+             "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.275", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"Subscript", "[", 
+               RowBox[{
+                RowBox[{"Style", "[", 
+                 RowBox[{"\"\<m\>\"", ",", "Italic"}], "]"}], ",", 
+                "\"\<\[Pi]\>\""}], "]"}], ",", "baseStyle"}], "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.53", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"Subscript", "[", 
+               RowBox[{
+                RowBox[{"Style", "[", 
+                 RowBox[{"\"\<m\>\"", ",", "Italic"}], "]"}], ",", 
+                "\"\<\[Eta]\>\""}], "]"}], ",", "baseStyle"}], "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.614", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"Subscript", "[", 
+               RowBox[{
+                RowBox[{"Style", "[", 
+                 RowBox[{"\"\<m\>\"", ",", "Italic"}], "]"}], ",", 
+                "\"\<\[Eta]\[Prime]\>\""}], "]"}], ",", "baseStyle"}], "]"}], 
+            ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.72", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}]}], 
+         "}"}]}]}], "]"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPCOD2Gamma", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{"dataALPCOD2GammaPast", ",", "dataALPCOD2GammaFuture"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"listPlotALPCOD2Gamma", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"ALPPlotStdMask", "[", 
+       RowBox[{
+        RowBox[{"dataALPCOD2Gamma", "[", "#", "]"}], ",", "#"}], "]"}], "&"}],
+      ",", 
+     RowBox[{"Keys", "[", "dataALPCOD2Gamma", "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"COD2Gamma", "=", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"plotWidth", "=", ".75"}], ",", 
+       RowBox[{"aspectRatio", "=", ".75"}]}], "}"}], ",", 
+     RowBox[{"display", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Show", "[", 
+         RowBox[{"listPlotALPCOD2Gamma", ",", 
+          RowBox[{"yLabelxMass", "[", 
+           RowBox[{"StringForm", "[", 
+            RowBox[{"\"\<````\>\"", ",", 
+             RowBox[{"Style", "[", 
+              RowBox[{
+               RowBox[{"Subscript", "[", 
+                RowBox[{"\"\<C\>\"", ",", "\"\<GG\>\""}], "]"}], ",", 
+               "Italic"}], "]"}], ",", "\"\</\[CapitalLambda]\>\""}], "]"}], 
+           "]"}]}], "]"}], "//", 
+        RowBox[{"at", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"0", ",", "0"}], "}"}], ",", "plotWidth"}], "]"}]}], ",", 
+       RowBox[{"AspectRatio", "\[Rule]", "aspectRatio"}], ",", 
+       RowBox[{"ImageSize", "\[Rule]", "500"}], ",", 
+       RowBox[{"Epilog", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Inset", "[", 
+           RowBox[{
+            RowBox[{"baseLegend90CL", "[", 
+             RowBox[{"DeleteCases", "[", 
+              RowBox[{
+               RowBox[{"Keys", "[", "dataALPCOD2Gamma", "]"}], ",", 
+               "\"\<E141\>\""}], "]"}], "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.23", ",", "0.38"}], "}"}], "]"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"StringForm", "[", 
+               RowBox[{"\"\<`` = `` = ``\>\"", ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<GG\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}], ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<WW\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}], ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<BB\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}]}], "]"}], ",", 
+              RowBox[{"Lighter", "[", 
+               RowBox[{"Black", ",", "0.4"}], "]"}], ",", "baseStyle"}], 
+             "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.295", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"Subscript", "[", 
+               RowBox[{
+                RowBox[{"Style", "[", 
+                 RowBox[{"\"\<m\>\"", ",", "Italic"}], "]"}], ",", 
+                "\"\<\[Pi]\>\""}], "]"}], ",", "baseStyle"}], "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.53", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"Subscript", "[", 
+               RowBox[{
+                RowBox[{"Style", "[", 
+                 RowBox[{"\"\<m\>\"", ",", "Italic"}], "]"}], ",", 
+                "\"\<\[Eta]\>\""}], "]"}], ",", "baseStyle"}], "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.614", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"Subscript", "[", 
+               RowBox[{
+                RowBox[{"Style", "[", 
+                 RowBox[{"\"\<m\>\"", ",", "Italic"}], "]"}], ",", 
+                "\"\<\[Eta]\[Prime]\>\""}], "]"}], ",", "baseStyle"}], "]"}], 
+            ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.72", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}]}], 
+         "}"}]}]}], "]"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Row2", "=", 
+   RowBox[{"Row", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"cropVector", "[", 
+       RowBox[{"GG2Gamma", ",", "0", ",", "0", ",", "400", ",", "375"}], 
+       "]"}], ",", 
+      RowBox[{"cropVector", "[", 
+       RowBox[{"COD2Gamma", ",", "0", ",", "0", ",", "400", ",", "375"}], 
+       "]"}]}], "}"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Export", "[", 
+   RowBox[{
+    RowBox[{"Dir", "<>", "\"\<2Gamma_GG_COD_comparison.pdf\>\""}], ",", 
+    RowBox[{"Style", "[", 
+     RowBox[{"Row2", ",", 
+      RowBox[{"LineBreakWithin", "\[Rule]", "False"}]}], "]"}]}], "]"}], 
+  ";"}]}], "Input",
+ CellChangeTimes->{{3.955537108649704*^9, 3.955537128486397*^9}, {
+   3.955537160493093*^9, 3.955537194182069*^9}, {3.9555372799169416`*^9, 
+   3.955537282435317*^9}, {3.955595657068952*^9, 3.955595696842718*^9}, 
+   3.955597202306863*^9, {3.955597407531725*^9, 3.955597407737134*^9}, {
+   3.955703147123048*^9, 3.9557031716728573`*^9}, {3.9562345415228157`*^9, 
+   3.956234542122094*^9}},ExpressionUUID->"269ad5c7-fdae-4f32-b201-\
+81433bbfaf6a"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"dataALPGG", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{"dataALPGGPast", ",", "dataALPGGFuture"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"listPlotALPGG", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"ALPPlotReduced", "[", 
+       RowBox[{
+        RowBox[{"dataALPGG", "[", "#", "]"}], ",", "#"}], "]"}], "&"}], ",", 
+     RowBox[{"Keys", "[", "dataALPGG", "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPGG2Gamma", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{"dataALPGG2GammaPast", ",", "dataALPGG2GammaFuture"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"listPlotALPGGdashed", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"ALPPlotDashed", "[", 
+       RowBox[{
+        RowBox[{"dataALPGG2Gamma", "[", "#", "]"}], ",", "#"}], "]"}], "&"}], 
+     ",", 
+     RowBox[{"Keys", "[", "dataALPGG2Gamma", "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"GGreduced", "=", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"plotWidth", "=", ".75"}], ",", 
+       RowBox[{"aspectRatio", "=", ".75"}]}], "}"}], ",", 
+     RowBox[{"display", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Show", "[", 
+         RowBox[{"listPlotALPGG", ",", "listPlotALPGGdashed", ",", 
+          RowBox[{"yLabelxMass", "[", 
+           RowBox[{"StringForm", "[", 
+            RowBox[{"\"\<````\>\"", ",", 
+             RowBox[{"Style", "[", 
+              RowBox[{
+               RowBox[{"Subscript", "[", 
+                RowBox[{"\"\<C\>\"", ",", "\"\<GG\>\""}], "]"}], ",", 
+               "Italic"}], "]"}], ",", "\"\</\[CapitalLambda]\>\""}], "]"}], 
+           "]"}]}], "]"}], "//", 
+        RowBox[{"at", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"0", ",", "0"}], "}"}], ",", "plotWidth"}], "]"}]}], ",", 
+       RowBox[{"AspectRatio", "\[Rule]", "aspectRatio"}], ",", 
+       RowBox[{"ImageSize", "\[Rule]", "500"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"Epilog", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Inset", "[", 
+           RowBox[{
+            RowBox[{"baseLegend90CL", "[", 
+             RowBox[{"DeleteCases", "[", 
+              RowBox[{
+               RowBox[{"Keys", "[", "dataALPGG", "]"}], ",", "\"\<E141\>\""}],
+               "]"}], "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.61", ",", "0.78"}], "}"}], "]"}]}], "]"}], ",", 
+          RowBox[{"Inset", "[", 
+           RowBox[{"dashedLegend90CL", ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.605", ",", "0.615"}], "}"}], "]"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"StringForm", "[", 
+               RowBox[{"\"\<`` = `` = 0\>\"", ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<WW\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}], ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<BB\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}]}], "]"}], ",", 
+              RowBox[{"Lighter", "[", 
+               RowBox[{"Black", ",", "0.4"}], "]"}], ",", "baseStyle"}], 
+             "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.61", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"Subscript", "[", 
+               RowBox[{
+                RowBox[{"Style", "[", 
+                 RowBox[{"\"\<m\>\"", ",", "Italic"}], "]"}], ",", 
+                "\"\<\[Eta]\>\""}], "]"}], ",", "baseStyle"}], "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.20", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"Subscript", "[", 
+               RowBox[{
+                RowBox[{"Style", "[", 
+                 RowBox[{"\"\<m\>\"", ",", "Italic"}], "]"}], ",", 
+                "\"\<\[Eta]\[Prime]\>\""}], "]"}], ",", "baseStyle"}], "]"}], 
+            ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.36", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}]}], 
+         "}"}]}]}], "]"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPCOD", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{"dataALPCODPast", ",", "dataALPCODFuture"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"listPlotALPCOD", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"ALPPlotReduced", "[", 
+       RowBox[{
+        RowBox[{"dataALPCOD", "[", "#", "]"}], ",", "#"}], "]"}], "&"}], ",", 
+     
+     RowBox[{"Keys", "[", "dataALPCOD", "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPCOD2Gamma", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{"dataALPCOD2GammaPast", ",", "dataALPCOD2GammaFuture"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"listPlotALPCODdashed", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"ALPPlotDashed", "[", 
+       RowBox[{
+        RowBox[{"dataALPCOD2Gamma", "[", "#", "]"}], ",", "#"}], "]"}], "&"}],
+      ",", 
+     RowBox[{"Keys", "[", "dataALPCOD2Gamma", "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"CODreduced", "=", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"plotWidth", "=", ".75"}], ",", 
+       RowBox[{"aspectRatio", "=", ".75"}]}], "}"}], ",", 
+     RowBox[{"display", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Show", "[", 
+         RowBox[{"listPlotALPCOD", ",", "listPlotALPCODdashed", ",", 
+          RowBox[{"yLabelxMass", "[", 
+           RowBox[{"StringForm", "[", 
+            RowBox[{"\"\<````\>\"", ",", 
+             RowBox[{"Style", "[", 
+              RowBox[{
+               RowBox[{"Subscript", "[", 
+                RowBox[{"\"\<C\>\"", ",", "\"\<GG\>\""}], "]"}], ",", 
+               "Italic"}], "]"}], ",", "\"\</\[CapitalLambda]\>\""}], "]"}], 
+           "]"}]}], "]"}], "//", 
+        RowBox[{"at", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"0", ",", "0"}], "}"}], ",", "plotWidth"}], "]"}]}], ",", 
+       RowBox[{"AspectRatio", "\[Rule]", "aspectRatio"}], ",", 
+       RowBox[{"ImageSize", "\[Rule]", "500"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"Epilog", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Inset", "[", 
+           RowBox[{
+            RowBox[{"baseLegend90CL", "[", 
+             RowBox[{"DeleteCases", "[", 
+              RowBox[{
+               RowBox[{"Keys", "[", "dataALPCOD", "]"}], ",", 
+               "\"\<E141\>\""}], "]"}], "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.61", ",", "0.78"}], "}"}], "]"}]}], "]"}], ",", 
+          RowBox[{"Inset", "[", 
+           RowBox[{"dashedLegend90CL", ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.605", ",", "0.615"}], "}"}], "]"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"StringForm", "[", 
+               RowBox[{"\"\<`` = `` = ``\>\"", ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<GG\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}], ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<WW\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}], ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<BB\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}]}], "]"}], ",", 
+              RowBox[{"Lighter", "[", 
+               RowBox[{"Black", ",", "0.4"}], "]"}], ",", "baseStyle"}], 
+             "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.59", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"Subscript", "[", 
+               RowBox[{
+                RowBox[{"Style", "[", 
+                 RowBox[{"\"\<m\>\"", ",", "Italic"}], "]"}], ",", 
+                "\"\<\[Eta]\>\""}], "]"}], ",", "baseStyle"}], "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.20", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"Subscript", "[", 
+               RowBox[{
+                RowBox[{"Style", "[", 
+                 RowBox[{"\"\<m\>\"", ",", "Italic"}], "]"}], ",", 
+                "\"\<\[Eta]\[Prime]\>\""}], "]"}], ",", "baseStyle"}], "]"}], 
+            ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.36", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}]}], 
+         "}"}]}]}], "]"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Row3", "=", 
+   RowBox[{"Row", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"cropVector", "[", 
+       RowBox[{"GGreduced", ",", "0", ",", "0", ",", "400", ",", "375"}], 
+       "]"}], ",", 
+      RowBox[{"cropVector", "[", 
+       RowBox[{"CODreduced", ",", "0", ",", "0", ",", "400", ",", "375"}], 
+       "]"}]}], "}"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Export", "[", 
+  RowBox[{
+   RowBox[{"Dir", "<>", "\"\<total_GG_COD_comparison.pdf\>\""}], ",", 
+   RowBox[{"Style", "[", 
+    RowBox[{"Row3", ",", 
+     RowBox[{"LineBreakWithin", "\[Rule]", "False"}]}], "]"}], ",", 
+   RowBox[{"\"\<AllowRasterization\>\"", "\[Rule]", "True"}], ",", 
+   RowBox[{"ImageSize", "\[Rule]", " ", "500"}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.955598420758081*^9, 3.955598484674634*^9}, {
+  3.95559851843821*^9, 3.955598648380083*^9}, {3.955599524436026*^9, 
+  3.9555995272060843`*^9}, {3.955600515282386*^9, 3.955600520967845*^9}, {
+  3.955702229181738*^9, 3.955702305218692*^9}, {3.955702341922556*^9, 
+  3.955702344551889*^9}, {3.955702388357987*^9, 3.955702426936487*^9}, {
+  3.9561381744242477`*^9, 3.956138178766252*^9}, {3.956140321683641*^9, 
+  3.9561403242314034`*^9}, {3.956234536241782*^9, 
+  3.956234537066309*^9}},ExpressionUUID->"f71cc630-218f-4a88-b1c9-\
+da9437c57a5b"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"dataALPGGHypo", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{"dataALPGGPast", ",", "dataALPGGHypothetical"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"listPlotALPGGHypo", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"ALPPlotReduced", "[", 
+       RowBox[{
+        RowBox[{"dataALPGGHypo", "[", "#", "]"}], ",", "#"}], "]"}], "&"}], 
+     ",", 
+     RowBox[{"Keys", "[", "dataALPGGHypo", "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPGG2GammaHypo", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{"dataALPGG2GammaPast", ",", "dataALPGG2GammaHypothetical"}], 
+    "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"listPlotALPGGdashedHypo", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"ALPPlotDashed", "[", 
+       RowBox[{
+        RowBox[{"dataALPGG2GammaHypo", "[", "#", "]"}], ",", "#"}], "]"}], 
+      "&"}], ",", 
+     RowBox[{"Keys", "[", "dataALPGG2GammaHypo", "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"GGreducedHypo", "=", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"plotWidth", "=", ".75"}], ",", 
+       RowBox[{"aspectRatio", "=", ".75"}]}], "}"}], ",", 
+     RowBox[{"display", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Show", "[", 
+         RowBox[{"listPlotALPGGHypo", ",", "listPlotALPGGdashedHypo", ",", 
+          RowBox[{"yLabelxMass", "[", 
+           RowBox[{"StringForm", "[", 
+            RowBox[{"\"\<````\>\"", ",", 
+             RowBox[{"Style", "[", 
+              RowBox[{
+               RowBox[{"Subscript", "[", 
+                RowBox[{"\"\<C\>\"", ",", "\"\<GG\>\""}], "]"}], ",", 
+               "Italic"}], "]"}], ",", "\"\</\[CapitalLambda]\>\""}], "]"}], 
+           "]"}]}], "]"}], "//", 
+        RowBox[{"at", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"0", ",", "0"}], "}"}], ",", "plotWidth"}], "]"}]}], ",", 
+       RowBox[{"AspectRatio", "\[Rule]", "aspectRatio"}], ",", 
+       RowBox[{"ImageSize", "\[Rule]", "500"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"Epilog", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Inset", "[", 
+           RowBox[{
+            RowBox[{"baseLegend90CL", "[", 
+             RowBox[{"DeleteCases", "[", 
+              RowBox[{
+               RowBox[{"Keys", "[", "dataALPGGHypo", "]"}], ",", 
+               "\"\<E141\>\""}], "]"}], "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.59", ",", "0.78"}], "}"}], "]"}]}], "]"}], ",", 
+          RowBox[{"Inset", "[", 
+           RowBox[{"dashedLegend90CL", ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.532", ",", "0.615"}], "}"}], "]"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"StringForm", "[", 
+               RowBox[{"\"\<`` = `` = 0\>\"", ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<WW\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}], ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<BB\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}]}], "]"}], ",", 
+              RowBox[{"Lighter", "[", 
+               RowBox[{"Black", ",", "0.4"}], "]"}], ",", "baseStyle"}], 
+             "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.61", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"Subscript", "[", 
+               RowBox[{
+                RowBox[{"Style", "[", 
+                 RowBox[{"\"\<m\>\"", ",", "Italic"}], "]"}], ",", 
+                "\"\<\[Eta]\>\""}], "]"}], ",", "baseStyle"}], "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.20", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"Subscript", "[", 
+               RowBox[{
+                RowBox[{"Style", "[", 
+                 RowBox[{"\"\<m\>\"", ",", "Italic"}], "]"}], ",", 
+                "\"\<\[Eta]\[Prime]\>\""}], "]"}], ",", "baseStyle"}], "]"}], 
+            ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.36", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}]}], 
+         "}"}]}]}], "]"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPCODHypo", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{"dataALPCODPast", ",", "dataALPCODHypothetical"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"listPlotALPCODHypo", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"ALPPlotReduced", "[", 
+       RowBox[{
+        RowBox[{"dataALPCODHypo", "[", "#", "]"}], ",", "#"}], "]"}], "&"}], 
+     ",", 
+     RowBox[{"Keys", "[", "dataALPCODHypo", "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dataALPCOD2GammaHypo", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{"dataALPCOD2GammaPast", ",", "dataALPCOD2GammaHypothetical"}], 
+    "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"listPlotALPCODdashedHypo", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"ALPPlotDashed", "[", 
+       RowBox[{
+        RowBox[{"dataALPCOD2GammaHypo", "[", "#", "]"}], ",", "#"}], "]"}], 
+      "&"}], ",", 
+     RowBox[{"Keys", "[", "dataALPCOD2GammaHypo", "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"CODreducedHypo", "=", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"plotWidth", "=", ".75"}], ",", 
+       RowBox[{"aspectRatio", "=", ".75"}]}], "}"}], ",", 
+     RowBox[{"display", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Show", "[", 
+         RowBox[{"listPlotALPCODHypo", ",", "listPlotALPCODdashedHypo", ",", 
+          RowBox[{"yLabelxMass", "[", 
+           RowBox[{"StringForm", "[", 
+            RowBox[{"\"\<````\>\"", ",", 
+             RowBox[{"Style", "[", 
+              RowBox[{
+               RowBox[{"Subscript", "[", 
+                RowBox[{"\"\<C\>\"", ",", "\"\<GG\>\""}], "]"}], ",", 
+               "Italic"}], "]"}], ",", "\"\</\[CapitalLambda]\>\""}], "]"}], 
+           "]"}]}], "]"}], "//", 
+        RowBox[{"at", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"0", ",", "0"}], "}"}], ",", "plotWidth"}], "]"}]}], ",", 
+       RowBox[{"AspectRatio", "\[Rule]", "aspectRatio"}], ",", 
+       RowBox[{"ImageSize", "\[Rule]", "500"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"Epilog", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Inset", "[", 
+           RowBox[{
+            RowBox[{"baseLegend90CL", "[", 
+             RowBox[{"DeleteCases", "[", 
+              RowBox[{
+               RowBox[{"Keys", "[", "dataALPCODHypo", "]"}], ",", 
+               "\"\<E141\>\""}], "]"}], "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.59", ",", "0.78"}], "}"}], "]"}]}], "]"}], ",", 
+          RowBox[{"Inset", "[", 
+           RowBox[{"dashedLegend90CL", ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.532", ",", "0.615"}], "}"}], "]"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"StringForm", "[", 
+               RowBox[{"\"\<`` = `` = ``\>\"", ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<GG\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}], ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<WW\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}], ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<BB\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}]}], "]"}], ",", 
+              RowBox[{"Lighter", "[", 
+               RowBox[{"Black", ",", "0.4"}], "]"}], ",", "baseStyle"}], 
+             "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.59", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"Subscript", "[", 
+               RowBox[{
+                RowBox[{"Style", "[", 
+                 RowBox[{"\"\<m\>\"", ",", "Italic"}], "]"}], ",", 
+                "\"\<\[Eta]\>\""}], "]"}], ",", "baseStyle"}], "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.20", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"Subscript", "[", 
+               RowBox[{
+                RowBox[{"Style", "[", 
+                 RowBox[{"\"\<m\>\"", ",", "Italic"}], "]"}], ",", 
+                "\"\<\[Eta]\[Prime]\>\""}], "]"}], ",", "baseStyle"}], "]"}], 
+            ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.36", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}]}], 
+         "}"}]}]}], "]"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Row3Hypo", "=", 
+   RowBox[{"Row", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"cropVector", "[", 
+       RowBox[{"GGreducedHypo", ",", "0", ",", "0", ",", "400", ",", "375"}], 
+       "]"}], ",", 
+      RowBox[{"cropVector", "[", 
+       RowBox[{"CODreducedHypo", ",", "0", ",", "0", ",", "400", ",", "375"}],
+        "]"}]}], "}"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Export", "[", 
+  RowBox[{
+   RowBox[{"Dir", "<>", "\"\<total_GG_COD_comparison_hypothetical.pdf\>\""}], 
+   ",", 
+   RowBox[{"Style", "[", 
+    RowBox[{"Row3Hypo", ",", 
+     RowBox[{"LineBreakWithin", "\[Rule]", "False"}]}], "]"}], ",", 
+   RowBox[{"\"\<AllowRasterization\>\"", "\[Rule]", "True"}], ",", 
+   RowBox[{"ImageSize", "\[Rule]", " ", "500"}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.9561382090963078`*^9, 3.956138395588058*^9}, {
+  3.9561403540981903`*^9, 3.956140354618209*^9}, {3.956140754143054*^9, 
+  3.956140765019932*^9}},ExpressionUUID->"c41415d4-d977-4861-a3e9-\
+17beafe7f9a0"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"dataALPFF", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{"dataALPFFPast", ",", "dataALPFFFuture"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"listPlotALPFF", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"ALPPlotFFMask", "[", 
+       RowBox[{
+        RowBox[{"dataALPFF", "[", "#", "]"}], ",", "#"}], "]"}], "&"}], ",", 
+     RowBox[{"Keys", "[", "dataALPFF", "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"FF", "=", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"plotWidth", "=", ".75"}], ",", 
+       RowBox[{"aspectRatio", "=", ".75"}]}], "}"}], ",", 
+     RowBox[{"display", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Show", "[", 
+         RowBox[{"listPlotALPFF", ",", 
+          RowBox[{"yLabelxMass", "[", 
+           RowBox[{"StringForm", "[", 
+            RowBox[{"\"\<````\>\"", ",", 
+             RowBox[{"Style", "[", 
+              RowBox[{
+               RowBox[{"Subscript", "[", 
+                RowBox[{"\"\<C\>\"", ",", "\"\<ff\>\""}], "]"}], ",", 
+               "Italic"}], "]"}], ",", "\"\</\[CapitalLambda]\>\""}], "]"}], 
+           "]"}]}], "]"}], "//", 
+        RowBox[{"at", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"0", ",", "0"}], "}"}], ",", "plotWidth"}], "]"}]}], ",", 
+       RowBox[{"AspectRatio", "\[Rule]", "aspectRatio"}], ",", 
+       RowBox[{"ImageSize", "\[Rule]", "500"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"Epilog", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Inset", "[", 
+           RowBox[{
+            RowBox[{"baseLegend90CL", "[", 
+             RowBox[{"DeleteCases", "[", 
+              RowBox[{
+               RowBox[{"Keys", "[", "dataALPFF", "]"}], ",", "\"\<E141\>\""}],
+               "]"}], "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.24", ",", "0.38"}], "}"}], "]"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"StringForm", "[", 
+               RowBox[{"\"\<`` = `` = ``\>\"", ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<ff\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}], ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<qq\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}], ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<ll\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}]}], "]"}], ",", 
+              RowBox[{"Lighter", "[", 
+               RowBox[{"Black", ",", "0.4"}], "]"}], ",", "baseStyle"}], 
+             "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.26", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"Subscript", "[", 
+               RowBox[{
+                RowBox[{"Style", "[", 
+                 RowBox[{"\"\<m\>\"", ",", "Italic"}], "]"}], ",", 
+                "\"\<\!\(\*SuperscriptBox[\(\[Pi]\), \(0\)]\)\>\""}], "]"}], 
+              ",", "baseStyle"}], "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.445", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"Subscript", "[", 
+               RowBox[{
+                RowBox[{"Style", "[", 
+                 RowBox[{"\"\<m\>\"", ",", "Italic"}], "]"}], ",", 
+                "\"\<\[Eta]\>\""}], "]"}], ",", "baseStyle"}], "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.54", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"Subscript", "[", 
+               RowBox[{
+                RowBox[{"Style", "[", 
+                 RowBox[{"\"\<m\>\"", ",", "Italic"}], "]"}], ",", 
+                "\"\<\[Eta]\[Prime]\>\""}], "]"}], ",", "baseStyle"}], "]"}], 
+            ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.654", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}]}], 
+         "}"}]}]}], "]"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"RowFF", "=", 
+   RowBox[{"Row", "[", 
+    RowBox[{"{", 
+     RowBox[{"cropVector", "[", 
+      RowBox[{"FF", ",", "0", ",", "0", ",", "400", ",", "375"}], "]"}], 
+     "}"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Export", "[", 
+  RowBox[{
+   RowBox[{"Dir", "<>", "\"\<total_FF_comparison.pdf\>\""}], ",", 
+   RowBox[{"Style", "[", 
+    RowBox[{"RowFF", ",", 
+     RowBox[{"LineBreakWithin", "\[Rule]", "False"}]}], "]"}], ",", 
+   RowBox[{"\"\<AllowRasterization\>\"", "\[Rule]", "True"}], ",", 
+   RowBox[{"ImageSize", "\[Rule]", " ", "500"}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.9563910923259993`*^9, 3.956391201491516*^9}, {
+  3.956391362851866*^9, 
+  3.956391377102497*^9}},ExpressionUUID->"632dcff8-956f-4102-9d85-\
+c7f1dc347908"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"dataALPFFHypo", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{"dataALPFFPast", ",", "dataALPFFHypothetical"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"listPlotALPFFHypo", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"ALPPlotFFMask", "[", 
+       RowBox[{
+        RowBox[{"dataALPFFHypo", "[", "#", "]"}], ",", "#"}], "]"}], "&"}], 
+     ",", 
+     RowBox[{"Keys", "[", "dataALPFFHypo", "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"FFHypo", "=", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"plotWidth", "=", ".75"}], ",", 
+       RowBox[{"aspectRatio", "=", ".75"}]}], "}"}], ",", 
+     RowBox[{"display", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Show", "[", 
+         RowBox[{"listPlotALPFFHypo", ",", 
+          RowBox[{"yLabelxMass", "[", 
+           RowBox[{"StringForm", "[", 
+            RowBox[{"\"\<````\>\"", ",", 
+             RowBox[{"Style", "[", 
+              RowBox[{
+               RowBox[{"Subscript", "[", 
+                RowBox[{"\"\<C\>\"", ",", "\"\<ff\>\""}], "]"}], ",", 
+               "Italic"}], "]"}], ",", "\"\</\[CapitalLambda]\>\""}], "]"}], 
+           "]"}]}], "]"}], "//", 
+        RowBox[{"at", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"0", ",", "0"}], "}"}], ",", "plotWidth"}], "]"}]}], ",", 
+       RowBox[{"AspectRatio", "\[Rule]", "aspectRatio"}], ",", 
+       RowBox[{"ImageSize", "\[Rule]", "500"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"Epilog", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Inset", "[", 
+           RowBox[{
+            RowBox[{"baseLegend90CL", "[", 
+             RowBox[{"DeleteCases", "[", 
+              RowBox[{
+               RowBox[{"Keys", "[", "dataALPFFHypo", "]"}], ",", 
+               "\"\<E141\>\""}], "]"}], "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.29", ",", "0.38"}], "}"}], "]"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"StringForm", "[", 
+               RowBox[{"\"\<`` = `` = ``\>\"", ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<ff\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}], ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<qq\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}], ",", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Subscript", "[", 
+                   RowBox[{"\"\<C\>\"", ",", "\"\<ll\>\""}], "]"}], ",", 
+                  "Italic"}], "]"}]}], "]"}], ",", 
+              RowBox[{"Lighter", "[", 
+               RowBox[{"Black", ",", "0.4"}], "]"}], ",", "baseStyle"}], 
+             "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.26", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"Subscript", "[", 
+               RowBox[{
+                RowBox[{"Style", "[", 
+                 RowBox[{"\"\<m\>\"", ",", "Italic"}], "]"}], ",", 
+                "\"\<\!\(\*SuperscriptBox[\(\[Pi]\), \(0\)]\)\>\""}], "]"}], 
+              ",", "baseStyle"}], "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.445", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"Subscript", "[", 
+               RowBox[{
+                RowBox[{"Style", "[", 
+                 RowBox[{"\"\<m\>\"", ",", "Italic"}], "]"}], ",", 
+                "\"\<\[Eta]\>\""}], "]"}], ",", "baseStyle"}], "]"}], ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.54", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}], ",", 
+          RowBox[{"Text", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{
+              RowBox[{"Subscript", "[", 
+               RowBox[{
+                RowBox[{"Style", "[", 
+                 RowBox[{"\"\<m\>\"", ",", "Italic"}], "]"}], ",", 
+                "\"\<\[Eta]\[Prime]\>\""}], "]"}], ",", "baseStyle"}], "]"}], 
+            ",", 
+            RowBox[{"Scaled", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.654", ",", "0.18"}], "}"}], "]"}], ",", 
+            RowBox[{"Background", "\[Rule]", "Transparent"}]}], "]"}]}], 
+         "}"}]}]}], "]"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"RowFFHypo", "=", 
+   RowBox[{"Row", "[", 
+    RowBox[{"{", 
+     RowBox[{"cropVector", "[", 
+      RowBox[{"FFHypo", ",", "0", ",", "0", ",", "400", ",", "375"}], "]"}], 
+     "}"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Export", "[", 
+  RowBox[{
+   RowBox[{"Dir", "<>", "\"\<total_FF_comparison_hypothetical.pdf\>\""}], ",", 
+   RowBox[{"Style", "[", 
+    RowBox[{"RowFFHypo", ",", 
+     RowBox[{"LineBreakWithin", "\[Rule]", "False"}]}], "]"}], ",", 
+   RowBox[{"\"\<AllowRasterization\>\"", "\[Rule]", "True"}], ",", 
+   RowBox[{"ImageSize", "\[Rule]", " ", "500"}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.956391319916909*^9, 3.956391331807234*^9}, {
+  3.956391394095595*^9, 3.956391426306239*^9}, {3.956391658214786*^9, 
+  3.956391671787471*^9}},ExpressionUUID->"f4184c23-9fc1-47d8-925c-\
+f7107db19ee7"]
+}, Open  ]]
+},
+WindowSize->{1107, 747},
+WindowMargins->{{Automatic, 170}, {22, Automatic}},
+Magnification:>0.8 Inherited,
+FrontEndVersion->"14.1 for Mac OS X ARM (64-bit) (July 16, 2024)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"6190d252-111a-446c-87b5-93a1c3f0602a"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[422, 15, 256, 4, 52, "Section",ExpressionUUID->"a127dbf0-800f-4d1e-b1ad-70bd8ae5a063"],
+Cell[681, 21, 1104, 24, 72, "Input",ExpressionUUID->"72a5ddde-4ab1-4c11-9b39-6761bc9c922a"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1822, 50, 255, 4, 52, "Section",ExpressionUUID->"b574aa55-379e-4e70-a041-fa822b2c6a9a"],
+Cell[2080, 56, 15435, 337, 2000, "Input",ExpressionUUID->"1d956c2b-ee02-4484-a6fd-a981ad574628"],
+Cell[17518, 395, 12112, 244, 1771, "Input",ExpressionUUID->"f9c3cd22-a9a9-4ab6-b079-474914d11f15"],
+Cell[29633, 641, 14522, 296, 2229, "Input",ExpressionUUID->"eb6f93d8-6f75-4f6e-888a-e7c9083a6cf1"],
+Cell[44158, 939, 9526, 194, 1641, "Input",ExpressionUUID->"a35f9114-587f-4cf7-9b3d-14824acb9665"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[53721, 1138, 249, 4, 52, "Section",ExpressionUUID->"ac81549a-7286-4d6c-b6a4-5be12d31cca1"],
+Cell[53973, 1144, 7369, 187, 301, "Input",ExpressionUUID->"47c924b6-d41f-4bf8-b444-17c706ee465b"],
+Cell[61345, 1333, 11009, 273, 382, "Input",ExpressionUUID->"269ad5c7-fdae-4f32-b201-81433bbfaf6a"],
+Cell[72357, 1608, 11579, 290, 415, "Input",ExpressionUUID->"f71cc630-218f-4a88-b1c9-da9437c57a5b"],
+Cell[83939, 1900, 11407, 287, 415, "Input",ExpressionUUID->"c41415d4-d977-4861-a3e9-17beafe7f9a0"],
+Cell[95349, 2189, 5854, 145, 228, "Input",ExpressionUUID->"632dcff8-956f-4102-9d85-c7f1dc347908"],
+Cell[101206, 2336, 5964, 146, 228, "Input",ExpressionUUID->"f4184c23-9fc1-47d8-925c-f7107db19ee7"]
+}, Open  ]]
+}
+]
+*)
+

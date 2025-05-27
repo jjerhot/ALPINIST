@@ -1,34 +1,19 @@
-variables = [   'mX',
-                'GammaX',
-                'tauX',
-                'BRdecay',
-                'BRprod',
-            ]
+from ALP_rescale.general.setup import *
 
-couplings = [   'Y'
+couplings = [   'Y',
+                'Lambda'
             ]
-
-experiments = { 'NA62':         'NA62',
-                'CHARM':        'CHARM',
-                'NuCal':        'NuCal',
-                'SHiP':         'SHiP',
-                'DarkQuest':    'DarkQuest',
-                'DUNE':         'DUNE',
-                'SHADOWS':      'SHADOWS'}
 
 channels_decay = [  '2El',
                     '2Mu',
                     '2Pi',
-                    '2K'
+                    '2K',
+                    '2Pi2Pi0',
+                    '4Pi',
                     ]
 
 channels_production = [ 
-                        'BmesonK',
-                        'BmesonKstar'
+                        'Brems',
+                        'Bmeson',
+                        'Bmeson2S'
                         ]
-reference_couplings = {
-                        'BmesonK':           1e-10,
-                        'BmesonKstar':       1e-10}
-scaling_exponent =    {
-                        'BmesonK':           1,
-                        'BmesonKstar':       1}

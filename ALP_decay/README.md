@@ -8,19 +8,22 @@ ALP_decay loads tables from tab_prod/ for given experiment and production mode a
 Table of Contents
 -----------------
 
-  * [Description](#description)
-  * [Requirements](#requirements)
-  * [Usage](#usage)
-  * [License](#license)
+- [ALP\_decay module for ALPINIST](#alp_decay-module-for-alpinist)
+  - [Table of Contents](#table-of-contents)
+  - [Description](#description)
+  - [Requirements](#requirements)
+  - [Usage](#usage)
+  - [License](#license)
 
 
 Description
 -----------
 ALP_decay loads tables from tab_prod/ for given experiment and production mode and simulates chosen decay. Output table is written in tab_decay/ in format: mass width Nevents. For 3-body decays Dalitz plots from widths/Dalitz/ are used.
 The main loops are:
-  * Loops over 2 input mass-energy tables (0.01MeV-10MeV-3010MeV), referential coupling value the same as for input tables
-  * Loops over masses (201 values): 0.0001MeV-3010MeV
+  * Loops over 2 input mass-energy tables (0.01MeV-10MeV-5310MeV), referential coupling value the same as for input tables
+  * Loops over masses (201 values): 0.0001MeV-5310MeV
   * Loops over decay widths (101 values): 1E-25 - 1E-10
+  * (for HNLs: loops over lepton coupling dominance scenarios for production)
 
 ALP_decay contains the following files:
   * DecayMC.C: Contains main. Parses arguments.
@@ -46,23 +49,32 @@ To compile, execute in ALP_decay/
 cmake3 -B build && cmake3 --build build
 ```
 
-To run, execute ./DecayMC in ALP_decay/bin/ with -h to show help or with required parameters (-e EXP -p PRODUCTION_MODE -d DECAY_MODE -n NUMBER_OF_EVENTS_PER_BIN). Example for simulating a->2gamma decay in CHARM experiment for primakoff production with 1M events per mass and weight bin:
+To run, execute ./DecayMC in ALP_decay/bin/ with -h to show help or with required parameters (-e EXP -p PRODUCTION_MODE -d DECAY_MODE -n NUMBER_OF_EVENTS_PER_BIN). Example for simulating a->2gamma decay in CHARM experiment for Primakoff production with 1M events per mass and weight bin:
 
 ```sh
-./DecayMC -e CHARM -p primakoff -d 2Gamma -n 1000000
+./DecayMC -x alp -e CHARM -p Primakoff -d 2Gamma -n 1000000
 ```
 
 Alternatively can be run with ROOT interpreter. Execute root in ALP_decay/src/ and then for running the same as in example above execute:
 ```sh
 .include ../include
 .L ExpParameters.C
-.x DecayMCProcess.C(1,0,0,1000000)
+.x DecayMCProcess.C(0,1,0,0,1000000)
 ```
 
 The parameter mapping for DecayMCProcess.C is the following:
-  * Experiment: 0-NA62, 1-CHARM, 2-NuCal, 3-SHiP, 4-SeaQuest, 5-DUNE, 6-SHADOWS, 7-KOTOdump, 8-KOTOpnn, 9-KOTO2dump, 10-KOTO2pnn, 11-KOTOexclPnn
-  * Production mode: 0-primakoff, 1-photonfrommeson, 2-mixingPi0, 3-mixingEta, 4-mixingEtaPrim, 5-BmesonK, 6-BmesonKstar, 7-DmesonPi
-  * Decay mode: 0-2Gamma, 1-2El, 2-2Mu, 3-3Pi0, 4-3Pi, 5-2PiGamma, 6-2Pi0Eta, 7-2PiEta, 8-2Pi0EtaPrim, 9-2PiEtaPrim
+  * Exotic particles: 0-Axion-Like-Particles, 1-Heavy Neutral Leptons, 2-Dark Photons,3-Dark Scalars
+  * Experiment: 0-CHARM, 1-BEBC, 2-NuCal, 3-NuTeV, 4-NA62, 5-DarkQuest, 6-DarkQuestPhase2, 7-DUNE, 8-SHiP, 9-KOTOdump, 10-KOTOpnn, 11-KOTO2dump, 12-KOTO2pnn, 13-KOTOexclPnn, 14-KLEVER, 15-KLEVERext, 16-SHADOWS, 17-SHiPecn4, 18-ORCA, 19-BEBCcuboid
+  * Production mode: 
+    * for ALP:  0-Bmeson, 1-Dmeson, 2-Primakoff, 3-PhotonFromMeson, 4-MixingPi0, 5-MixingEta, 6-MixingEtaPrim
+    * for HNL:  0-Bmeson, 1-Dmeson
+    * for DP:   0-Brems, 1-MesonDecay, 2-MixingRho, 3-MixingOmega, 4-MixingPhi
+    * for DS:   0-Brems, 1-Bmeson, 2-Bmeson2S
+  * Decay mode: 
+    * for ALP: 0-2Gamma, 1-2El, 2-2Mu, 3-3Pi0, 4-3Pi, 5-2PiGamma, 6-2Pi0Eta, 7-2PiEta, 8-2Pi0EtaPrim, 9-2PiEtaPrim, 10-2Pi, 11-2K, 12-2KPi,13-2Pi2Pi0
+    * for HNL: 1-PiEl, 2-PiMu, 3-RhoEl, 4-RhoMu, 5-NuElEl, 6-NuMuMu, 7-NuElMu, 8-PiNu, EtaNu, RhoNu
+    * for DP: 1-2El, 2-2Mu, 3-2Pi, 4-3Pi, 5-4Pi, 6-2Pi2Pi0, 7-2K, 8-2KPi
+    * for DS: 1-2El, 2-2Mu, 3-2Pi, 4-2K, 5-4Pi, 6-2Pi2Pi0
   * Number of MC events
 
 

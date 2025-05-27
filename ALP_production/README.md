@@ -25,23 +25,31 @@ Requirements
 
 ALP_rescale requires the following to run:
 
-  * [python][python] 3.1+
-  * python packages: numpy, sklearn, multiprocessing, tqdm, argparse
+  * [python][python] 3.6+
+  * python packages: numpy, scipy, sklearn, multiprocessing, tqdm, argparse
+  * [pyroot][root] linked from ROOT
   * [pythia][pythia] 8.2+ 
 
 
 Usage
 -----
 
-To run with default settings, run the exotic_production.py with arguments --exp to select the experiment and --prod to select the production mode. Optional arguments are:
+Run this module as a python module from the Alpinist home directory. To run with default settings, run the exotic_production with arguments -x to select the exotic particle, --exp (or -e) to select the experiment and --prod (or -p) to select the production mode. Optional arguments are:
  * -n: number of threads (default 1);
  * -ext/-no-ext: external source or Pythia (default external dataset in tab_mesons/);
  * -nprod: number of generated mesons in Pythia or external source (default 1E5);
  * -ndec: number of decays simulated for each meson produced (default 10).
+
+Example for generating a Dark Photon distribution from Bremsstrahlung production for CHARM experiment:
+
+```sh
+python -m ALP_production.exotic_production -e CHARM -p Brems -n 1 -x dp
+```
+
 For listing all options run with --help:
 
 ```sh
-./exotic_production.py --help
+python -m ALP_production.exotic_production --help
 ```
 
 License
@@ -77,5 +85,6 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+[root]: https://root.cern.ch/
 [python]: https://www.python.org/
 [pythia]: https://pythia.org/

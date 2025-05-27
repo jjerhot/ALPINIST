@@ -1,0 +1,644 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 13.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     24546,        636]
+NotebookOptionsPosition[     22781,        601]
+NotebookOutlinePosition[     23250,        619]
+CellTagsIndexPosition[     23207,        616]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Initial settings", "Section",
+ CellChangeTimes->{{3.796533877596461*^9, 3.796533878908628*^9}, {
+  3.815290655044984*^9, 3.815290657896138*^9}, {3.943687064031869*^9, 
+  3.943687064833809*^9}},ExpressionUUID->"eac81e71-3036-44b1-b014-\
+3bd40433e254"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Dir", "=", 
+   RowBox[{"NotebookDirectory", "[", "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"SetDirectory", "[", 
+   RowBox[{"StringJoin", "[", 
+    RowBox[{"Dir", ",", "\"\<..\>\""}], "]"}], "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"<<", "BDplotSettings`"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"SetDirectory", "[", 
+   RowBox[{"ToString", "[", 
+    RowBox[{"StringForm", "[", 
+     RowBox[{"\"\<``../../tab_toPlot/\>\"", ",", "Dir"}], "]"}], "]"}], "]"}],
+   ";"}]}], "Input",
+ CellChangeTimes->{{3.844402414827369*^9, 3.844402469087092*^9}, {
+   3.844402517310341*^9, 3.844402531766367*^9}, {3.844402628063117*^9, 
+   3.844402641336465*^9}, {3.849087260156732*^9, 3.849087260871932*^9}, {
+   3.875239715873756*^9, 3.875239715922701*^9}, {3.893817341595361*^9, 
+   3.89381734198989*^9}, {3.898913675607132*^9, 3.89891367626227*^9}, 
+   3.956393183647028*^9},
+ CellLabel->
+  "(Kernel1) In[1]:=",ExpressionUUID->"72a5ddde-4ab1-4c11-9b39-6761bc9c922a"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Load datasets", "Section",
+ CellChangeTimes->{{3.796533877596461*^9, 3.796533878908628*^9}, {
+  3.815290655044984*^9, 3.815290657896138*^9}, {3.839997435959012*^9, 
+  3.8399974380242553`*^9}},ExpressionUUID->"262f97e4-f8b1-4c3d-8033-\
+e1c4529a1e10"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"dataPast", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<BEBC\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<BEBC/dp/BEBC_mX_eps_Brems-MesonDecay_2El-2Mu-2Pi-3Pi-4Pi-2Pi2Pi0-\
+2K-2KPi0.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<CHARM\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<CHARM/dp/CHARM_mX_eps_Brems-MesonDecay_2El-2Mu-2Pi-3Pi-4Pi-\
+2Pi2Pi0-2K-2KPi0.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<NuCal\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NuCal/dp/NuCal_mX_eps_Brems-MesonDecay_2El-2Mu-2Pi-3Pi-4Pi-\
+2Pi2Pi0-2K-2KPi0.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], 
+    RowBox[{"(*", 
+     RowBox[{",", "\[IndentingNewLine]", 
+      RowBox[{"\"\<NuTeV\>\"", "->", 
+       RowBox[{"Import", "[", 
+        RowBox[{
+        "\"\<NuTeV/dp/NuTeV_mX_eps_Brems-MesonDecay_2El-2Mu-2Pi-3Pi-4Pi-\
+2Pi2Pi0-2K-2KPi0.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], "*)"}], 
+    "\[IndentingNewLine]", "|>"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.956393224202037*^9, 3.9563932525638533`*^9}, {
+   3.95639344683902*^9, 3.9563934569018993`*^9}, 3.956395093627535*^9, 
+   3.9563957133149652`*^9},
+ CellLabel->
+  "(Kernel1) In[5]:=",ExpressionUUID->"028c3b47-696c-4205-89f0-b5aa0c3f0bc8"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"dataFuture", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<NA62\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NA62/dp/NA62_mX_eps_Brems-MesonDecay_2El-2Mu-2Pi-3Pi-4Pi-2Pi2Pi0-\
+2K-2KPi0.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<DarkQuest\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DarkQuest/dp/DarkQuest_mX_eps_Brems-MesonDecay_2El-2Mu-2Pi-3Pi-\
+4Pi-2Pi2Pi0-2K-2KPi0.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<DUNE\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DUNE/dp/DUNE_mX_eps_Brems-MesonDecay_2El-2Mu-2Pi-3Pi-4Pi-2Pi2Pi0-\
+2K-2KPi0.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHiP\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHiP/dp/SHiP_mX_eps_Brems-MesonDecay_2El-2Mu-2Pi-3Pi-4Pi-2Pi2Pi0-\
+2K-2KPi0.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], "\[IndentingNewLine]", 
+    "|>"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.9563932348977633`*^9, 3.956393258349627*^9}, 
+   3.956393389215938*^9, {3.956393460860045*^9, 3.9563934725279837`*^9}, 
+   3.9563957166715107`*^9, 3.956397000131016*^9},
+ CellLabel->
+  "(Kernel1) In[6]:=",ExpressionUUID->"a2a96d53-d5a0-41fa-931c-6dddeb7df0ac"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"dataHypothetical", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<DarkQuestPhase2\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DarkQuest/dp/DarkQuestPhase2_mX_eps_Brems-MesonDecay_2El-2Mu-2Pi-\
+3Pi-4Pi-2Pi2Pi0-2K-2KPi0.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<HIKE\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NA62/dp/NA62_mX_eps_Brems-MesonDecay_2El-2Mu-2Pi-3Pi-4Pi-2Pi2Pi0-\
+2K-2KPi0.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHADOWS\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHADOWS/dp/SHADOWS_mX_eps_Brems-MesonDecay_2El-2Mu-2Pi-3Pi-4Pi-\
+2Pi2Pi0-2K-2KPi0.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHiPecn4\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHiP/dp/SHiPecn4_mX_eps_Brems-MesonDecay_2El-2Mu-2Pi-3Pi-4Pi-\
+2Pi2Pi0-2K-2KPi0.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], 
+    RowBox[{"(*", 
+     RowBox[{",", "\[IndentingNewLine]", 
+      RowBox[{"\"\<ORCA\>\"", "->", 
+       RowBox[{"Import", "[", 
+        RowBox[{
+        "\"\<ORCA/dp/ORCA_mX_eps_Brems-MesonDecay_2El-2Mu-2Pi-3Pi-4Pi-2Pi2Pi0-\
+2K-2KPi0.dat\>\"", ",", "\"\<Table\>\""}], "]"}]}]}], "*)"}], 
+    "\[IndentingNewLine]", "|>"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.95639324245007*^9, 3.956393266259995*^9}, {
+  3.956393476243862*^9, 3.956393490780509*^9}},
+ CellLabel->
+  "(Kernel1) In[7]:=",ExpressionUUID->"59729c22-4255-4f3d-9451-7ed98fd44687"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"dataPastMixing", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<BEBC\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<BEBC/dp/BEBC_mX_eps_Brems-MesonDecay-MixingRho-MixingOmega-\
+MixingPhi_2El-2Mu-2Pi-3Pi-4Pi-2Pi2Pi0-2K-2KPi0.dat\>\"", ",", 
+        "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<CHARM\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<CHARM/dp/CHARM_mX_eps_Brems-MesonDecay-MixingRho-MixingOmega-\
+MixingPhi_2El-2Mu-2Pi-3Pi-4Pi-2Pi2Pi0-2K-2KPi0.dat\>\"", ",", 
+        "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<NuCal\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NuCal/dp/NuCal_mX_eps_Brems-MesonDecay-MixingRho-MixingOmega-\
+MixingPhi_2El-2Mu-2Pi-3Pi-4Pi-2Pi2Pi0-2K-2KPi0.dat\>\"", ",", 
+        "\"\<Table\>\""}], "]"}]}]}], 
+    RowBox[{"(*", 
+     RowBox[{",", "\[IndentingNewLine]", 
+      RowBox[{"\"\<NuTeV\>\"", "->", 
+       RowBox[{"Import", "[", 
+        RowBox[{
+        "\"\<NuTeV/dp/NuTeV_mX_eps_Brems-MesonDecay-MixingRho-MixingOmega-\
+MixingPhi_2El-2Mu-2Pi-3Pi-4Pi-2Pi2Pi0-2K-2KPi0.dat\>\"", ",", 
+         "\"\<Table\>\""}], "]"}]}]}], "*)"}], "\[IndentingNewLine]", 
+    "|>"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.956393224202037*^9, 3.9563932525638533`*^9}, {
+   3.95639344683902*^9, 3.9563934569018993`*^9}, {3.9563935909007263`*^9, 
+   3.956393591511498*^9}, {3.9563936286827307`*^9, 3.95639363320969*^9}, 
+   3.956395103159895*^9, 3.9563967986263037`*^9},
+ CellLabel->
+  "(Kernel1) In[8]:=",ExpressionUUID->"1f21f198-a91e-47ce-8bcf-4b09464e9e33"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"dataFutureMixing", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<NA62\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NA62/dp/NA62_mX_eps_Brems-MesonDecay-MixingRho-MixingOmega-\
+MixingPhi_2El-2Mu-2Pi-3Pi-4Pi-2Pi2Pi0-2K-2KPi0.dat\>\"", ",", 
+        "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<DarkQuest\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DarkQuest/dp/DarkQuest_mX_eps_Brems-MesonDecay-MixingRho-\
+MixingOmega-MixingPhi_2El-2Mu-2Pi-3Pi-4Pi-2Pi2Pi0-2K-2KPi0.dat\>\"", ",", 
+        "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<DUNE\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DUNE/dp/DUNE_mX_eps_Brems-MesonDecay-MixingRho-MixingOmega-\
+MixingPhi_2El-2Mu-2Pi-3Pi-4Pi-2Pi2Pi0-2K-2KPi0.dat\>\"", ",", 
+        "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHiP\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHiP/dp/SHiP_mX_eps_Brems-MesonDecay-MixingRho-MixingOmega-\
+MixingPhi_2El-2Mu-2Pi-3Pi-4Pi-2Pi2Pi0-2K-2KPi0.dat\>\"", ",", 
+        "\"\<Table\>\""}], "]"}]}]}], "\[IndentingNewLine]", "|>"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.9563932348977633`*^9, 3.956393258349627*^9}, 
+   3.956393389215938*^9, {3.956393460860045*^9, 3.9563934725279837`*^9}, 
+   3.9563935955726757`*^9, {3.95639363432295*^9, 3.956393639963101*^9}},
+ CellLabel->
+  "(Kernel1) In[9]:=",ExpressionUUID->"e2dd40d6-5726-4c1b-8a6c-dcbee206b07d"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"dataHypotheticalMixing", "=", 
+   RowBox[{"<|", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<DarkQuestPhase2\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<DarkQuest/dp/DarkQuestPhase2_mX_eps_Brems-MesonDecay-MixingRho-\
+MixingOmega-MixingPhi_2El-2Mu-2Pi-3Pi-4Pi-2Pi2Pi0-2K-2KPi0.dat\>\"", ",", 
+        "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<HIKE\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<NA62/dp/NA62_mX_eps_Brems-MesonDecay-MixingRho-MixingOmega-\
+MixingPhi_2El-2Mu-2Pi-3Pi-4Pi-2Pi2Pi0-2K-2KPi0.dat\>\"", ",", 
+        "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHADOWS\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHADOWS/dp/SHADOWS_mX_eps_Brems-MesonDecay-MixingRho-MixingOmega-\
+MixingPhi_2El-2Mu-2Pi-3Pi-4Pi-2Pi2Pi0-2K-2KPi0.dat\>\"", ",", 
+        "\"\<Table\>\""}], "]"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<SHiPecn4\>\"", "->", 
+      RowBox[{"Import", "[", 
+       RowBox[{
+       "\"\<SHiP/dp/SHiPecn4_mX_eps_Brems-MesonDecay-MixingRho-MixingOmega-\
+MixingPhi_2El-2Mu-2Pi-3Pi-4Pi-2Pi2Pi0-2K-2KPi0.dat\>\"", ",", 
+        "\"\<Table\>\""}], "]"}]}]}], 
+    RowBox[{"(*", 
+     RowBox[{",", "\[IndentingNewLine]", 
+      RowBox[{"\"\<ORCA\>\"", "->", 
+       RowBox[{"Import", "[", 
+        RowBox[{
+        "\"\<ORCA/dp/ORCA_mX_eps_Brems-MesonDecay-MixingRho-MixingOmega-\
+MixingPhi_2El-2Mu-2Pi-3Pi-4Pi-2Pi2Pi0-2K-2KPi0.dat\>\"", ",", 
+         "\"\<Table\>\""}], "]"}]}]}], "*)"}], "\[IndentingNewLine]", 
+    "|>"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.95639324245007*^9, 3.956393266259995*^9}, {
+   3.956393476243862*^9, 3.956393490780509*^9}, 3.9563935980675898`*^9, {
+   3.956393647616192*^9, 3.9563936533960533`*^9}},
+ CellLabel->
+  "(Kernel1) In[10]:=",ExpressionUUID->"f2174bec-c21f-48d4-a60a-26b69aeaae64"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Make plots", "Section",
+ CellChangeTimes->{{3.796533877596461*^9, 3.796533878908628*^9}, {
+  3.815290655044984*^9, 3.815290657896138*^9}, {3.839997456807195*^9, 
+  3.83999745839121*^9}},ExpressionUUID->"3ce947fb-b972-4536-8f4b-\
+e83dccd202d8"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"data", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{"dataPast", ",", "dataFuture"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"listPlot", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"DPPlot", "[", 
+       RowBox[{
+        RowBox[{"data", "[", "#", "]"}], ",", "#"}], "]"}], "&"}], ",", 
+     RowBox[{"Keys", "[", "data", "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"DPStd", "=", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"plotWidth", "=", ".75"}], ",", 
+       RowBox[{"aspectRatio", "=", ".75"}]}], "}"}], ",", 
+     RowBox[{"display", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Show", "[", 
+         RowBox[{"listPlot", ",", 
+          RowBox[{"yLabelNoDimxMassIndex", "[", 
+           RowBox[{
+            RowBox[{"StringForm", "[", 
+             RowBox[{"\"\<``\>\"", ",", 
+              RowBox[{"Style", "[", 
+               RowBox[{"\"\<\[CurlyEpsilon]\>\"", ",", "Italic"}], "]"}]}], 
+             "]"}], ",", "\"\<A'\>\""}], "]"}]}], "]"}], "//", 
+        RowBox[{"at", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"0", ",", "0"}], "}"}], ",", "plotWidth"}], "]"}]}], ",", 
+       RowBox[{"AspectRatio", "\[Rule]", "aspectRatio"}], ",", 
+       RowBox[{"ImageSize", "\[Rule]", "500"}], ",", 
+       RowBox[{"Epilog", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{"Inset", "[", 
+          RowBox[{
+           RowBox[{"baseLegend90CL", "[", 
+            RowBox[{"DeleteCases", "[", 
+             RowBox[{
+              RowBox[{"Keys", "[", "data", "]"}], ",", "\"\<E141\>\""}], 
+             "]"}], "]"}], ",", 
+           RowBox[{"Scaled", "[", 
+            RowBox[{"{", 
+             RowBox[{"0.25", ",", "0.31"}], "}"}], "]"}]}], "]"}], "}"}]}]}], 
+      "]"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"RowDPStd", "=", 
+   RowBox[{"Row", "[", 
+    RowBox[{"{", 
+     RowBox[{"cropVector", "[", 
+      RowBox[{"DPStd", ",", "0", ",", "0", ",", "400", ",", "375"}], "]"}], 
+     "}"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Export", "[", 
+  RowBox[{
+   RowBox[{"Dir", "<>", "\"\<DP_comparison.pdf\>\""}], ",", 
+   RowBox[{"Style", "[", 
+    RowBox[{"RowDPStd", ",", 
+     RowBox[{"LineBreakWithin", "\[Rule]", "False"}]}], "]"}]}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.9563975103096447`*^9, 3.956397511318309*^9}, {
+  3.956397601277464*^9, 3.956397601631473*^9}, {3.9563977561984863`*^9, 
+  3.956397756861521*^9}},ExpressionUUID->"baa3c7a5-665f-4fbe-8041-\
+0db86bbd8c95"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"dataMixing", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{"dataPastMixing", ",", "dataFutureMixing"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"listPlotMixing", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"DPPlot", "[", 
+       RowBox[{
+        RowBox[{"dataMixing", "[", "#", "]"}], ",", "#"}], "]"}], "&"}], ",", 
+     
+     RowBox[{"Keys", "[", "dataMixing", "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"DPMixing", "=", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"plotWidth", "=", ".75"}], ",", 
+       RowBox[{"aspectRatio", "=", ".75"}]}], "}"}], ",", 
+     RowBox[{"display", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Show", "[", 
+         RowBox[{"listPlotMixing", ",", 
+          RowBox[{"yLabelNoDimxMassIndex", "[", 
+           RowBox[{
+            RowBox[{"StringForm", "[", 
+             RowBox[{"\"\<``\>\"", ",", 
+              RowBox[{"Style", "[", 
+               RowBox[{"\"\<\[CurlyEpsilon]\>\"", ",", "Italic"}], "]"}]}], 
+             "]"}], ",", "\"\<A'\>\""}], "]"}]}], "]"}], "//", 
+        RowBox[{"at", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"0", ",", "0"}], "}"}], ",", "plotWidth"}], "]"}]}], ",", 
+       RowBox[{"AspectRatio", "\[Rule]", "aspectRatio"}], ",", 
+       RowBox[{"ImageSize", "\[Rule]", "500"}], ",", 
+       RowBox[{"Epilog", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{"Inset", "[", 
+          RowBox[{
+           RowBox[{"baseLegend90CL", "[", 
+            RowBox[{"DeleteCases", "[", 
+             RowBox[{
+              RowBox[{"Keys", "[", "dataMixing", "]"}], ",", "\"\<E141\>\""}],
+              "]"}], "]"}], ",", 
+           RowBox[{"Scaled", "[", 
+            RowBox[{"{", 
+             RowBox[{"0.25", ",", "0.31"}], "}"}], "]"}]}], "]"}], "}"}]}]}], 
+      "]"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"RowDPMixing", "=", 
+   RowBox[{"Row", "[", 
+    RowBox[{"{", 
+     RowBox[{"cropVector", "[", 
+      RowBox[{"DPMixing", ",", "0", ",", "0", ",", "400", ",", "375"}], "]"}],
+      "}"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Export", "[", 
+  RowBox[{
+   RowBox[{"Dir", "<>", "\"\<DP_mixing_comparison.pdf\>\""}], ",", 
+   RowBox[{"Style", "[", 
+    RowBox[{"RowDPMixing", ",", 
+     RowBox[{"LineBreakWithin", "\[Rule]", "False"}]}], "]"}]}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.9563979729590607`*^9, 3.9563980094310617`*^9}},
+ CellLabel->
+  "(Kernel1) In[31]:=",ExpressionUUID->"b85528e5-585a-4adb-9643-4e67697343ec"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"dataHypo", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{"dataPast", ",", "dataHypothetical"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"listPlotHypo", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"DPPlot", "[", 
+       RowBox[{
+        RowBox[{"dataHypo", "[", "#", "]"}], ",", "#"}], "]"}], "&"}], ",", 
+     RowBox[{"Keys", "[", "dataHypo", "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"DPHypo", "=", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"plotWidth", "=", ".75"}], ",", 
+       RowBox[{"aspectRatio", "=", ".75"}]}], "}"}], ",", 
+     RowBox[{"display", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Show", "[", 
+         RowBox[{"listPlot", ",", 
+          RowBox[{"yLabelNoDimxMassIndex", "[", 
+           RowBox[{
+            RowBox[{"StringForm", "[", 
+             RowBox[{"\"\<``\>\"", ",", 
+              RowBox[{"Style", "[", 
+               RowBox[{"\"\<\[CurlyEpsilon]\>\"", ",", "Italic"}], "]"}]}], 
+             "]"}], ",", "\"\<A'\>\""}], "]"}]}], "]"}], "//", 
+        RowBox[{"at", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"0", ",", "0"}], "}"}], ",", "plotWidth"}], "]"}]}], ",", 
+       RowBox[{"AspectRatio", "\[Rule]", "aspectRatio"}], ",", 
+       RowBox[{"ImageSize", "\[Rule]", "500"}], ",", 
+       RowBox[{"Epilog", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{"Inset", "[", 
+          RowBox[{
+           RowBox[{"baseLegend90CL", "[", 
+            RowBox[{"DeleteCases", "[", 
+             RowBox[{
+              RowBox[{"Keys", "[", "dataHypo", "]"}], ",", "\"\<E141\>\""}], 
+             "]"}], "]"}], ",", 
+           RowBox[{"Scaled", "[", 
+            RowBox[{"{", 
+             RowBox[{"0.30", ",", "0.31"}], "}"}], "]"}]}], "]"}], "}"}]}]}], 
+      "]"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"RowDPHypo", "=", 
+   RowBox[{"Row", "[", 
+    RowBox[{"{", 
+     RowBox[{"cropVector", "[", 
+      RowBox[{"DPHypo", ",", "0", ",", "0", ",", "400", ",", "375"}], "]"}], 
+     "}"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Export", "[", 
+  RowBox[{
+   RowBox[{"Dir", "<>", "\"\<DP_comparison_hypothetical.pdf\>\""}], ",", 
+   RowBox[{"Style", "[", 
+    RowBox[{"RowDPHypo", ",", 
+     RowBox[{"LineBreakWithin", "\[Rule]", "False"}]}], "]"}]}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.956397772594274*^9, 3.956397807953985*^9}, {
+  3.956398051640553*^9, 3.956398052056877*^9}},
+ CellLabel->
+  "(Kernel1) In[36]:=",ExpressionUUID->"75dedf87-2b8e-4802-8586-67b6a790fa11"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"dataHypoMixing", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{"dataPastMixing", ",", "dataHypotheticalMixing"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"listPlotHypoMixing", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"DPPlot", "[", 
+       RowBox[{
+        RowBox[{"dataHypoMixing", "[", "#", "]"}], ",", "#"}], "]"}], "&"}], 
+     ",", 
+     RowBox[{"Keys", "[", "dataHypoMixing", "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"DPHypoMixing", "=", 
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"plotWidth", "=", ".75"}], ",", 
+       RowBox[{"aspectRatio", "=", ".75"}]}], "}"}], ",", 
+     RowBox[{"display", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Show", "[", 
+         RowBox[{"listPlotHypoMixing", ",", 
+          RowBox[{"yLabelNoDimxMassIndex", "[", 
+           RowBox[{
+            RowBox[{"StringForm", "[", 
+             RowBox[{"\"\<``\>\"", ",", 
+              RowBox[{"Style", "[", 
+               RowBox[{"\"\<\[CurlyEpsilon]\>\"", ",", "Italic"}], "]"}]}], 
+             "]"}], ",", "\"\<A'\>\""}], "]"}]}], "]"}], "//", 
+        RowBox[{"at", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"0", ",", "0"}], "}"}], ",", "plotWidth"}], "]"}]}], ",", 
+       RowBox[{"AspectRatio", "\[Rule]", "aspectRatio"}], ",", 
+       RowBox[{"ImageSize", "\[Rule]", "500"}], ",", 
+       RowBox[{"Epilog", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{"Inset", "[", 
+          RowBox[{
+           RowBox[{"baseLegend90CL", "[", 
+            RowBox[{"DeleteCases", "[", 
+             RowBox[{
+              RowBox[{"Keys", "[", "dataHypoMixing", "]"}], ",", 
+              "\"\<E141\>\""}], "]"}], "]"}], ",", 
+           RowBox[{"Scaled", "[", 
+            RowBox[{"{", 
+             RowBox[{"0.30", ",", "0.31"}], "}"}], "]"}]}], "]"}], "}"}]}]}], 
+      "]"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"RowDPHypoMixing", "=", 
+   RowBox[{"Row", "[", 
+    RowBox[{"{", 
+     RowBox[{"cropVector", "[", 
+      RowBox[{"DPHypoMixing", ",", "0", ",", "0", ",", "400", ",", "375"}], 
+      "]"}], "}"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Export", "[", 
+  RowBox[{
+   RowBox[{"Dir", "<>", "\"\<DP_mixing_comparison_hypothetical.pdf\>\""}], 
+   ",", 
+   RowBox[{"Style", "[", 
+    RowBox[{"RowDPHypoMixing", ",", 
+     RowBox[{"LineBreakWithin", "\[Rule]", "False"}]}], "]"}]}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.95639806584477*^9, 3.9563980865588417`*^9}, 
+   3.956398382312932*^9},ExpressionUUID->"c62650d6-8834-4a09-acff-\
+1fda91fe82fa"]
+}, Open  ]]
+},
+WindowSize->{1107, 747},
+WindowMargins->{{-1184, Automatic}, {Automatic, 12}},
+TaggingRules-><|"TryRealOnly" -> False|>,
+Magnification:>0.8 Inherited,
+FrontEndVersion->"14.1 for Mac OS X ARM (64-bit) (July 16, 2024)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"449708ba-f4fe-47d2-9a69-ab3a5780dcb7"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 256, 4, 52, "Section",ExpressionUUID->"eac81e71-3036-44b1-b014-3bd40433e254"],
+Cell[839, 28, 1039, 24, 83, "Input",ExpressionUUID->"72a5ddde-4ab1-4c11-9b39-6761bc9c922a"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1915, 57, 255, 4, 52, "Section",ExpressionUUID->"262f97e4-f8b1-4c3d-8033-e1c4529a1e10"],
+Cell[2173, 63, 1429, 34, 116, "Input",ExpressionUUID->"028c3b47-696c-4205-89f0-b5aa0c3f0bc8"],
+Cell[3605, 99, 1419, 33, 116, "Input",ExpressionUUID->"a2a96d53-d5a0-41fa-931c-6dddeb7df0ac"],
+Cell[5027, 134, 1665, 39, 132, "Input",ExpressionUUID->"59729c22-4255-4f3d-9451-7ed98fd44687"],
+Cell[6695, 175, 1687, 37, 116, "Input",ExpressionUUID->"1f21f198-a91e-47ce-8bcf-4b09464e9e33"],
+Cell[8385, 214, 1592, 34, 116, "Input",ExpressionUUID->"e2dd40d6-5726-4c1b-8a6c-dcbee206b07d"],
+Cell[9980, 250, 1937, 42, 148, "Input",ExpressionUUID->"f2174bec-c21f-48d4-a60a-26b69aeaae64"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[11954, 297, 249, 4, 52, "Section",ExpressionUUID->"3ce947fb-b972-4536-8f4b-e83dccd202d8"],
+Cell[12206, 303, 2613, 72, 105, "Input",ExpressionUUID->"baa3c7a5-665f-4fbe-8041-0db86bbd8c95"],
+Cell[14822, 377, 2623, 72, 132, "Input",ExpressionUUID->"b85528e5-585a-4adb-9643-4e67697343ec"],
+Cell[17448, 451, 2638, 72, 132, "Input",ExpressionUUID->"75dedf87-2b8e-4802-8586-67b6a790fa11"],
+Cell[20089, 525, 2676, 73, 121, "Input",ExpressionUUID->"c62650d6-8834-4a09-acff-1fda91fe82fa"]
+}, Open  ]]
+}
+]
+*)
+
