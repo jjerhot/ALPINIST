@@ -1,4 +1,21 @@
+import sys, os
+
 pythia_dir = None
+
+if pythia_dir is not None:
+  print("[Info:] \t Using custom Pythia directory: "+pythia_dir)
+else:
+  pythia_dir = os.environ.get('PYTHIA8', None)
+  
+  if pythia_dir is None:
+    print("[Warning:] \t Pythia not found. Please set PYTHIA8 to the corresponding directory if it should be used for exotic production")
+  else:
+    if not os.path.exists(pythia_dir + "/examples"):
+      if os.path.exists(pythia_dir + "/share"): # probably conda environment
+        pythia_dir += "/share/Pythia8/"
+      else:
+        print("[Warning:] \t Pythia folder not containing examples directory")
+
 
 #currently available experiments and their tags. 
 experiments = { 'NA62':         'NA62',
@@ -32,6 +49,7 @@ channels_production = {"alp" : [
                           'MesonDecay',
                         ],
                       "ds" : [
+                          'Brems',
                           'Bmeson',
                           'Bmeson2S'
                         ]
@@ -39,18 +57,6 @@ channels_production = {"alp" : [
 
 coupling_ref = 1
 coupling_exp = 2
-
-#legacy reference couplings and scaling exponents
-# reference_couplings = {'primakoff':      1e-4,
-#                        'photonfrommeson':1e-4,
-#                        'mixing':         1e-4,
-#                        'Bmeson':         1e-4,
-#                        'Dmeson':         1e-4}
-# scaling_exponent =    {'primakoff':      2,
-#                        'photonfrommeson':2,
-#                        'mixing':         2,
-#                        'Bmeson':         2,
-#                        'Dmeson':         2}
 
 # beam momenta at the experimental facilities
 p_beam =    {'NuTeV':   800,
@@ -65,36 +71,6 @@ p_beam =    {'NuTeV':   800,
              'KOTO2':   30,
              'BEBC':    400,
              'ORCA':    400,
-            }
-
-# target material volume averaged proton count per nucleus
-Z_target =  {'NuTeV':   6.55872,
-             'NA62':    29,
-             'CHARM':   29, 
-             'NuCal':   26, 
-             'SHiP':    42, 
-             'DarkQuest':26, 
-             'DUNE':    6,
-             'SHADOWS': 29, 
-             'KOTO':    79, 
-             'KOTO2':   79,
-             'BEBC':    29,
-             'ORCA':    6,
-            }
-
-# target material volume averaged nucleon count per nucleus
-A_target =  {'NuTeV':   12.5056,
-             'NA62':    63.546,
-             'CHARM':   63.546, 
-             'NuCal':   56, 
-             'SHiP':    95, 
-             'DarkQuest':56, 
-             'DUNE':    12,
-             'SHADOWS': 63.546, 
-             'KOTO':    197, 
-             'KOTO2':   197,
-             'BEBC':    63.546,
-             'ORCA':    12,
             }
 
 # minimum energy for export grid at given beam momentum (in GeV)
@@ -142,6 +118,8 @@ theta_max = {
               "NuTeV": 0.00179,
               "ORCA": 90e-6,
             } #default: 0.01098
+
+kaons_list = ["K","K0star_700","K0star_1430","Kstar_892","Kstar_1410","Kstar_1680","K1_1270","K1_1400","K2star_1430"]
 
 theta_bins = 31
 

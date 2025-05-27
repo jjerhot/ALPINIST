@@ -312,7 +312,7 @@ class plot_setup:
         if file.experiment in setup.experiments:
             self._data_setup = np.loadtxt(Path(home_dir,'tab_toPlot/'+file.experiment+'/hnl/')/str(file))
         else:
-            self._data_setup = np.loadtxt(Path(home_dir,'../tab_toPlot/combined/hnl/')/str(file))
+            self._data_setup = np.loadtxt(Path(home_dir,'tab_toPlot/combined/hnl/')/str(file))
         
         data_points_dict = {(0.,0.): []}
         for line in self._data_setup: 

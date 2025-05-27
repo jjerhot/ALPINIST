@@ -18,14 +18,14 @@ const std::vector<TString> exoLabels{"alp","hnl","dp","ds"}; ///< available exot
 const std::vector<TString> yVars {"Width","Tau","cTau"}; ///< available y-axis variables: 0-Width (GeV), 1-Tau (fs), 2-cTau (m)
 
 const std::vector<std::vector<TString>> prodmodeNames {
-						{"Bmeson", "Dmeson","primakoff","photonfrommeson","mixingPi0","mixingEta","mixingEtaPrim"},
+						{"Bmeson", "Dmeson","Primakoff","PhotonFromMeson","MixingPi0","MixingEta","MixingEtaPrim"},
 						{"Bmeson", "Dmeson"},
-						{"Brems", "MesonDecay","Mixing"},
-						{"Bmeson","Bmeson2S"}}; ///< associated production modes
+						{"Brems", "MesonDecay","MixingRho","MixingOmega","MixingPhi"},
+						{"Brems","Bmeson","Bmeson2S"}}; ///< associated production modes
 
 const std::vector<std::vector<TString>>  decaymodeNames {
 							{"2Gamma","2El","2Mu","3Pi0","3Pi","2PiGamma","2Pi0Eta","2PiEta","2Pi0EtaPrim","2PiEtaPrim","2Pi","2K","2KPi0","2Pi2Pi0"},
-							{"PiEl", "PiMu", "RhoEl", "RhoMu", "NuElEl", "NuMuMu", "NuElMu", "PiNu", "EtaNu", "RhoNu"  /*"PiTau", "RhoTau", "EtaPrimNu", "KMu", "KMu", "KTau", "KEl"*/},
+							{"PiEl", "PiMu", "PiPiEl", "PiPiMu", "NuElEl", "NuMuMu", "NuElMu", "PiNu", "EtaNu", "PiPiNu"  /*"PiTau", "RhoTau", "EtaPrimNu", "KMu", "KMu", "KTau", "KEl"*/},
 							{"2El","2Mu","2Pi","3Pi","4Pi","2Pi2Pi0","2K","2KPi0"},
 							{"2El","2Mu","2Pi","2K","4Pi","2Pi2Pi0"}}; ///< associated decay modes
 

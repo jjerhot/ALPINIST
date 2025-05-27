@@ -2,11 +2,9 @@ ALP_rescale module for ALPINIST
 ===============================
 
 ALP_rescale loads the tables from /tab_decay for the experiment, production and decay mode selected from the lists and calculates the number of predicted events for the following model-independent parameters: m<sub>X</sub>, &#915;<sub>X</sub>, &#964;<sub>X</sub>, BR<sub>prod</sub>, BR<sub>decay</sub> and model-dependent parameters for ALPs:
-C<sub>BB</sub>, C<sub>WW</sub>, C<sub>gg</sub>, C<sub>&#8467;&#8467;</sub>, &#923;, A, B or for Dark Scalar: Y or for Dark Photon: eps or for HNL: U2el, U2mu, U2tau
+C<sub>BB</sub>, C<sub>WW</sub>, C<sub>GG</sub>, C<sub>qq</sub>, C<sub>&#8467;&#8467;</sub>, &#923; or for Dark Scalar: Y (sin<sup>2</sup>&#952;) or for Dark Photon: &#949; or for HNL: U<sup>2</sup><sub>e</sub>, U<sup>2</sup><sub>&#956;</sub>, U<sup>2</sup><sub>&#964;</sub>
 (all relations used for the calculations are described in appendices of J. Jerhot et al. [arXiv:2201.05170][2201.05170] and J. L. Schubert et al., [arXiv:2407.08673][2407.08673] and references therein).
 Output tables in format [m_X g_X nEvents] or other couplings combinations are stored in /tab_toPlot for each experiment and exotic particle.
-
-For general ALP-Yukawa coupling C<sub>&#8467;&#8467;</sub>=C<sub>qq</sub> a separate module alp_2mu_rescale.py can be used for rescaling for ALP &#8594; 2&#956; decay (using relations from B. Dobrich et al., [arXiv:1810.11336][1810.11336]).
 
 Table of Contents
 -----------------
@@ -45,7 +43,6 @@ ALP_rescale contains the following parts:
     * ternary_rescale.py: Dedicated rescaling for ternary distributions
     * plot_ternary_exclusion.py: Dedicated plotting module for ternary plots
     
-  * alp_2mu_rescale.py: Separate main module for Yukawa-coupled pseudoscalars
   * plot_exclusion.py: Separate module for plotting and extracting contours in python
 
 Requirements
@@ -68,7 +65,7 @@ python -m ALP_rescale.alp_rescale -x alp -varX mX -varY CBB
 ```
 
 The default settings are:
-&#923; = 1000, A = 0, B = 0 and running over all experiments available and summing over all production and decay modes. The setup of couplings is specified later on but can also be skipped by running with -only option for the coupling selected for varY (other couplings are then set to a fixed 0) as e.g.:
+&#923; = 1000 and running over all experiments available and summing over all production and decay modes. The setup of couplings is specified later on but can also be skipped by running with -only option for the coupling selected for varY (other couplings are then set to a fixed 0) as e.g.:
 ```sh
 python -m ALP_rescale.alp_rescale -x alp -varX mX -varY CBB-only
 ```
@@ -76,7 +73,7 @@ python -m ALP_rescale.alp_rescale -x alp -varX mX -varY CBB-only
 All the parameters can be modified and multiple experiments, decay and production modes can be ran simultaneously, e.g.:
 
 ```sh
-python -m ALP_rescale.alp_rescale -varX mX -varY CWW -e NA62 CHARM --prod Bmeson --decay 2Gamma 2El --lambda 10000 -a 3 -b -3 
+python -m ALP_rescale.alp_rescale -varX mX -varY CWW -e NA62 CHARM --prod Bmeson --decay 2Gamma 2El --lambda 10000
 ```
 
 Besides model-dependent parameters, also model-independent parameters can be used, such as decay width gammaX, lifetime tauX, production branching ratio BRprod or decay branching ration BRdecay.
@@ -87,10 +84,6 @@ To list all options and parameters run:
 python -m ALP_rescale.alp_rescale -h
 ```
 
-Similarly, alp_2mu_rescale.py can be run as
-```sh
-python -m ALP_rescale.alp_2mu_rescale
-```
 and offers several options, listed when run with `-h` or `--help` argument. 
 
 To use plot_exclusion.py, run it with selected experiment or choose specific production or decay modes

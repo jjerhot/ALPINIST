@@ -24,6 +24,7 @@ from ALP_rescale.hnl import hnl_setup as sethnl
 from ALP_rescale.general import load_data as ld
 from ALP_rescale.general import functions as f
 from ALP_rescale.general.setup import experiments as exp_dict
+from ALP_rescale.general.constants import prod_xsec_ref
 from ALP_rescale.general.mergeSigRegions import MergeInput
 
 
@@ -39,12 +40,10 @@ def main(argv=None):
     parser.add_argument("-x","--exotic",  default="alp", type=str, help="Exotic particles available: exotic = alp | hnl | ds | dp . Default is ALP")
     parser.add_argument("-varX", type=str, help="X-axis variable. Options are: "+" | ".join(setalp.variables) +" | coupling (for ALP: "+" | ".join(setalp.couplings)+" ; for HNL: "+" | ".join(sethnl.couplings)+" ; for DS: "+" | ".join(setds.couplings)+" ; for DP: "+" | ".join(setdp.couplings)+"). Standard choice is mX.")
     parser.add_argument("-varY", type=str, help="Y-axis variable. Options are: "+" | ".join(setalp.variables) +" | coupling (for ALP: "+" | ".join(setalp.couplings)+" ; for HNL: "+" | ".join(sethnl.couplings)+" ; for DS: "+" | ".join(setds.couplings)+" ; for DP: "+" | ".join(setdp.couplings)+"). Standard choice is one of the couplings. For setting other couplings to zero, use -only option as for example: -varY CBB-only")
-    parser.add_argument("-e","--exp",  default="", type=str, nargs='*', help="Experiments available (case sensitive): exp = "+" | ".join(setalp.experiments)+". If not specified, running over all experiments available.")
-    parser.add_argument("-p","--prod",  default="", type=str, nargs='*', help="Production modes available (case sensitive): prod = primakoff | photonfrommeson | mixingPi0 | mixingEta | mixingEtaPrim | BmesonK | BmesonKstar | DmesonPi | KSmesonPi0. If not specified, running over all production modes available.")
-    parser.add_argument("-d","--decay",  default="", type=str, nargs='*', help="Decay modes available (case sensitive): decay = 2Gamma | 2El | 2Mu | 3Pi0 | 3Pi | 2PiGamma | 2Pi0Eta | 2PiEta (for DS 2Pi and 2K). If not specified, running over all decay modes available.")
+    parser.add_argument("-e","--exp",  default="", type=str, nargs='*', help="Experiments available (case sensitive): exp = "+" | ".join(exp_dict)+". If not specified, running over all experiments available.")
+    parser.add_argument("-p","--prod",  default="", type=str, nargs='*', help="Production modes available (case sensitive): (for ALP: "+" | ".join(setalp.channels_production)+" ; for HNL: "+" | ".join(sethnl.channels_production)+" ; for DS: "+" | ".join(setds.channels_production)+" ; for DP: "+" | ".join(setdp.channels_production)+"). If not specified, running over all production modes available.")
+    parser.add_argument("-d","--decay",  default="", type=str, nargs='*', help="Decay modes available (case sensitive): (for ALP: "+" | ".join(setalp.channels_decay)+" ; for HNL: "+" | ".join(sethnl.channels_decay)+" ; for DS: "+" | ".join(setds.channels_decay)+" ; for DP: "+" | ".join(setdp.channels_decay)+"). If not specified, running over all decay modes available.")
     parser.add_argument("-l","--lambda", dest="lam", default=1000, type=float, help="The \u039B [GeV] energy scale. Default value is \u039B = 1000 GeV")
-    parser.add_argument("-a", default=0, type=float, help="The model-dependent A parameter in [2102.04474]. Default value is A = 0")
-    parser.add_argument("-b", default=0, type=float, help="The model-dependent B parameter in [2102.04474]. Default value is B = 0")
     parser.add_argument("-reg", default=1, type=int, help="Number of signal regions. Default value is reg = 1. ")
     parser.add_argument("-comb","--combine", dest='comb', action='store_true', help="Combine experiments")
     parser.add_argument("-no-comb","--no-combine", dest='comb', action='store_false', help="Rescale experiments separately. Default")
@@ -54,15 +53,16 @@ def main(argv=None):
     parser.set_defaults(tern=False)
     parser.add_argument("-standalone","--standalone", dest='standalone', action='store_true', help="Run standalone for given channel, no referential coupling reweight")
     parser.set_defaults(standalone=False)
+    parser.add_argument("-prodscale","--prod-scale-sigmas", default=0., type=float, dest='prod_scale_sigmas', help=f"Rescale the input yield globally to move away from central value by number of standard deviations in production yield (available for {'|'.join(prod_xsec_ref.keys())} production channels)")
 
     args = parser.parse_args()
 
-    rescale(args.exotic, args.varX, args.varY, args.exp, args.prod, args.decay, args.lam, args.a, args.b, args.reg, args.comb, ter=args.ter, dirac=args.dirac, standalone=args.standalone)
+    rescale(args.exotic, args.varX, args.varY, args.exp, args.prod, args.decay, args.lam, args.reg, args.comb, ter=args.ter, dirac=args.dirac, standalone=args.standalone, prod_scale_sigmas = args.prod_scale_sigmas)
     
  ##
  # @fn rescale
  # @brief terminal interface for coupling setup
-def rescale(exotic, varX, varY, exp, prod, decay, lam, a, b, reg, comb, ter=False, dirac=False,standalone=False):
+def rescale(exotic, varX, varY, exp, prod, decay, lam, reg, comb, ter=False, dirac=False,standalone=False, prod_scale_sigmas=0.):
 
     if ter: # if ternary eavluation call auxillary module and exit
         if exotic != "hnl":
@@ -79,7 +79,7 @@ def rescale(exotic, varX, varY, exp, prod, decay, lam, a, b, reg, comb, ter=Fals
     if exotic == "ds":
         vars = setds.variables
         coups = setds.couplings
-        exps = setds.experiments
+        exps = exp_dict
         prods = setds.channels_production
         decs = setds.channels_decay
     elif exotic == "dp":
@@ -97,7 +97,7 @@ def rescale(exotic, varX, varY, exp, prod, decay, lam, a, b, reg, comb, ter=Fals
     else:
         vars = setalp.variables
         coups = setalp.couplings
-        exps = setalp.experiments
+        exps = exp_dict
         prods = setalp.channels_production
         decs = setalp.channels_decay
 
@@ -295,29 +295,20 @@ def rescale(exotic, varX, varY, exp, prod, decay, lam, a, b, reg, comb, ter=Fals
     for fixed in fixedValues.keys():
         variables_values[fixed] = fixedValues[fixed]    
 
-    rescale_xy(exotic, varAxes, experiments, channels_production, channels_decay, fixedValues, variables_values, scaledCouplingsX, scaledCouplingsY, regions, [lam, a, b], combine_experiments=comb, exp_dict = exps, dirac_width=dirac, standalone=standalone)
-
-    # #directory
-    # this_dir = path.dirname(path.realpath(__file__))
-
-    # #generate x- and y- tables
-    # x_axis_list_log = generate_log_list(args.varX, args.lam)
-    # y_axis_list_log = generate_log_list(args.varY, args.lam)
-
-    #rescale
+    rescale_xy(exotic, varAxes, experiments, channels_production, channels_decay, fixedValues, variables_values, scaledCouplingsX, scaledCouplingsY, regions, lam, combine_experiments=comb, exp_dict = exps, dirac_width=dirac, standalone=standalone,  prod_scale_sigmas= prod_scale_sigmas)
     
  ##
  # @fn rescale_xy
  # @brief rescale function for custom x- and y-axes
-def rescale_xy(exotic, varAxes , experiments, channels_production, channels_decay, fixedValues, variables_values, scaleWithX, scaleWithY,  regions = 1, alp_model_params = [1000.,0.,0.], combine_experiments = False, exp_dict = exp_dict, dirac_width = False, standalone = False):
+def rescale_xy(exotic, varAxes , experiments, channels_production, channels_decay, fixedValues, variables_values, scaleWithX, scaleWithY,  regions = 1, alp_lambda = 1000, combine_experiments = False, exp_dict = exp_dict, dirac_width = False, standalone = False,  prod_scale_sigmas=0.):
 
     varX, varY = varAxes
     #directory
     this_dir = path.dirname(path.realpath(__file__))
 
     #generate x- and y- tables
-    x_axis_list_log = generate_log_list(varX, alp_model_params[0])
-    y_axis_list_log = generate_log_list(varY, alp_model_params[0])
+    x_axis_list_log = generate_log_list(varX, alp_lambda)
+    y_axis_list_log = generate_log_list(varY, alp_lambda)
 
     # adjusting for HNL labling scheme
     channels_production_extended = []
@@ -332,7 +323,7 @@ def rescale_xy(exotic, varAxes , experiments, channels_production, channels_deca
         if not regions == [""]:
             mergeSigReg = MergeInput(exp,regions,channels_decay,channels_production)
 
-        process = ld.Process_data(exp,channels_decay,channels_production, len(x_axis_list_log)*len(y_axis_list_log),exotic, run_standalone = standalone) if exotic != "hnl" else ld.Process_data(exp,channels_decay,channels_production_extended, len(x_axis_list_log)*len(y_axis_list_log),exotic,dirac_width = dirac_width)
+        process = ld.Process_data(exp,channels_decay,channels_production, len(x_axis_list_log)*len(y_axis_list_log),exotic, run_standalone = standalone, alp_lambda_UV = alp_lambda,prod_scale_sigmas=prod_scale_sigmas) if exotic != "hnl" else ld.Process_data(exp,channels_decay,channels_production_extended, len(x_axis_list_log)*len(y_axis_list_log),exotic,dirac_width = dirac_width, prod_scale_sigmas=prod_scale_sigmas)
 
         #fill the table
         data_list = []
@@ -347,17 +338,15 @@ def rescale_xy(exotic, varAxes , experiments, channels_production, channels_deca
                     variables_values[y_var] = scaleWithY[y_var]*10**y
                 if exotic == "alp" and "C" in '\t'.join(varAxes):
                     if varX == "mX":
-                        data_sublist.append([10**x, 10**y/alp_model_params[0], process.ALP_events_EFT(variables_values['mX'], variables_values['CGG'], variables_values['CWW'], variables_values['CBB'], *alp_model_params, variables_values['Cll'], variables_values['Cqq'])])
+                        data_sublist.append([10**x, 10**y/alp_lambda, process.ALP_events_EFT(variables_values['mX'], variables_values['CGG'], variables_values['CWW'], variables_values['CBB'], variables_values['Cll'], variables_values['Cqq'])])
                     elif varY == "mX":
-                        data_sublist.append([10**x/alp_model_params[0], 10**y, process.ALP_events_EFT(variables_values['mX'], variables_values['CGG'], variables_values['CWW'], variables_values['CBB'], *alp_model_params, variables_values['Cll'], variables_values['Cqq'])])
+                        data_sublist.append([10**x/alp_lambda, 10**y, process.ALP_events_EFT(variables_values['mX'], variables_values['CGG'], variables_values['CWW'], variables_values['CBB'], variables_values['Cll'], variables_values['Cqq'])])
                     else:
-                        data_sublist.append([10**x, 10**y, process.ALP_events_EFT(variables_values['mX'], variables_values['CGG'], variables_values['CWW'], variables_values['CBB'], *alp_model_params, variables_values['Cll'], variables_values['Cqq'])])
+                        data_sublist.append([10**x, 10**y, process.ALP_events_EFT(variables_values['mX'], variables_values['CGG'], variables_values['CWW'], variables_values['CBB'], variables_values['Cll'], variables_values['Cqq'])])
                 elif exotic == "hnl" and "U" in '\t'.join(varAxes):
                     data_sublist.append([10**x, 10**y, process.HNL_events(variables_values['mX'], variables_values['U2el'], variables_values['U2mu'], variables_values['U2tau'])])
                 elif exotic == "ds" and "Y" in '\t'.join(varAxes):
                     data_sublist.append([10**x, 10**y, process.DS_events_EFT(variables_values['mX'], np.sqrt(variables_values['Y']), variables_values['Lambda'])])
-                # elif exotic == "dp" and "eps2" in '\t'.join(varAxes):
-                #     data_sublist.append([10**x, 10**y, process.DP_events_EFT(variables_values['mX'], np.sqrt(variables_values['eps2']))])
                 elif exotic == "dp" and "eps" in '\t'.join(varAxes):
                     data_sublist.append([10**x, 10**y, process.DP_events_EFT(variables_values['mX'], variables_values['eps'])])
                 
@@ -424,7 +413,7 @@ def rescale_xy(exotic, varAxes , experiments, channels_production, channels_deca
             # flags = ""
             # if dirac_width: flags += "_diracwidth"
 
-            outfileName = exp + "_" + generate_file_info(channels_production,channels_decay,fixedValues, varX, varY, scaleWithX, scaleWithY, dirac_width, standalone)+'.dat'
+            outfileName = exp + "_" + generate_file_info(channels_production,channels_decay,fixedValues, varX, varY, scaleWithX, scaleWithY, dirac_width, standalone, prod_scale_sigmas)+'.dat'
             np.savetxt(outPath + outfileName,data,fmt='%.4e')
             print('\n[Info:] \t', 'File ' + outfileName + ' saved to ' + outPath)
         
@@ -451,15 +440,18 @@ def rescale_xy(exotic, varAxes , experiments, channels_production, channels_deca
  ##
  # @fn generate_file_info
  # @brief prepares an output filename
-def generate_file_info(channels_production,channels_decay,fixedValues, varX, varY, scaleWithX, scaleWithY, dirac_width, standalone):
+def generate_file_info(channels_production,channels_decay,fixedValues, varX, varY, scaleWithX, scaleWithY, dirac_width, standalone, prod_scale_sigmas):
     modes = ""
     if channels_production: modes += "_" + '-'.join(channels_production)
+    if prod_scale_sigmas: modes +=  "_" + ("Minus" if prod_scale_sigmas < 0 else "Plus") + (str(int(abs(prod_scale_sigmas))) if prod_scale_sigmas.is_integer() else str("{:.1f}".format(abs(prod_scale_sigmas)))) + "Sigma"
     if channels_decay: modes += "_" + '-'.join(channels_decay)
 
     fixedNames = ""
     for fixed in fixedValues.keys():
         if fixed == "mX":
             fixedNames = fixedNames + "-" + fixed + str(int(fixedValues[fixed]*1000)) + "MeV"
+        elif fixedValues[fixed] < 1 and fixedValues[fixed] != 0:
+            fixedNames = fixedNames + "-" + fixed + str("{:.1E}".format(fixedValues[fixed]))
         else:
             fixedNames = fixedNames + "-" + fixed + str(int(fixedValues[fixed]))
     if fixedNames != "":
@@ -469,7 +461,8 @@ def generate_file_info(channels_production,channels_decay,fixedValues, varX, var
     for couplings in scaleWithX.keys():
         coup_val = float(scaleWithX[couplings])
         if coup_val.is_integer(): coup_val = str(int(coup_val))
-        else: coup_val = str("{:.1E}".format(coup_val))
+        else:
+            coup_val = str("{:.1E}".format(coup_val))
         xscaledNames = xscaledNames + "-" + couplings + coup_val
     if xscaledNames != "":
         xscaledNames = "_scaleWith" + varX + xscaledNames
@@ -496,7 +489,7 @@ def generate_file_info(channels_production,channels_decay,fixedValues, varX, var
 def generate_log_list(var,Lambda):
     n_bins = 601
     if var == "mX": #GeV
-        # list = [ m_a_log for m_a_log in np.linspace(np.log10(0.0001),np.log10(3.01),n_bins)]
+        # return np.linspace(np.log10(0.0001),np.log10(5.35),n_bins).tolist()
         return np.linspace(np.log10(0.01),np.log10(5.35),n_bins).tolist()
     elif "C" in var: #GeV^-1
         n_bins = 201
@@ -505,10 +498,11 @@ def generate_log_list(var,Lambda):
         n_bins = 201
         return  np.linspace(-11,-1,n_bins).tolist()
     elif "Y" in var:
+        n_bins = 201
         return np.linspace(-13,-1,n_bins).tolist()
     elif "eps" in var:
-        n_bins = 101
-        return np.linspace(-8,-2,n_bins).tolist()
+        n_bins = 201
+        return np.linspace(-9,-2,n_bins).tolist()
     elif "Lambda" in var:
         n_bins = 101
         return np.linspace(-13,-1,n_bins).tolist()
@@ -521,9 +515,6 @@ def generate_log_list(var,Lambda):
     elif "BR" in var:
         n_bins = 101
         return np.linspace(-13,-1,n_bins).tolist()
-    # elif "eps2" in var:
-    #     n_bins = 101
-    #     list = [ eps2 for eps2 in np.linspace(-16,-4,n_bins)]
     else:
         print("[Error:] \t Variable " + var + " not recognized")
         sys.exit(1)

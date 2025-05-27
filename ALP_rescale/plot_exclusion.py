@@ -276,8 +276,12 @@ def main_loop(experiments = [], exotic = "alp"):
                     # h1,l1 = cont.legend_elements()
                     leg_proxy.append(cont.legend_elements()[0][0])
                 n_matched_files+=1
-        #         leg_label.append(file.name_for_comparing)
-        plt.legend(leg_proxy, [r'$\mathrm{CHARM}\, (\mu\mu,\,m_X = 1\,\mathrm{GeV})$',r'$\mathrm{CHARM}\, (ee,\,m_X = 1\,\mathrm{GeV})$'], loc='center left', bbox_to_anchor=(0.05, 0.1), frameon=False)
+                if len(experiments) == 1:
+                    leg_label.append(file.name_for_comparing)
+                else:
+                    leg_label.append(file.experiment)
+        # plt.legend(leg_proxy, [r'$\mathrm{CHARM}\, (\mu\mu,\,m_X = 1\,\mathrm{GeV})$',r'$\mathrm{CHARM}\, (ee,\,m_X = 1\,\mathrm{GeV})$'], loc='center left', bbox_to_anchor=(0.05, 0.1), frameon=False)
+        plt.legend(leg_proxy, leg_label, loc='center left', bbox_to_anchor=(0.05, 0.1), frameon=False)
 
 
         if mode_chosen == 1:
@@ -465,7 +469,7 @@ exp_style = { #fill,linewidth,R,G,B,transparency
 
 label_variable = {
     'mX':       '$m_X$ [$\mathrm{GeV}/c^2$]',
-    'Y':        '$\mathrm{sin}^2 \ttheta$',
+    'Y':        '$\mathrm{sin}^2 \\theta$',
     'eps':      '$\epsilon$',
     'gY':       '$g_{Y}$',
     'GammaX':   '$\Gamma_X$ [$\mathrm{GeV}$]',

@@ -1,3 +1,5 @@
+# Photon distribution generated from decays of light mesons generated for 200000 impinging protons, with PYTHIA8.3 and modifiers ["SoftQCD:all = on", "111:mayDecay = no", "Beams:idA = 2212","Beams:idB = 2212","Beams:eA = 30","Beams:eB = 0","Beams:frameType = 2"]
+# "Log10(p[GeV]), Log10(pT[GeV]), dY[per(GeV^2 N_PoT)]"
 -3.5 -4 8.26946e-07
 -3.5 -3.9 0
 -3.5 -3.8 2.48084e-06

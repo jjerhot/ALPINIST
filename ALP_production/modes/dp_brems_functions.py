@@ -1,7 +1,6 @@
 # modes/dp_brems_functions.py
 #
-# brems_cross_section written by Tom
-# methods for DP brems production, should be documented
+# methods for DP brems production, following 1311.3870, should be documented
 
 import numpy as np
 from ALP_production.general import exotic_constants as c

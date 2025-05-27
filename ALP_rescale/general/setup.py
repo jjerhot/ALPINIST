@@ -12,7 +12,7 @@ experiments = { 'NA62':         'NA62',
                 'SHiP':         'SHiP',
                 'SHiPecn4':     'SHiP',
                 'DarkQuest':    'DarkQuest',
-                'DarkQuestPhase2':    'DarkQuest',
+                'DarkQuestPhase2':'DarkQuest',
                 'DUNE':         'DUNE',
                 'SHADOWS':      'SHADOWS',
                 'KOTOpnn':      'KOTO',
@@ -69,12 +69,12 @@ n_events_90CL = {
     'ORCA':         2.3,
     },
     'hnl': {
-    'NA62':         1.,# 1E18
+    'NA62':         2.3,# 1E18
     'HIKE':         2.3/15,
     'CHARM':        2.3,#
     'NuCal':        3.6,
     'SHiPecn4':     3*2.3, #2E20
-    'SHiP':         2.3/3, #6E20
+    'SHiP':         2.3, #6E20
     'DarkQuest':    10.,#
     'DarkQuestPhase2': 10.,
     'DUNE':         1., # 10 years data taking with 10 events required (1912.07622)
@@ -136,22 +136,3 @@ n_events_90CL = {
     'ORCA':         2.3,
     }
 }
-
-#.. to be seen if can be removed entirely 
-# reference_couplings = {'primakoff':         1e-4,
-#                        'photonfrommeson':   1e-4,
-#                        'mixingPi0':         1e-4,
-#                        'mixingEta':         1e-4,
-#                        'mixingEtaPrim':     1e-4,
-#                        'Bmeson':            1e-10,
-#                        'Dmeson':            1e-10,
-#                        'recast':            1,}
-
-# scaling_exponent =    {'primakoff':         2,
-#                        'photonfrommeson':   2,
-#                        'mixingPi0':         2,
-#                        'mixingEta':         2,
-#                        'mixingEtaPrim':     2,
-#                        'Bmeson':            1,
-#                        'Dmeson':            1,
-#                        'recast':            2,}

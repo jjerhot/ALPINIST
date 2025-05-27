@@ -15,7 +15,41 @@
 #include <TROOT.h>
 #include "Rtypes.h"
 
-class Magnet;
+ /// \class Magnet
+ /// \Brief
+ /// Magnet object with field strengh and length
+ /// \EndBrief
+ class Magnet{
+	
+	private:
+		Bool_t   _IsTorroidal; // refers to a torroidal magnet with a coil in the center
+		Double_t _FieldInfo; //rad
+		Double_t _ZMagnet; //m
+		Double_t _ZLengthMagnet; //m
+		Double_t _MagKick; //GeV
+	public:
+		Magnet() : _IsTorroidal(0), _FieldInfo(TMath::PiOver2()), _ZMagnet(0.), _MagKick(0.){}
+		Magnet(Double_t ZMagnet, Double_t MagnetZLength, Double_t MagnetFieldStrength): _IsTorroidal(0), _FieldInfo(TMath::PiOver2()){
+			_ZMagnet		= ZMagnet;
+			_ZLengthMagnet  = MagnetZLength;
+			_MagKick		= c*1E-9*MagnetZLength*MagnetFieldStrength;
+		}
+		Magnet(Double_t ZMagnet, Double_t MagnetZLength, Double_t MagnetFieldStrength, Double_t MagnetFieldPhi) : Magnet(ZMagnet, MagnetZLength, MagnetFieldStrength) {
+			_FieldInfo	= MagnetFieldPhi;
+			_IsTorroidal= 0;
+		}
+		Magnet(Double_t ZMagnet, Double_t MagnetZLength, Double_t MagnetFieldStrength, Bool_t IsToroidal, Double_t DetectorRadius) : Magnet(ZMagnet, MagnetZLength, MagnetFieldStrength) {
+			_IsTorroidal	= IsToroidal;
+			_FieldInfo		= DetectorRadius;
+		}
+		virtual ~Magnet(){}
+		Double_t GetZ()				const {return _ZMagnet;}
+		Double_t GetZLength()		const {return _ZLengthMagnet;}
+		Double_t GetMagKick()		const {return _MagKick;}
+		Double_t GetMagFieldInfo()	const {return _FieldInfo;}
+		Double_t GetMagRadius()		const {return _FieldInfo;}
+		Double_t GetIsToroidal()	const {return _IsTorroidal;}
+	};
 class ExpParameters{
 
 public:
@@ -130,12 +164,12 @@ public:
     //experimental conditions methods
     Int_t   twoPhotonCondition(Int_t iOnECal, Double_t totalEnergyAcceptance, TVector3 posDecay, TVector3 posFVEnd[2], TVector3 posECal[2], TLorentzVector pgA[2]);
     Bool_t  multiplePhotonCondition(Int_t nGammas, Double_t totalEnergyAcceptance, TVector3 posDecay, TVector3 posFVEnd[6], TVector3 posECal[6], TLorentzVector pgA[6]);	
-    Bool_t  twoMuonCondition(Int_t iOnTracker1, Int_t iOnTracker4, Int_t iOnECal, Int_t iOnMuonDetector, TVector3 posDecay, TLorentzVector pCA[2], TLorentzVector pMiss);    
+    Bool_t  twoMuonCondition(Int_t iOnTracker1, Int_t iOnTracker4, Int_t iOnECal, Int_t iOnMuonDetector, TVector3 posDecay, TLorentzVector pCA[2]);    
 	Bool_t  twoHadronCondition(Int_t iOnTracker1, Int_t iOnTracker4, Int_t iChOnECal, Int_t iOnMuonDetector, TVector3 posDecay, TLorentzVector pCA[2]);
 	Bool_t  muonHadronCondition(Int_t iOnTracker1, Int_t iOnTracker4, Int_t iChOnECal, Int_t iOnMuonDetector, TVector3 posDecay, TLorentzVector pCA[2]);
-	Bool_t  electronMuonCondition(Double_t totalEnergyAcceptance, Int_t iOnTracker1, Int_t iOnTracker4, Int_t iChOnECal, Int_t iOnMuonDetector,  TVector3 posDecay, TVector3 posECal[2], TLorentzVector pCA[2], TLorentzVector pMiss);
+	Bool_t  electronMuonCondition(Double_t totalEnergyAcceptance, Int_t iOnTracker1, Int_t iOnTracker4, Int_t iChOnECal, Int_t iOnMuonDetector,  TVector3 posDecay, TVector3 posECal[2], TLorentzVector pCA[2]);
 	Bool_t	electronHadronCondition(Int_t iOnTracker1, Int_t iOnTracker4, Int_t iChOnECal,  TVector3 posDecay, TVector3 posECal[2], TLorentzVector pCA[2]);
-	Bool_t	twoElectronCondition(Int_t iOnTracker1, Int_t iOnTracker4, Int_t iOnECal, Double_t totalEnergyAcceptance, TVector3 posDecay, TVector3 posFVEnd[2], TVector3 posECal[2], TLorentzVector pCA[2], TLorentzVector pMiss);
+	Bool_t	twoElectronCondition(Int_t iOnTracker1, Int_t iOnTracker4, Int_t iOnECal, Double_t totalEnergyAcceptance, TVector3 posDecay, TVector3 posFVEnd[2], TVector3 posECal[2], TLorentzVector pCA[2]);
 	std::vector<SMParticleProperty*> finState; //final state particles masses
 
 	// Int_t ncTau = 0;
@@ -192,6 +226,7 @@ private:
 	TString expLabel = "";
 	Int_t beamEnergy = 0;
 	std::array<Double_t,3> target;
+	std::array<Double_t,3> refTarget;
 	Double_t ZECal = 0;
 	Double_t ZFVEnd = 0;
 	Double_t ZFVIn = 0;
@@ -226,41 +261,4 @@ private:
 	Int_t nRegions;
 
 };
-
- /// \class Magnet
- /// \Brief
- /// Magnet object with field strengh and length
- /// \EndBrief
-class Magnet{
-	
-private:
-	Bool_t   _IsTorroidal; // refers to a torroidal magnet with a coil in the center
-	Double_t _FieldInfo; //rad
-	Double_t _ZMagnet; //m
-	Double_t _ZLengthMagnet; //m
-	Double_t _MagKick; //GeV
-public:
-	Magnet() : _IsTorroidal(0), _FieldInfo(TMath::PiOver2()), _ZMagnet(0.), _MagKick(0.){}
-	Magnet(Double_t ZMagnet, Double_t MagnetZLength, Double_t MagnetFieldStrength): _IsTorroidal(0), _FieldInfo(TMath::PiOver2()){
-		_ZMagnet		= ZMagnet;
-		_ZLengthMagnet  = MagnetZLength;
-		_MagKick		= c*1E-9*MagnetZLength*MagnetFieldStrength;
-	}
-	Magnet(Double_t ZMagnet, Double_t MagnetZLength, Double_t MagnetFieldStrength, Double_t MagnetFieldPhi) : Magnet(ZMagnet, MagnetZLength, MagnetFieldStrength) {
-		_FieldInfo	= MagnetFieldPhi;
-		_IsTorroidal= 0;
-	}
-	Magnet(Double_t ZMagnet, Double_t MagnetZLength, Double_t MagnetFieldStrength, Bool_t IsToroidal, Double_t DetectorRadius) : Magnet(ZMagnet, MagnetZLength, MagnetFieldStrength) {
-		_IsTorroidal	= IsToroidal;
-		_FieldInfo		= DetectorRadius;
-	}
-	virtual ~Magnet(){}
-	Double_t GetZ()				const {return _ZMagnet;}
-	Double_t GetZLength()		const {return _ZLengthMagnet;}
-	Double_t GetMagKick()		const {return _MagKick;}
-	Double_t GetMagFieldInfo()	const {return _FieldInfo;}
-	Double_t GetMagRadius()		const {return _FieldInfo;}
-	Double_t GetIsToroidal()	const {return _IsTorroidal;}
-};
-
 #endif

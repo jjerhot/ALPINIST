@@ -10,15 +10,30 @@ g_EM = np.sqrt(4*np.pi*alpha_EM)
 g_W = 0.652905 #Weak coupling (2018PDG and physics.nist.gov)
 alpha_W = g_W**2/(4*np.pi)
 G_F = 1.1663787e-5 #Fermi coupling constant (in GeV^-2) 2021PDG
+N_8 = 1.53e-7 # from 2110.10698 (without phase)
 m_W = 80.379 # W mass in GeV 2018PDG
 v = 2*m_W/g_W # Higgs vev
 m_Z = 91.1876
+m_H = 125.2
 theta_w = np.arccos(m_W/m_Z)
 sin_w2 = 1-(m_W/m_Z)**2
-m_el = 0.000511
-m_mu = 0.105658
-m_tau = 1.77686
-m_q = [0.00216, 0.00467, 0.093, 1.275, 4.18, 173.0] #quark mass 2019PDG u,d,s,c,b,t
+#Lepton masses in GEV PDG 2024
+m_el = 5.1099895e-4
+m_mu = 0.1056583755
+m_tau = 1.77693
+#Quark masses in GEV PDG 2024
+m_u = 2.16e-3
+m_c = 1.273
+m_t = 172.57
+m_d = 4.7e-3
+m_s = 93.5e-3
+m_b = 4.183
+# fermion mass collections
+m_q = [m_u, m_d, m_s, m_c, m_b, m_t] #lightest to heaviest
+m_qt = [m_u,m_c,m_t]
+m_qb = [m_d,m_s,m_b]
+m_l = [m_el,m_mu,m_tau]
+
 m_pi = 0.13957
 m_pi0 = 0.13498
 m_eta = 0.54786
@@ -68,15 +83,8 @@ V_CKM = np.array([[0.974, 0.2265, 0.00361],
                   [0.2263, 0.9732, 0.0405],
                   [0.0085, 0.03978, 0.99917]])
 
-#Quark masses in GEV PDG 2022
-m_u = 2.16e-3
-m_c = 1.27
-m_t = 172.69
-m_d = 4.67e-3
-m_s = 93.4e-3
-m_b = 4.18
-
 B0 = m_pi0**2 /(m_q[0] + m_q[1])
+delta_I = (m_q[1] - m_q[0])/(m_q[0] + m_q[1])
 
 fpi = 0.093
 feta = 0.093
@@ -104,6 +112,7 @@ g_phi0   = f_pi*m_pi0
 g_Jpsi   = 0.406*m_Jpsi  #GeV^2 hep-ph/9703364v
 
 #Life times PDG2022 in 
+tau_K  = 1.238e-8 / hPl #GeV^-1
 tau_D  = 1033.1e-15 / hPl #GeV^-1
 tau_D0 = 410.3e-15 / hPl #GeV^-1
 tau_Ds = 504e-15 / hPl #GeV^-1
@@ -113,9 +122,48 @@ tau_B0 = 1519e-15 / hPl #GeV^-1
 tau_Bs = 1520e-15 / hPl #GeV^-1
 
 #resulting widths
+Gamma_K =1/tau_K
 Gamma_B0 =1/tau_B0
 Gamma_B = 1/tau_B
 Gamma_D0 = 1/tau_D0
 Gamma_D = 1/tau_D
 
 CF = 4/3 # Casimir fundamental rep for SU(3)
+
+C_bs_S = 3*V_tb*V_ts*m_q[5]**2/(v*v*v*16*np.pi**2) / 1e3 # for recasting ALP B meson production to DS (add 1e-3 for MeV^-1)
+
+prod_xsec_ref = { # reference production cross section and standard deviation values from [2407.08673]
+    'Dmeson' : { # in nb
+        'E137':     [0, 0],
+        'E141':     [0, 0],
+        "KOTO":     [0, 0],
+        "KOTO2":    [0, 0],
+        "NuCal":    [2.2e3, 1.2e3],
+        "DUNE" :    [4.6e3, 1.8e3],
+        "DarkQuest":[4.6e3, 1.8e3],
+        "NA62"  :   [20.0e3, 4.5e3],
+        "BEBC"  :   [20.0e3, 4.5e3],
+        "CHARM" :   [20.0e3, 4.5e3],
+        'SHADOWS':  [20.0e3, 4.5e3],
+        "SHiP"  :   [20.0e3, 4.5e3],
+        "ORCA"  :   [20.0e3, 4.5e3],
+        "NuTeV" :   [39.5e3, 7.7e3]
+    },
+    'Bmeson' : { # in nb
+        'E137':     [0, 0],
+        'E141':     [0, 0],
+        "KOTO":     [0, 0],
+        "KOTO2":    [0, 0],
+        "NuCal":    [0, 0],
+        "DUNE" :    [0.02, 0.02],
+        "DarkQuest":[0.02, 0.02],
+        "NA62"  :   [2.63, 0.76],
+        "BEBC"  :   [2.63, 0.76],
+        "CHARM" :   [2.63, 0.76],
+        'SHADOWS':  [2.63, 0.76],
+        "SHiP"  :   [2.63, 0.76],
+        "ORCA"  :   [2.63, 0.76],
+        "NuTeV" :   [18.6, 4.6]
+    }
+}
+

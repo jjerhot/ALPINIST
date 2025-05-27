@@ -4,35 +4,9 @@ from os import path
 from ALP_rescale.general import constants as c
 from ALP_rescale.general import functions as f
 
-#Generating interpolation map for nu2pi decay only for completeness (rho is dominant)
-def F_pi_analytic(s):
-		Gamma_omega =  0.0844 #GeV PDG 2020
-		BW_omega = c.m_omega**2 / (c.m_omega - s - 1.j * c.m_omega*Gamma_omega )
-
-		beta_pi = lambda q2: np.sqrt(np.clip(1-4*c.m_pi**2/q2,0.,None))
-		k = lambda q2 : 0.5*np.sqrt(q2)*beta_pi(q2)
-		h = lambda q2 : 2./np.pi * k(q2)/np.sqrt(q2)*np.log((np.sqrt(q2)+2.*k(q2))/(2*c.m_pi))
-		hprime = lambda q2 : (q2* (1+beta_pi(q2)) + 4*c.m_pi**2 *(np.log( (np.sqrt(q2)*(1+beta_pi(q2))/(2*c.m_pi))) * (1+ beta_pi(q2))   - 1. )) / (2*np.pi*q2 *(q2 - 4*c.m_pi**2 + q2*beta_pi(q2)))
-		d = lambda q2 : 3./np.pi * c.m_pi**2/k(q2)**2 *np.log((q2+2*k(q2))/(2.*c.m_pi)) + np.sqrt(q2)*(1./(2.*np.pi*k(q2)**2) - c.m_pi**2/(np.pi*k(q2)**3))
-		f = lambda q2, m2, Gamma : Gamma*m2/k(m2)**3*( k(q2)**2 * (h(q2)- h(m2)) + (m2 - q2) * k(m2) *hprime(m2) ) 
-		G = lambda q2, m2, Gamma : Gamma * q2 / m2 * (  beta_pi(q2)/beta_pi(m2))**3
-
-		BW_rho = lambda q2, m_rho, Gamma_rho : np.divide(m_rho**2*(1+d(m_rho**2)*Gamma_rho/m_rho) , (m_rho**2 - q2 + f(q2,m_rho**2, Gamma_rho) - 1.j * m_rho * G(q2, m_rho**2, Gamma_rho)), dtype=np.csingle)
-
-		## following data is taken from 1205.2228
-		c_omega = 1.664e-3 * np.exp(-0.011j)
-		c_rhoi	= 0.158	   * np.exp(3.76j)
-		c_rhoii = 0.068    * np.exp(1.39j)
-		c_rhoiii= 0.0051   * np.exp(0.70j)
-
-		return np.divide(BW_rho(s, c.m_rho, 149.59 ) * (1 + c_omega * BW_omega)/(1+c_omega) + c_rhoi * BW_rho(s, 1493, 427) +  c_rhoii * BW_rho(s, 1861, 316) + c_rhoiii * BW_rho(s, 2254, 109),
-						1 + c_rhoi + c_rhoii + c_rhoiii)
-s_interp = np.linspace(4.*c.m_pi**2,36,1000)
-s_interp[0]*=0.99
-F_pi = interp1d(s_interp, np.abs(F_pi_analytic(s_interp)),bounds_error=False, fill_value=0.)
+s_interp = np.linspace((c.m_pi0+c.m_pi)**2,5.31**2,2000)
+Fabs2_pi = interp1d(s_interp, np.abs(f.F_pi_analytic(s_interp))**2, bounds_error=False, fill_value=0.)
 del s_interp
-
-
 class hnl_decay_width:
 	"""decay widths of the hnl as taken from JHEP, 0710
 	"""
@@ -60,18 +34,13 @@ class hnl_decay_width:
 		elif decay_mode == "DsEl":	return hnl_decay_width.N_LH(hnl_mass, c.m_el, c.m_Ds, 1.,  c.f_DsV_cs, U2_el)
 		elif decay_mode == "DsMu": 	return hnl_decay_width.N_LH(hnl_mass, c.m_mu, c.m_Ds, 1.,  c.f_DsV_cs, U2_mu)
 		elif decay_mode == "DsTau":	return hnl_decay_width.N_LH(hnl_mass, c.m_tau,c.m_Ds, 1.,  c.f_DsV_cs, U2_tau)
+		elif decay_mode == "DsstarEl":return  hnl_decay_width.N_LHv(hnl_mass, c.m_el, c.m_Dsstar, c.V_cs, c.g_Dsstar, U2_el)
+		elif decay_mode == "DsstarMu":return  hnl_decay_width.N_LHv(hnl_mass, c.m_mu, c.m_Dsstar, c.V_cs, c.g_Dsstar, U2_mu)
+		elif decay_mode == "DsstarTau":return hnl_decay_width.N_LHv(hnl_mass, c.m_tau,c.m_Dsstar, c.V_cs, c.g_Dsstar, U2_tau)
 
-		elif decay_mode == "RhoEl":	return hnl_decay_width.N_LHv(hnl_mass, c.m_el, c.m_rho, c.V_ud, c.g_rho, U2_el)
-		elif decay_mode == "RhoMu":	return hnl_decay_width.N_LHv(hnl_mass, c.m_mu, c.m_rho, c.V_ud, c.g_rho, U2_mu)
-		elif decay_mode == "RhoTau":return hnl_decay_width.N_LHv(hnl_mass, c.m_tau,c.m_rho, c.V_ud, c.g_rho, U2_tau)  
-		elif decay_mode == "DsstarEl":return  hnl_decay_width.N_LHv(hnl_mass, c.m_el, c.m_Dsstar, c.V_cs, c.g_rho, U2_el)
-		elif decay_mode == "DsstarMu":return  hnl_decay_width.N_LHv(hnl_mass, c.m_mu, c.m_Dsstar, c.V_cs, c.g_rho, U2_mu)
-		elif decay_mode == "DsstarTau":return hnl_decay_width.N_LHv(hnl_mass, c.m_tau,c.m_Dsstar, c.V_cs, c.g_rho, U2_tau)
-
-		elif decay_mode == "RhoNu":		return sum(U2) * hnl_decay_width.N_NuHv(hnl_mass, c.m_rho,  c.g_rho,   1.-2.*c.sin_w2,   1.)  if not only_charged_current else 0.
-		elif decay_mode == "OmegaNu":	return sum(U2) * hnl_decay_width.N_NuHv(hnl_mass, c.m_omega, c.g_omega, 4./3*c.sin_w2,    1.) if not only_charged_current else 0.
-		elif decay_mode == "PhiNu": 	return sum(U2) * hnl_decay_width.N_NuHv(hnl_mass, c.m_phi,   c.g_phi,   4./3*c.sin_w2-1., 1.) if not only_charged_current else 0.
-		elif decay_mode == "JpsiNu": 	return sum(U2) * hnl_decay_width.N_NuHv(hnl_mass, c.m_Jpsi,  c.g_Jpsi,  1.-8/3*c.sin_w2,  1.) if not only_charged_current else 0.
+		elif decay_mode == "OmegaNu":	return sum(U2) * hnl_decay_width.N_NuHv(hnl_mass, c.m_omega, c.g_omega, 2./3*c.sin_w2,    1.) if not only_charged_current else 0.
+		elif decay_mode == "PhiNu": 	return sum(U2) * hnl_decay_width.N_NuHv(hnl_mass, c.m_phi,   c.g_phi,   (4./3*c.sin_w2-1)/np.sqrt(2), 1.) if not only_charged_current else 0.
+		elif decay_mode == "JpsiNu": 	return sum(U2) * hnl_decay_width.N_NuHv(hnl_mass, c.m_Jpsi,  c.g_Jpsi,  (1.-8./3*c.sin_w2)/np.sqrt(2),  1.) if not only_charged_current else 0.
 
 		elif decay_mode == "NuNuNu": 	return sum(U2) * hnl_decay_width.N_3Nus(hnl_mass, 1) if not only_charged_current else 0.
 
@@ -83,12 +52,16 @@ class hnl_decay_width:
 		elif decay_mode == "NuElTau":	return hnl_decay_width.N_LaLbNub(hnl_mass, c.m_el, c.m_tau, U2_el) + hnl_decay_width.N_LaLbNub(hnl_mass, c.m_tau, c.m_el, U2_tau)
 		elif decay_mode == "NuMuTau":	return hnl_decay_width.N_LaLbNub(hnl_mass, c.m_mu, c.m_tau, U2_mu) + hnl_decay_width.N_LaLbNub(hnl_mass, c.m_tau, c.m_mu, U2_tau)
 
+		# pipi states replace rho resonance approximation
+		elif decay_mode == "PiPiNu":  return sum(U2) * hnl_decay_width.N_NuPiPi(hnl_mass, 1.) if not only_charged_current else 0.
+		elif decay_mode == "PiPiEl":  return hnl_decay_width.N_LPiPi(hnl_mass, c.m_el,  U2_el) 
+		elif decay_mode == "PiPiMu":  return hnl_decay_width.N_LPiPi(hnl_mass, c.m_mu,  U2_mu) 
+		elif decay_mode == "PiPiTau": return hnl_decay_width.N_LPiPi(hnl_mass, c.m_tau, U2_tau) 
 
-		## only for completenes (pipi states are dominated by rho resonance in relevant regime):
-		# elif decay_mode == "PiPiNu":  return sum(U2) * hnl_decay_width.N_NuPiPi(hnl_mass, 1.) 
-		# elif decay_mode == "PiPiEl":  return hnl_decay_width.N_LPiPi(hnl_mass, c.m_el,  U2_el) 
-		# elif decay_mode == "PiPiMu":  return hnl_decay_width.N_LPiPi(hnl_mass, c.m_mu,  U2_mu) 
-		# elif decay_mode == "PiPiTau": return hnl_decay_width.N_LPiPi(hnl_mass, c.m_tau, U2_tau) 
+		# elif decay_mode == "RhoNu":		return sum(U2) * hnl_decay_width.N_NuHv(hnl_mass, c.m_rho,  c.g_rho,   1.-2.*c.sin_w2,   1.)  if not only_charged_current else 0.
+		# elif decay_mode == "RhoEl":	return hnl_decay_width.N_LHv(hnl_mass, c.m_el, c.m_rho, c.V_ud, c.g_rho, U2_el)
+		# elif decay_mode == "RhoMu":	return hnl_decay_width.N_LHv(hnl_mass, c.m_mu, c.m_rho, c.V_ud, c.g_rho, U2_mu)
+		# elif decay_mode == "RhoTau":return hnl_decay_width.N_LHv(hnl_mass, c.m_tau,c.m_rho, c.V_ud, c.g_rho, U2_tau)  
 		else: print("[Info:] HNL branching for decay mode ",decay_mode,"not found.")
 		return 0.
 	@staticmethod 
@@ -153,28 +126,21 @@ class hnl_decay_width:
 			)
 		return 0.
 	@staticmethod
-	def N_NuPiPi(m_N, U2_la):
-		M_pi = 2*c.m_pi
-		if M_pi < m_N:
-			q2s = np.linspace(M_pi**2, m_N**2, 1000)
-			xis = q2s/m_N**2 
-			beta3_pi = np.power(np.clip(1.-M_pi**2/q2s,0.,None), 1.5)
-			F2_pi = F_pi(q2s)**2
-			Integrant = (1.-xis )**2 * (1+2*xis)*beta3_pi*F2_pi
-			return U2_la * np.divide(c.G_F**2 * m_N**3, 768.*np.pi) * (1-2*c.sin_w2**2)**2 * np.trapz(Integrant, x = q2s)
+	def N_NuPiPi(m_N, U2_la, n_intpoints = 1000):
+		if 2*c.m_pi < m_N:
+			M2_Zs = np.linspace(4*c.m_pi**2, m_N**2, n_intpoints+2, dtype=np.double)[1:-1]
+			x_Z = np.sqrt(M2_Zs) / m_N 
+			Integrant =   (1. - x_Z**2)**2 * (1. + x_Z**2) * np.power(1 -4.*c.m_pi**2 / M2_Zs, 1.5) *  Fabs2_pi(M2_Zs)
+			return U2_la * np.divide(c.G_F**2*m_N**3 *c.V_ud**2, 768.*np.pi**3) * (1-2*c.sin_w2**2)**2  * np.trapz(Integrant, x=M2_Zs)
 		return 0.
 	@staticmethod
-	def N_LPiPi(m_N, m_l, U2_la):
-		M_pi = 2*c.m_pi
-		if M_pi + m_l < m_N:
+	def N_LPiPi(m_N, m_l, U2_la, n_intpoints = 1000):
+		if c.m_pi + c.m_pi0 + m_l < m_N:
+			M2_Ws = np.linspace((c.m_pi0+c.m_pi)**2, (m_N - m_l)**2, n_intpoints+2, dtype=np.double)[1:-1]
 			x_l = m_l / m_N
-			q2s = np.linspace(M_pi**2, (m_N-m_l)**2, 1000)
-			xis = q2s/m_N**2
-			beta3_pi = np.power(np.clip(1.-M_pi**2/q2s,0.,None), 1.5)
-			F2_pi = F_pi(q2s)**2
-			lambda_ = np.sqrt(np.clip( f.lambda_Kallen(1,np.sqrt(xis), x_l),0.,None))
-			Integrant = ((1.-x_l**2)**2 + xis*(1+x_l**2) - 2 * xis**2) * lambda_ * beta3_pi * F2_pi
-			return U2_la * np.divide(c.G_F**2 * c.V_ud**2 * m_N**3, 384*np.pi) * np.trapz(Integrant, x = q2s)
+			x_W = np.sqrt(M2_Ws) / m_N 
+			Integrant =  ((1-x_l**2)**2 + x_W**2 *(1+x_l**2) - 2*x_W**4) * np.sqrt(f.lambda_Kallen(1, x_W, x_l)) * np.power(1 - (c.m_pi+c.m_pi0)**2 / M2_Ws, 1.5) *  Fabs2_pi(M2_Ws)
+			return U2_la * np.divide(c.G_F**2*m_N**3 *c.V_ud**2, 384.*np.pi**3) * np.trapz(Integrant, x=M2_Ws)
 		return 0.
 	# misc widths for hadronic width approximation:
 	@staticmethod
@@ -186,7 +152,7 @@ class hnl_decay_width:
 	@staticmethod
 	def semileptonic_width_single_meson(hnl_mass, U2, dirac_HNL=False, only_charged_current = False):
 		Gamma = 0.
-		decay_channels = ["PiNu", "EtaNu", "EtapNu", "RhoNu", "OmegaNu", "PhiNu", "PiEl", "PiMu", "PiTau", "KEl", "KMu", "KTau", "DEl", "DMu","DTau", "DsEl", "DsMu", "DsTau", "RhoEl", "RhoMu", "RhoTau", "DsstarEl", "DsstarMu", "DsstarTau"]
+		decay_channels = ["PiNu", "EtaNu", "EtapNu", "PiPiNu", "OmegaNu", "PhiNu", "PiEl", "PiMu", "PiTau", "KEl", "KMu", "KTau", "DEl", "DMu","DTau", "DsEl", "DsMu", "DsTau", "PiPiEl", "PiPiMu", "PiPiTau", "DsstarEl", "DsstarMu", "DsstarTau"]
 		for channel in decay_channels: Gamma += hnl_decay_width.dirac_widths(channel, hnl_mass, U2, only_charged_current=only_charged_current)
 		return Gamma if dirac_HNL else 2.*Gamma
 	@staticmethod
@@ -280,7 +246,7 @@ class Total_width:
 		use_analytic = use_analytic or only_charged_current # only charged currents are not available precompiled
 		leptonic_dirac_width = hnl_decay_width.leptonic_width(m_N, U2, dirac_HNL=True, only_charged_current=only_charged_current) if use_analytic else U2[0]*self.el_L_singleMeson_interp(m_N) + U2[1]*self.mu_L_singleMeson_interp(m_N) + U2[2]*self.tau_L_singleMeson_interp(m_N)
 		semileptonic_dirac_width = hnl_decay_width.semileptonic_width_single_meson(m_N, U2, dirac_HNL=True,only_charged_current=only_charged_current) if use_analytic else U2[0]*self.el_SL_singleMeson_interp(m_N) + U2[1]*self.mu_SL_singleMeson_interp(m_N) + U2[2]*self.tau_SL_singleMeson_interp(m_N)
-		if not use_only_single_meson: semileptonic_dirac_width = max(semileptonic_dirac_width,
+		if not use_only_single_meson and m_N>1: semileptonic_dirac_width = max(semileptonic_dirac_width,
 								  hnl_decay_width.semileptonic_width_approx(m_N, U2, dirac_HNL=True, only_charged_current=only_charged_current) if use_analytic else U2[0]*self.el_SL_approx_interp(m_N) + U2[1]*self.mu_SL_approx_interp(m_N) + U2[2]*self.tau_SL_approx_interp(m_N)
 								  )
 		

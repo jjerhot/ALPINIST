@@ -78,11 +78,13 @@ ExpParameters::ExpParameters(Int_t nBinsX, Int_t nBinsY, Bool_t xIsLin, Bool_t y
  /// \Detailed
  /// Initializes final states as particle objects given the decay mode.
  /// Defines experiment geometry and material.
- /// Calculates normalization cross section for given production mode.
+ /// Calculates normalization cross section for given production mode
+ /// - target variable allows choosing a different target material than for which the input table was generated (but ALP photoproduction has also non-trivial kinematic dependency).
  /// \EndDetailed
 ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString ProductionMode_, Int_t DecayMode_, Int_t nBinsX = 101, Int_t nBinsY = 101, Bool_t xIsLin = false, Bool_t yIsLin = false, Int_t yVar = 0) : ExpParameters::ExpParameters(nBinsX, nBinsY, xIsLin, yIsLin, yVar){
 	//Intializing final states
 	expNum = Experiment_;
+	exoNum = ExoticType_;
 	decayMode = DecayMode_;
 	decayModeName = decaymodeNames[ExoticType_][DecayMode_];
 	switch(ExoticType_){
@@ -157,7 +159,7 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 
 			} break;
 		case 1: //hnl
-			switch(DecayMode_){ // so far "PiEl", "PiMu", "RhoEl", "RhoMu", "NuElEl", "NuMuMu", "NuElMu", "PiNu", "EtaNu", "RhoNu",
+			switch(DecayMode_){ // so far "PiEl", "PiMu", "PiPiEl", "PiMu", "NuElEl", "NuMuMu", "NuElMu", "PiNu", "EtaNu", "PiPiNu",
 				case 0:
 					finState.push_back(new SMParticleProperty("pi-"));
 					finState.push_back(new SMParticleProperty("el+"));
@@ -167,12 +169,15 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 					finState.push_back(new SMParticleProperty("mu+"));
 					break;
 				case 2:
-					finState.push_back(new SMParticleProperty("rho-"));
+					finState.push_back(new SMParticleProperty("pi-"));
+					finState.push_back(new SMParticleProperty("pi0"));
 					finState.push_back(new SMParticleProperty("el+"));
 					break;
 				case 3:
-					finState.push_back(new SMParticleProperty("rho-"));
+					finState.push_back(new SMParticleProperty("pi-"));
+					finState.push_back(new SMParticleProperty("pi0"));
 					finState.push_back(new SMParticleProperty("mu+"));
+					break;
 					break;
 				case 4:
 					finState.push_back(new SMParticleProperty("el+"));
@@ -203,8 +208,10 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 					decayModeOpen = 1;
 					break;
 				case 9:
-					finState.push_back(new SMParticleProperty("rho0"));
+					finState.push_back(new SMParticleProperty("pi-"));
+					finState.push_back(new SMParticleProperty("pi+"));
 					finState.push_back(new SMParticleProperty("nu"));
+					break;
 					decayModeOpen = 1;
 					break;
 			} break;
@@ -289,6 +296,7 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 			expName = "CHARM";
 			beamEnergy = 400;
 			target = targetMat.at("Cu");
+			refTarget = target;
 			ZTarget = 0;
 			X0 = 0.;  // m
 			Y0 = -4.8;// m since the angle is ~10 mrad, but the detector is parallel to the beam line
@@ -316,6 +324,7 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 			expName = "BEBC";
 			beamEnergy = 400;
 			target = targetMat.at("Cu");
+			refTarget = target;
 			ZTarget = 0;
 			X0 = 0.;  // m
 			Y0 = 0;// 
@@ -342,6 +351,7 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 			expName = "NuCal";
 			beamEnergy = 70;
 			target = targetMat.at("Fe");
+			refTarget = target;
 			ZTarget = 0;
 			X0 = 0.;  // m
 			Y0 = 0.;  // m
@@ -369,6 +379,7 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 			expName = "NuTeV";
 			beamEnergy = 800;
 			target = targetMat.at("BeO");
+			refTarget = target;
 			ZTarget = 0;
 			X0 = 0.; 
 			Y0 = 0.; 
@@ -399,6 +410,7 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 			expName = "NA62";
 			beamEnergy = 400;
 			target = targetMat.at("Cu");
+			refTarget = target;
 			ZTarget = 23.070; //XTAX101024
 			X0 = 0.; // m
 			Y0 = -0.022; // m
@@ -425,7 +437,7 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 			acceptanceHole = 0.1 ; // m, half the hole length
 			acceptanceSide = 1.; // m
 			//POT = 1.3*1.E16; // 1 day
-			POT = 1.*1.E18; // 2021-2023
+			POT = 1.*1.E18; //
 			// POT = 1.*1.E19; //2026-2030 period (possible x4 update beyond)
 
 			energyMinInFile = 5.5;
@@ -437,6 +449,7 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 			expName = "DarkQuest";
 			beamEnergy = 120;
 			target = targetMat.at("Fe");
+			refTarget = target;
 			ZTarget = 0;
 			X0 = 0.; // m
 			Y0 = 0.; // m straight for mathematica comparison
@@ -478,6 +491,7 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 			expName = "DarkQuest";
 			beamEnergy = 120;
 			target = targetMat.at("Fe");
+			refTarget = target;
 			ZTarget = 0;
 			X0 = 0.; // m
 			Y0 = 0.; // m 
@@ -512,6 +526,7 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 			expName = "DUNE";
 			beamEnergy = 120;
 			target = targetMat.at("C");
+			refTarget = target;
 			ZTarget = 0;
 			X0 = 0.;
 			Y0 = 0.; //by default but detector can move off-axis up to 30.5m (see DUNE-PRISM)
@@ -532,6 +547,7 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 			expName = "SHiP";
 			beamEnergy = 400;
 			target = targetMat.at("Mo");
+			refTarget = target;
 			ZTarget = 0;
 			X0 = 0.; // m
 			Y0 = 0.; // m straight for mathematica comparison
@@ -576,6 +592,7 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 			ThetaBeamEuler = 0.279253; //16∘ = 279.253 mrad
 			PsiBeamEuler = 0;
 			target = targetMat.at("Au");
+			refTarget = target;
 			ZTarget = 0; //presume that they dumped on T1 target
 			X0 = 0.;//7.56; //The KL beam line is off-axis by an angle of 16∘ = 280mrad with respect to the primary proton beam line. And the whole thing is l=27m long, we compute x=l\times theta. should we put a -sign here?
 			Y0 = 0.;
@@ -614,6 +631,7 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 			ThetaBeamEuler = 0.279253; //16∘ = 279.253 mrad
 			PsiBeamEuler = 0;
 			target = targetMat.at("Au");
+			refTarget = target;
 			ZTarget = 0; //presume that they dumped on T1 target
 			X0 = 0.;//7.56;  //The KL beam line is off-axis by an angle of 16∘ = 280mrad with respect to the primary proton beam line. And the whole thing is l=27m long, we compute x=l\times theta. should we put a -sign here?
 			Y0 = 0.;
@@ -654,6 +672,7 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 			ThetaBeamEuler = 0.087266; //5∘ = 87.266 mrad
 			PsiBeamEuler = 0;
 			target = targetMat.at("Au");
+			refTarget = target;
 			ZTarget = 0; //presume that they dumped on T1 target
 			X0 = 0.;//
 			Y0 = 0.;
@@ -691,6 +710,7 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 			ThetaBeamEuler = 0.087266; //5∘ = 87.266 mrad
 			PsiBeamEuler = 0;
 			target = targetMat.at("Au");
+			refTarget = target;
 			ZTarget = 0; //presume that they dumped on T1 target
 			X0 = 0.;//
 			Y0 = 0.;
@@ -730,6 +750,7 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 			ThetaBeamEuler = 0.279253; //16∘ = 279.253 mrad
 			PsiBeamEuler = 0;
 			target = targetMat.at("Au");
+			refTarget = target;
 			ZTarget = 0; //presume that they dumped on T1 target
 			X0 = 0.;//7.56;  //The KL beam line is off-axis by an angle of 16∘ = 280mrad with respect to the primary proton beam line. And the whole thing is l=27m long, we compute x=l\times theta. should we put a -sign here?
 			Y0 = 0.;
@@ -764,12 +785,13 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 			break;
 		case 14 :
 			expLabel = expLabels[Experiment_];
-			expName = "KLEVER";
+			expName = "NA62";
 			beamEnergy = 400;
 			PhiBeamEuler = 0;
 			ThetaBeamEuler = 0.008; 
 			PsiBeamEuler = 0;
 			target = targetMat.at("Be"); // possibility of Be, Cu or W
+			refTarget = targetMat.at("Cu");// production yields are calculated assuming Cu
 			ZTarget = 0.;
 			X0 = 0.;  // m
 			Y0 = 0.;  // m
@@ -799,12 +821,13 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 			break;
 		case 15 :
 			expLabel = expLabels[Experiment_];
-			expName = "KLEVER";
+			expName = "NA62";
 			beamEnergy = 400;
 			PhiBeamEuler = 0;
 			ThetaBeamEuler = 0.008; 
 			PsiBeamEuler = 0;
 			target = targetMat.at("Be"); // possibility of Be, Cu or W
+			refTarget = targetMat.at("Cu"); // production yields are calculated assuming Cu
 			ZTarget = 0.;
 			X0 = 0.;  // m
 			Y0 = 0.;  // m
@@ -841,6 +864,7 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 			// ThetaBeamEuler = 0.0624188; //(~62mrad) for calorimeter located 36m downstream the target and 2.25m shifted center w.r.t. beam axis
 			PsiBeamEuler = 0;
 			target = targetMat.at("Cu");
+			refTarget = target;
 			ZTarget = 23.070; //NA62
 			X0 = 2.5;//(1+1.5);  //shifted 1m wrt NA62, 3m calo size (also option with 3m size in consideration)
 			Y0 = -0.022; //as for NA62
@@ -875,6 +899,7 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 			expName = "SHiP";
 			beamEnergy = 400;
 			target = targetMat.at("Mo");
+			refTarget = target;
 			ZTarget = 0;
 			X0 = 0.; // m
 			Y0 = 0.; // m straight for mathematica comparison
@@ -909,36 +934,12 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 			energyMaxInFile = 324.5;
 			energyWid = (energyMaxInFile-energyMinInFile)/(energyValuesInFile-1); // used to be log scale
 			break;
-		case 18 : // BEBC with a asimplified geometry as proposed in [2208.00416]
-			expLabel = expLabels[Experiment_];
-			expName = "BEBC";
-			beamEnergy = 400;
-			target = targetMat.at("Cu");
-			ZTarget = 0;
-			X0 = 0.;  // m
-			Y0 = 0;// 
-			Z0 = 0.; //
-			ZFVIn = 404.; //m 
-			ZECal = 405.92; //m /Chamber is 3.7 m tall and contains 19 m^3l -> could be approximating it as  2.27x2.27x3.7 cuboid,
-			ZFVEnd = ZFVIn+1.85;
-			ZMuonDetector = ZECal+7.665; // EMI is 26x6 m semicircle at 7.665 m from bubble chamber center  
-			Sigacceptance = 0.88; 
-			Sigacceptancemumu  = 0.89;
-
-			POT = 2.72*1.E18;
-
-			thetaMinInFile = 0.00017; 
-			thetaMaxInFile = 0.00972; 
-			thetaWid = (thetaMaxInFile-thetaMinInFile)/(thetaValuesInFile-1); 
-			energyMinInFile = 5.5;
-			energyMaxInFile = 324.5;
-			energyWid = (energyMaxInFile-energyMinInFile)/(energyValuesInFile-1); // used to be log scale
-			break;
-		case 19:
+		case 18:
 			expLabel = expLabels[Experiment_];
 			expName = "ORCA";
 			beamEnergy = 400;
 			target = targetMat.at("C");
+			refTarget = target;
 			ZTarget = 0;
 			X0 = 0.; 
 			Y0 = 0.; 
@@ -961,6 +962,32 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 			energyMaxInFile = 371.7;
 			energyWid = (energyMaxInFile-energyMinInFile)/(energyValuesInFile-1); // used to be log scale
 			break;
+		case 19 : // BEBC with a asimplified geometry as proposed in [2208.00416]
+			expLabel = expLabels[Experiment_];
+			expName = "BEBC";
+			beamEnergy = 400;
+			target = targetMat.at("Cu");
+			refTarget = target;
+			ZTarget = 0;
+			X0 = 0.;  // m
+			Y0 = 0;// 
+			Z0 = 0.; //
+			ZFVIn = 404.; //m 
+			ZECal = 405.92; //m /Chamber is 3.7 m tall and contains 19 m^3l -> could be approximating it as  2.27x2.27x3.7 cuboid,
+			ZFVEnd = ZFVIn+1.85;
+			ZMuonDetector = ZECal+7.665; // EMI is 26x6 m semicircle at 7.665 m from bubble chamber center  
+			Sigacceptance = 0.88; 
+			Sigacceptancemumu  = 0.89;
+
+			POT = 2.72*1.E18;
+
+			thetaMinInFile = 0.00017; 
+			thetaMaxInFile = 0.00972; 
+			thetaWid = (thetaMaxInFile-thetaMinInFile)/(thetaValuesInFile-1); 
+			energyMinInFile = 5.5;
+			energyMaxInFile = 324.5;
+			energyWid = (energyMaxInFile-energyMinInFile)/(energyValuesInFile-1); // used to be log scale
+			break;
 
 		default:
 			std::cout << "Invalid experiment label: " <<  Experiment_ << ". Use values ";
@@ -972,32 +999,37 @@ ExpParameters::ExpParameters(Int_t ExoticType_, Int_t Experiment_, TString Produ
 
 	// calculating normalization cross section
 	normCrossSec = 1.;
-	// if(std::find(prodmodeNames[ExoticType_].begin(), prodmodeNames[ExoticType_].end(), ProductionMode_) == prodmodeNames[ExoticType_].end())
-	// 	std::cout<<"[Warning] production mode" << ProductionMode_<< "not recognized for chosen exo type defaulting normCrossSec to 1." << std::endl;
-	// else 
+	
 	switch(ExoticType_){
 		case 0: //alp
-			// Double_t newCross = 1./(sigma_pp.at(beamEnergy)*TMath::Power(target[0],2./3));
-			if(ProductionMode_ == "primakoff") normCrossSec = 1./(sigma_pp.at(beamEnergy)*TMath::Power(target[0],0.77));
-			else if(ProductionMode_ == "photonfrommeson") normCrossSec = 1./target[2];
-			else if(ProductionMode_ == "Bmeson") normCrossSec = sigma_bb.at(beamEnergy)/(sigma_pp.at(beamEnergy))*TMath::Power(target[0],1./3);
-			else if(ProductionMode_ == "Dmeson") normCrossSec = sigma_cc.at(beamEnergy)/(sigma_pp.at(beamEnergy))*TMath::Power(target[0],1./3);
-			else if (ProductionMode_ != "mixingPi0" && ProductionMode_ != "mixingEta" && ProductionMode_ != "mixingEtaPrim") 
-				std::cout<<"[Warning] production mode " << ProductionMode_<< " not recognized for exo type alp. Defaulting normCrossSec to 1." << std::endl;
-			break;
+			if(refTarget!=target){
+				if(ProductionMode_ == "Bmeson") normCrossSec = TMath::Power(target[0]/refTarget[0], 1./3); 
+				else if(ProductionMode_ == "Dmeson") normCrossSec = TMath::Power(target[0]/refTarget[0], 1./3); 
+				else if(ProductionMode_ == "Primakoff"){
+					normCrossSec = TMath::Power(target[0]/refTarget[0], 0.77);
+					std::cout<<"[Warning] production mode " << ProductionMode_<< " cannot be trivially rescaled from reference please ensure to use an input distribution calculated for the desired target material." << std::endl;
+				}
+				else if(ProductionMode_ == "PhotonFromMeson"){
+					normCrossSec = target[2]/refTarget[2];
+					std::cout<<"[Warning] production mode " << ProductionMode_<< " cannot be trivially rescaled from reference please ensure to use an input distribution calculated for the desired target material." << std::endl;
+				}
+				else if (ProductionMode_ != "MixingPi0" && ProductionMode_ != "MixingEta" && ProductionMode_ != "MixingEtaPrim") 
+					std::cout<<"[Warning] production mode " << ProductionMode_<< " not recognized for exo type alp. Defaulting normCrossSec to 1." << std::endl;
+			} break;
 		case 1: //hnl
-			if(ProductionMode_ == "Bmeson") normCrossSec = sigma_bb.at(beamEnergy)/(sigma_pp.at(beamEnergy))*TMath::Power(target[0],1./3);
-			else if(ProductionMode_ == "Dmeson") normCrossSec = sigma_cc.at(beamEnergy)/(sigma_pp.at(beamEnergy))*TMath::Power(target[0],1./3);
-			else std::cout<<"[Warning] production mode " << ProductionMode_<< " not recognized for exo type hnl. Defaulting normCrossSec to 1." << std::endl;
-			break;
+			if(refTarget!=target){
+				if(ProductionMode_ == "Bmeson") normCrossSec = TMath::Power(target[0]/refTarget[0], 1./3);
+				else if(ProductionMode_ == "Dmeson") normCrossSec = TMath::Power(target[0]/refTarget[0], 1./3);
+				else std::cout<<"[Warning] production mode " << ProductionMode_ << " not recognized for exo type hnl. Defaulting normCrossSec to 1." << std::endl;
+			} break;
 		case 2: //dp
-			normCrossSec = 1.; //check if true also for Brems
-			if (ProductionMode_ != "Brems" && ProductionMode_ != "MesonDecay" && ProductionMode_ != "Mixing") 
+			if (ProductionMode_ != "Brems" && ProductionMode_ != "MesonDecay" && ProductionMode_ != "MixingRho" && ProductionMode_ != "MixingOmega" && ProductionMode_ != "MixingPhi") 
 				std::cout<<"[Warning] production mode " << ProductionMode_<< " not recognized for exo type dp. Defaulting normCrossSec to 1." << std::endl;
 			break;
-		case 3: //ds (B meson production)
-			normCrossSec = sigma_bb.at(beamEnergy)/(sigma_pp.at(beamEnergy))*TMath::Power(target[0],1./3);
-			if ( ProductionMode_ != "Bmeson" && ProductionMode_ != "Bmeson2S") 
+		case 3: //ds (B meson + Brems production)
+			if (ProductionMode_ == "Bmeson" || ProductionMode_ == "Bmeson2S") 
+				if(refTarget!=target) normCrossSec = TMath::Power(target[0]/refTarget[0], 1./3);
+			if ( ProductionMode_ != "Brems" &&  ProductionMode_ != "Bmeson" && ProductionMode_ != "Bmeson2S") 
 				std::cout<<"[Warning] production mode " << ProductionMode_<< " not recognized for exo type ds. Defaulting normCrossSec to 1." << std::endl;
 			break;
 	}
@@ -1290,7 +1322,7 @@ Int_t ExpParameters::twoPhotonCondition(Int_t iOnECal, Double_t totalEnergyAccep
 		return 0;
 	}
 	else if(expNum == 3){ //NuTeV
-		return exoNum == 1; // NuTeV only cares about the charged tracks (true for hnls only (rho decays))
+		return exoNum == 1; // NuTeV only cares about the charged tracks (true for hnls only (pipi0 decays))
 	}
 	else if(expNum == 2){ //NuCal
 		if((iOnECal==1 && (totalEnergyAcceptance>10)) || (iOnECal ==2 && ((energy0>10.) || (energy1>10.)))) return 1; // NuCal
@@ -1698,7 +1730,7 @@ Bool_t ExpParameters::multiplePhotonCondition(Int_t nGammas, Double_t totalEnerg
  /// \Brief
  /// Experimental cut to select two muons
  /// \EndBrief
-Bool_t ExpParameters::twoMuonCondition(Int_t iOnTracker1, Int_t iOnTracker4, Int_t iOnECal, Int_t iOnMuonDetector, TVector3 posDecay, TLorentzVector pCA[2], TLorentzVector pMiss){
+Bool_t ExpParameters::twoMuonCondition(Int_t iOnTracker1, Int_t iOnTracker4, Int_t iOnECal, Int_t iOnMuonDetector, TVector3 posDecay, TLorentzVector pCA[2]){
 	
 	if(expNum == 0){ //charm: 1 GeV mimimum: Mip should be seen throughout detector material (this is still generous)
 		if(iOnMuonDetector>1 && pCA[0].E() > 1 && pCA[1].E() > 1) return kTRUE;
@@ -1716,10 +1748,18 @@ Bool_t ExpParameters::twoMuonCondition(Int_t iOnTracker1, Int_t iOnTracker4, Int
 		return kFALSE;
 	}
 	else if(expNum == 3){ // NuTeV
-		if( pCA[0].E() > 2 && pCA[1].E() > 2  && iOnTracker1 == 2 && iOnTracker4 == 2 && iOnECal == 2 && iOnMuonDetector == 2 ) {
+		// FV cuts (assert decay vertex is 1m away from material)
+		if(posDecay.Perp()>2.3)return kFALSE; // R=2.3m helium bags
+		for(Double_t deltaZMaterial:{15.4, 25.2}){
+			Double_t zMaterial = ZFVIn + deltaZMaterial;
+			if( posDecay.Z() > zMaterial - 1. && posDecay.Z() < zMaterial + 1. ) return kFALSE;
+		}
+		// kinematic cuts
+		if( pCA[0].E() > 2 && pCA[1].E() > 2  && iOnTracker1 == 2 && iOnTracker4 == 2 && iOnECal == 2 && iOnMuonDetector == 2) {
 			TLorentzVector p_vis = (pCA[0]+pCA[1]), pHarder = pCA[0].E()>pCA[1].E() ? pCA[0]:pCA[1];
-			Double_t Q2_vis = (pHarder + pMiss).M2(), nu_vis = pMiss.E();
-			if(  (Q2_vis < 0.2 * MP*nu_vis ) && ( MP*MP + 2*MP*nu_vis - Q2_vis < 4.) && (p_vis.Pt() + p_vis.Mt() < 3 )) return kTRUE;
+			Double_t pNu  =  pCA[1].Z() + pCA[0].Z();
+			Double_t Q2_vis = (TLorentzVector(0,0,pNu,pNu) - pHarder).M2(), nu_vis = TMath::Sqrt(MP*MP+p_vis.Perp2());
+			if(  (Q2_vis < 0.2 * MP*nu_vis ) && ( MP*MP + 2*MP*nu_vis - Q2_vis < 4.) && (p_vis.Pt() + p_vis.Mt() < 3. )) return kTRUE;
 		}
 		return kFALSE;
 	}
@@ -1752,7 +1792,7 @@ Bool_t ExpParameters::twoMuonCondition(Int_t iOnTracker1, Int_t iOnTracker4, Int
 	return kFALSE;
 }
 
- /// \fn twoMuonCondition
+ /// \fn twoHadronCondition
  /// \Brief
  /// Experimental cut to select two hadrons
  /// \EndBrief
@@ -1802,7 +1842,7 @@ Bool_t ExpParameters::twoHadronCondition(Int_t iOnTracker1, Int_t iOnTracker4, I
 	return kFALSE;
 }
 
- /// \fn twoMuonCondition
+ /// \fn muonHadronCondition
  /// \Brief
  /// Experimental cut to select muon+hadron
  /// \EndBrief
@@ -1816,6 +1856,13 @@ Bool_t ExpParameters::muonHadronCondition(Int_t iOnTracker1, Int_t iOnTracker4, 
 		return kFALSE;
 	}
 	if(expNum == 3){//NuTeV
+		// FV cuts (assert decay vertex is 1m away from material)
+		if(posDecay.Perp()>2.3)return kFALSE; // R=2.3m helium bags
+		for(Double_t deltaZMaterial:{15.4, 25.2}){
+			Double_t zMaterial = ZFVIn + deltaZMaterial;
+			if( posDecay.Z() > zMaterial - 1. && posDecay.Z() < zMaterial + 1. ) return kFALSE;
+		}
+		// kinematic cuts
 		if( pCA[0].E() > 10. && pCA[1].E() > 2. && iOnTracker1 == 2 && iOnTracker4 == 2 &&  iChOnECal == 2  && iOnMuonDetector == 1) return kTRUE;
 		return kFALSE;
 	}
@@ -1844,11 +1891,11 @@ Bool_t ExpParameters::muonHadronCondition(Int_t iOnTracker1, Int_t iOnTracker4, 
 	return 0;
 	}
 
- /// \fn twoMuonCondition
+ /// \fn electronMuonCondition
  /// \Brief
  /// Experimental cut to select muon+electron
  /// \EndBrief
-Bool_t ExpParameters::electronMuonCondition(Double_t totalEnergyAcceptance, Int_t iOnTracker1, Int_t iOnTracker4, Int_t iChOnECal, Int_t iOnMuonDetector, TVector3 posDecay, TVector3 posECal[2], TLorentzVector pCA[2], TLorentzVector pMiss){
+Bool_t ExpParameters::electronMuonCondition(Double_t totalEnergyAcceptance, Int_t iOnTracker1, Int_t iOnTracker4, Int_t iChOnECal, Int_t iOnMuonDetector, TVector3 posDecay, TVector3 posECal[2], TLorentzVector pCA[2]){
 	Double_t radiuspos0 = posECal[0].XYvector().Mod();
 	TVector3 diffECal = posECal[1]-posECal[0];
 	Double_t distance = diffECal.Mag();
@@ -1864,10 +1911,18 @@ Bool_t ExpParameters::electronMuonCondition(Double_t totalEnergyAcceptance, Int_
 		return kFALSE;
 	}
 	else if(expNum == 3){ //NuTeV
-		if( pCA[0].E() > 10. && pCA[1].E() > 2. && iOnTracker1 == 2 && iOnTracker4 == 2 &&  iChOnECal == 2  && iOnMuonDetector == 1) {
+		// FV cuts (assert decay vertex is 1m away from material)
+		if(posDecay.Perp()>2.3)return kFALSE; // R=2.3m helium bags
+		for(Double_t deltaZMaterial:{15.4, 25.2}){
+			Double_t zMaterial = ZFVIn + deltaZMaterial;
+			if(posDecay.Z() > zMaterial - 1. && posDecay.Z() < zMaterial + 1.) return kFALSE;
+		}
+		// // kinematic cuts
+		if( pCA[0].E() > 2 && pCA[1].E() > 2  && iOnTracker1 == 2 && iOnTracker4 == 2 && iChOnECal == 2 && iOnMuonDetector == 2) {
 			TLorentzVector p_vis = (pCA[0]+pCA[1]);
-			Double_t Q2_vis = (pCA[0] + pMiss).M2(), nu_vis = pMiss.E();
-			if(  (Q2_vis < 0.2 * MP*nu_vis ) && ( MP*MP + 2*MP*nu_vis - Q2_vis > 4.) && (p_vis.Pt() + p_vis.Mt() < 3 )) return kTRUE;
+			Double_t pNu  = p_vis.Z();
+			Double_t Q2_vis = (TLorentzVector(0,0,pNu,pNu) - pCA[1]).M2(), nu_vis = TMath::Sqrt(MP*MP+p_vis.Perp2());
+			if(  (Q2_vis < 0.2 * MP*nu_vis ) && ( MP*MP + 2*MP*nu_vis - Q2_vis < 4.) && (p_vis.Pt() + p_vis.Mt() < 3. )) return kTRUE;
 		}
 		return kFALSE;
 	}
@@ -1900,7 +1955,7 @@ Bool_t ExpParameters::electronMuonCondition(Double_t totalEnergyAcceptance, Int_
 	return kFALSE;
 	}
 
- /// \fn twoMuonCondition
+ /// \fn electronHadronCondition
  /// \Brief
  /// Experimental cut to select hadron+electron
  /// \EndBrief
@@ -1939,11 +1994,11 @@ Bool_t ExpParameters::electronHadronCondition(Int_t iOnTracker1, Int_t iOnTracke
 	return 0;
 	}
 
- /// \fn twoMuonCondition
+ /// \fn twoElectronCondition
  /// \Brief
  /// Experimental cut to select two electrons
  /// \EndBrief
-Bool_t ExpParameters::twoElectronCondition(Int_t iOnTracker1, Int_t iOnTracker4, Int_t iOnECal, Double_t totalEnergyAcceptance,TVector3 posDecay, TVector3 posFVEnd[2], TVector3 posECal[2], TLorentzVector pCA[2], TLorentzVector pMiss){
+Bool_t ExpParameters::twoElectronCondition(Int_t iOnTracker1, Int_t iOnTracker4, Int_t iOnECal, Double_t totalEnergyAcceptance,TVector3 posDecay, TVector3 posFVEnd[2], TVector3 posECal[2], TLorentzVector pCA[2]){
 
 	if(expNum == 1||expNum == 19){ // BEBC
 		if( pCA[0].P() > 1 && pCA[1].P() > 1 && iOnECal == 2 ) {

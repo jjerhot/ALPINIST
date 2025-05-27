@@ -85,6 +85,7 @@ int main(int argc, char** argv) {
         std::cout << std::endl << "\t --linear-y\t\tuse linear scale for y-axis instead of logarithmic" << std::endl;
         std::cout << std::endl << "\t --variable-y\t\tchoose variable for y-axis, default is Width [GeV]; options available: " << std::endl << "\t\t\t";
             for(auto ivar : yVars) std::cout << ivar.Data() << ", ";
+        std::cout << std::endl << "\t --active-coupling\t\tchoose active coupling for which to simulate decays (only applicable to hnl, default all); options available: El, Mu, Tau, all";
         std::cout << std::endl;
         return 0;
     }
@@ -182,6 +183,7 @@ int main(int argc, char** argv) {
     Bool_t xIsLin = false;
     Bool_t yIsLin = false;
     Int_t yVar = 0; //0-Decay width (GeV), 1-tau (fs), 2-ctau (m)
+    Int_t actCoup;
 
 	if(input.cmdOptionExists("--natt")){
         const std::string &nbins = input.getCmdOption("--natt");
@@ -268,7 +270,29 @@ int main(int argc, char** argv) {
         yVar = std::distance(yVars.begin(), itr);
     }
 
-    DecayMCProcess(exotic, experiment, productionmode, decaymode, nEvents, allInAcceptance, nAttempts, verbose, seed, flatDecay, flatDalitz,nBinsX,nBinsY,xIsLin,yIsLin,yVar);
+    if(!input.cmdOptionExists("--active-coupling")) {
+        actCoup = -1; //0-Decay width (GeV)
+	} else if (exotic != 1){
+        std::cout << "[Error] Flag --active-coupling only applicable to exotic hnl, exotic chosen was '";
+        std::cout << exoLabels.at(exotic) << "'."<< std::endl;
+        return 1;
+    }else{
+        std::string actCoupChosen = input.getCmdOption("--active-coupling");
+        if (actCoupChosen != "all"){
+            actCoupChosen.insert(0, 1 , '-'); 
+            actCoupChosen.append("Mixing");
+            auto itr = std::find(activeCouplings[exotic].begin(), activeCouplings[exotic].end(), actCoupChosen);
+            if(itr == activeCouplings[exotic].end()){
+                std::cout << "[Error] Invalid active coupling: '" << actCoupChosen.substr(1,actCoupChosen.length()-7) << "'. Use values ";
+                for(auto coupling : activeCouplings[exotic]) std::cout << coupling.Remove(0,1).Remove(coupling.Length()-6,6) << ", ";
+                std::cout << "all " << std::endl;
+                return 1;
+            }
+            actCoup = std::distance(activeCouplings[exotic].begin(), itr);
+        } else actCoup = -1;
+    }
+
+    DecayMCProcess(exotic, experiment, productionmode, decaymode, nEvents, allInAcceptance, nAttempts, verbose, seed, flatDecay, flatDalitz,nBinsX,nBinsY,xIsLin,yIsLin,yVar,actCoup);
 
     return 0;
 }

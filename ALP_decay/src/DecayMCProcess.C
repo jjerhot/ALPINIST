@@ -19,6 +19,8 @@
 #include "TMath.h"
 #include "TFile.h"
 #include "TTree.h" //for TTree
+#include "TTreeReader.h"
+#include "TTreeReaderValue.h"
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
@@ -81,8 +83,7 @@ void FillCDAzTAX(std::vector<Particle*>, TH2D*, const TVector3, const Double_t);
 void DecayMCProcess(Int_t exoticIndex, Int_t experiment, Int_t productionmode, Int_t decaymode, Int_t numberOfMCevents,
 					Bool_t acc = true, Int_t nAttempts = 1000, Bool_t verb = false, Int_t seed = 0,
 					Bool_t flat = false, Bool_t dalitz = false, Int_t nBinsX = 101, Int_t nBinsY = 101,
-					Bool_t xIsLin = false, Bool_t yIsLin = false, Int_t yVar = 0){
-	std::cout << "xIsLin:" << xIsLin << " yIsLin:" << yIsLin << " yVar:" << yVar <<  " yName:" << yVars[yVar].Data() << std::endl;
+					Bool_t xIsLin = false, Bool_t yIsLin = false, Int_t yVar = 0, Int_t actCoup=-1){
 	// put default values for optional arguments for running with interpreter
 	TString exoName = exoLabels[exoticIndex];
 
@@ -90,8 +91,6 @@ void DecayMCProcess(Int_t exoticIndex, Int_t experiment, Int_t productionmode, I
 
 	allInAcceptance = acc;
 	verbose = verb;
-	flatDecay = flat;
-	flatDalitz = dalitz;
 	// check argument validity when running with interpreter
 	if(productionmode<0||productionmode>=prodmodeNames[exoticIndex].size()){
 		std::cout << "[Error] Invalid production mode: " <<  productionmode << ". Use values ";
@@ -109,10 +108,18 @@ void DecayMCProcess(Int_t exoticIndex, Int_t experiment, Int_t productionmode, I
 	}
 	TString decaymodeName = decaymodeNames[exoticIndex][decaymode];
 	ExpParameters genParam(exoticIndex,experiment,prodmodeName,decaymode,nBinsX,nBinsY,xIsLin,yIsLin,yVar);
+	flatDecay = flat;
+	flatDalitz = dalitz;
+	if(!(exoName.EqualTo("alp") || exoName.EqualTo("hnl"))){ //width tables only available for 3-body decays of alps and hnls)
+		if (genParam.finState.size() == 3)
+			std::cout << "[Info] No differential width tables available for exotic " <<  exoName << ". Defaulting to flat decay. ";
+		flatDalitz = true; 
+	}
+	Int_t maxMbDalitz = 9999; //maximum momentum bin for which dalitz table is defined
+
 	// ExpParameters genParam(exoticIndex,experiment,prodmodeName,decaymode);
 
 	std::cout << "[Info] Simulating "<< exoName << "s at " << genParam.GetExpLabel() << " in " << prodmodeName << " production mode and " << decaymodeName << " decay mode with POT " << genParam.GetPOT() << " and normCrossSec " << genParam.GetNormCrossSec() << std::endl;
-
 
 	//Ensuring out_directory exists
 	std::filesystem::path out_dir = Form("%s/%s/%s/",outPath.Data(),genParam.GetExpName().Data(),exoName.Data());
@@ -121,8 +128,8 @@ void DecayMCProcess(Int_t exoticIndex, Int_t experiment, Int_t productionmode, I
 
 
 	TString activeCoupling; // loop to cover the different possible hnl couplings
-	for (Int_t activeCouplingMode = 0; activeCouplingMode<activeCouplings[exoticIndex].size(); ++activeCouplingMode){
-		activeCoupling = activeCouplings[exoticIndex][activeCouplingMode];
+	std::vector<TString> activeCouplingsToLoop = actCoup == -1 ?  activeCouplings[exoticIndex] : std::vector<TString>({activeCouplings[exoticIndex][actCoup]}); //
+	for (TString& activeCoupling : activeCouplingsToLoop){
 		if(activeCoupling) std::cout << "\n[Info] Starting simulation for "<< activeCoupling << ":" <<std::endl;
 
 		//variables for 3-body decays
@@ -133,63 +140,56 @@ void DecayMCProcess(Int_t exoticIndex, Int_t experiment, Int_t productionmode, I
 		std::vector<Double_t> valGamma,m12List,m23List;
 		std::vector<std::array<std::vector<Double_t>,3>> ALPlist; // each mALP has unique m12 and m23 axis + m12*m23 values of diff. width  (contains m12List and m23List and valGamma)
 
-		if (genParam.finState.size() == 3 && !flatDalitz && (strcmp(exoName.Data(), "alp")||strcmp(exoName.Data(), "hnl"))){ //width tables only available for 3-body decays of alps and hnls
-			std::cout << "[Info] Simulating 3-body decay, will read differential width table" << std::endl;
-			// reading diff. width tables for 3-body decays
-			std::ifstream widthFile;
-			widthFile.open(Form("%s/%s%s.dat",widthPath.Data(),decaymodeName.Data(),activeCoupling.Data()));
-			if (!widthFile.is_open()) {
+		if (genParam.finState.size() == 3 && !flatDalitz){
+			TString dalitzPath = Form("%s/%s%s.root",widthPath.Data(),decaymodeName.Data(),decaymodeName.BeginsWith("PiPi") ? "" : activeCoupling.Data());
+			std::cout << "[Info] Simulating 3-body decay, will read differential width table " << dalitzPath << std::endl;
+			TFile *widthTFile = TFile::Open(dalitzPath,"READ");
+			if(!widthTFile->IsOpen()) {
 				std::cout << "[Error] Differential width table not found" << std::endl;
 				exit(1);
 			}
-			Double_t mALPCon, m12Con, m23Con, valCon; //containers
-			widthFile >> mALPCon >> m12Con >> m23Con >> valCon;
-			mALPList.push_back(mALPCon);
-			m12List.push_back(m12Con);
-			m23List.push_back(m23Con);
-			valGamma.push_back(valCon);
-			while (widthFile >> mALPCon >> m12Con >> m23Con >> valCon) {
-				if(mALPCon == mALPList.back()){
-					valGamma.push_back(valCon);
-					if(m12Con == m12List.back()) m23List.push_back(m23Con);
-					else{
-						m23List.clear();
-						m23List.push_back(m23Con);
-						m12List.push_back(m12Con);
-					}
-				} else{
-					//updating ALP mass
-					mALPList.push_back(mALPCon);
+			TTreeReader dalDensReader("DalitzDensity", widthTFile);
+			TTreeReaderValue<Float_t> mALPCon (dalDensReader, "Mass");
+			TTreeReaderValue<Float_t> m12Con  (dalDensReader, "M12");
+			TTreeReaderValue<Float_t> m23Con  (dalDensReader, "M23");
+			TTreeReaderValue<Float_t> valCon  (dalDensReader, "Density");
+			dalDensReader.Next();
+			mALPList.push_back(*mALPCon);
+			m12List.push_back(*m12Con);
+			m23List.push_back(*m23Con);
+			valGamma.push_back(*valCon);
 
-					//// FOR DEBUGGING /////
-					if(verbose)
-						std::cout << "Printing number of m12,m23,value points for mass " << mALPCon << " : " << m12List.size() << " " << m23List.size() << " " << valGamma.size() << std::endl;
-					///////////
-					
+			while(dalDensReader.Next()) {  // Theta[rad], Energy[GeV], MassFile[GeV], Val
+				if(*mALPCon == mALPList.back()) {
+					valGamma.push_back(*valCon);
+					if(*m12Con == m12List.back()) m23List.push_back(*m23Con);
+					else {
+						m23List.clear();
+						m23List.push_back(*m23Con);
+						m12List.push_back(*m12Con);
+					}
+				} else {
+					//updating Exotic mass
+					mALPList.push_back(*mALPCon);
 					//updating list
-					std::array<std::vector<Double_t>,3> mALPaxis = {m12List,m23List,valGamma};
-					ALPlist.push_back(mALPaxis);
+					std::array<std::vector<Double_t>, 3> mALPAxis = {m12List, m23List, valGamma};
+					ALPlist.push_back(mALPAxis);
 					valGamma.clear();
-					valGamma.push_back(valCon);
+					valGamma.push_back(*valCon);
 					m12List.clear();
-					m12List.push_back(m12Con);
+					m12List.push_back(*m12Con);
 					m23List.clear();
-					m23List.push_back(m23Con);
+					m23List.push_back(*m23Con);
 				}
 			}
-			if (widthFile.eof()){
-				std::array<std::vector<Double_t>,3> mALPaxis = {m12List,m23List,valGamma};
-				ALPlist.push_back(mALPaxis);
-				valGamma.clear();
-				m12List.clear();
-				m23List.clear();
-				std::cout << "[Info] Finished reading differential width table" << std::endl << std::endl;
-			} else{
-				std::cout << "[Error] Did not reach EoF when reading differential width table" << std::endl;
-				exit(1);
-			}
+			std::array<std::vector<Double_t>, 3> mALPAxis = {m12List, m23List, valGamma};
+			ALPlist.push_back(mALPAxis);
+			valGamma.clear();
+			m12List.clear();
+			m23List.clear();
 
-			widthFile.close();
+			widthTFile->Close();
+
 
 			std::cout << "[Info] Plots for "<< exoName <<" widths declaration and filling:" << std::endl;
 
@@ -519,15 +519,16 @@ void DecayMCProcess(Int_t exoticIndex, Int_t experiment, Int_t productionmode, I
 					else
 						tGenCorrectionMF.push_back(0.);
 					if(!flatDalitz){//DalitzMatching
-			 		while((logMassX - mALPList[curr_Dalitz_mb]) > ( (fabs(mALPList[curr_Dalitz_mb]) < fabs(logMassX) ? fabs(logMassX) : fabs(mALPList[curr_Dalitz_mb])) * 1.E-5)){ // evaluates for mALPList[curr_Dalitz_mb] definitelyLessThan logMassX 
-						++curr_Dalitz_mb;
-						if (curr_Dalitz_mb == mALPList.size()){
-							std::cout << "[Error] Mass bin with mass "<< massX <<"GeV above pregenerated Dalitz table mass range(max="<<pow(10,mALPList.back())<<"GeV). Please extend Dalitz table at least up to "<< pow(10,genParam.GetMaxMassX().back())<<"GeV or use the \"--flat-Dalitz\" flag " << std::endl;
-							exit(1);
+						while((logMassX - mALPList[curr_Dalitz_mb]) > ( (fabs(mALPList[curr_Dalitz_mb]) < fabs(logMassX) ? fabs(logMassX) : fabs(mALPList[curr_Dalitz_mb])) * 1.E-5)){ // evaluates for mALPList[curr_Dalitz_mb] definitelyLessThan logMassX 
+							++curr_Dalitz_mb;
+							if (curr_Dalitz_mb == mALPList.size()){
+								std::cout << "[Warning] Mass bin with mass "<< massX <<"GeV above pregenerated Dalitz table mass range(max="<<pow(10,mALPList.back())<<"GeV). Simulating flat dalitz decay for masses above." << std::endl;
+								maxMbDalitz = mb;
+								break;
+							}
 						}
-					}
-					mb_to_Dalitz_mbs.back()[mb] = curr_Dalitz_mb;
-				}	
+						mb_to_Dalitz_mbs.back()[mb] = curr_Dalitz_mb;
+					}	
 				} else
 					tGenCorrectionMF.push_back(1.); //no correction
 			}
@@ -654,7 +655,7 @@ void DecayMCProcess(Int_t exoticIndex, Int_t experiment, Int_t productionmode, I
 
 						if (genParam.finState.size() == 2) signalRegion = decayTo2Body(genParam,alpParam,eventWeight,exotic);
 						else if(genParam.finState.size() == 3){
-							if(!flatDalitz)
+							if(!flatDalitz && mb < maxMbDalitz)
 								signalRegion = decayTo3Body(genParam,alpParam,eventWeight,exotic,rescaleDalitz[mb_to_Dalitz_mbs[ifile][mb]],originalDalitz[mb_to_Dalitz_mbs[ifile][mb]]);
 							else signalRegion = decayTo3Body(genParam,alpParam,eventWeight,exotic,nullptr,nullptr);
 						} else if (genParam.finState.size() == 4) signalRegion = decayTo4Body(genParam,alpParam,eventWeight,exotic);
@@ -714,7 +715,7 @@ void DecayMCProcess(Int_t exoticIndex, Int_t experiment, Int_t productionmode, I
 
 							if (genParam.finState.size() == 2) signalRegion = decayTo2Body(genParam,alpParam,eventWeight,exotic);
 							else if(genParam.finState.size() == 3){
-								if(!flatDalitz) 
+								if(!flatDalitz && mb < maxMbDalitz) 
 									signalRegion = decayTo3Body(genParam,alpParam,eventWeight,exotic, rescaleDalitz[mb_to_Dalitz_mbs[ifile][mb]], originalDalitz[mb_to_Dalitz_mbs[ifile][mb]]);
 								else signalRegion = decayTo3Body(genParam,alpParam,eventWeight,exotic,nullptr, nullptr);
 							} else if (genParam.finState.size() == 4) signalRegion = decayTo4Body(genParam,alpParam,eventWeight,exotic);
@@ -930,6 +931,7 @@ void DecayMCProcess(Int_t exoticIndex, Int_t experiment, Int_t productionmode, I
 		// .. clearing Dalitz Plots to avoid memory leaks
 		if(!flatDalitz){
 			for(Int_t mb=0; mb<ALPlist.size(); ++mb){
+				if ( mb >= maxMbDalitz) break;
 				delete rescaleDalitz[mb];
 				for(Int_t ib=0; ib<4; ++ib)
 					delete originalDalitz[mb][ib];
@@ -1022,10 +1024,10 @@ Int_t decayTo2Body(ExpParameters &gen, AxionParameters &alp, Double_t &eventWeig
 		if(gen.GetDecayModeName() == "2Gamma") //for 2gamma decay check twoPhotonCondition
 			condition = gen.twoPhotonCondition(iOnECal, totalEnergyInAcceptance, exotic->GetEndPosition(), &posFVEndAll.front(), &posECalAll.front(), &lorMomAll.front());
 		else if(gen.GetDecayModeName() == "2El") //for 2el decay check twoPhotonCondition for charged
-			condition = gen.twoElectronCondition(iOnTracker1, iOnTracker4, iChOnECal, totalEnergyInAcceptance, exotic->GetEndPosition(), &posFVEndAll.front(), &posECalAll.front(), &lorMomAll.front(), missingMom);
+			condition = gen.twoElectronCondition(iOnTracker1, iOnTracker4, iChOnECal, totalEnergyInAcceptance, exotic->GetEndPosition(), &posFVEndAll.front(), &posECalAll.front(), &lorMomAll.front());
 		else if (gen.GetDecayModeName() == "2Mu"){ //2mu
 			sigacc = gen.GetSigacceptancemumu();
-			condition = gen.twoMuonCondition(iOnTracker1, iOnTracker4, iChOnECal, iOnMuonDetector, exotic->GetEndPosition(), &lorMomAll.front(), missingMom);
+			condition = gen.twoMuonCondition(iOnTracker1, iOnTracker4, iChOnECal, iOnMuonDetector, exotic->GetEndPosition(), &lorMomAll.front());
 		} else if (gen.GetDecayModeName() == "2Pi" || gen.GetDecayModeName() == "2K"){ //2hadrons
 			sigacc = gen.GetSigacceptancemumu();
 			condition = gen.twoHadronCondition(iOnTracker1, iOnTracker4, iChOnECal, iOnMuonDetector, exotic->GetEndPosition(), &lorMomAll.front());
@@ -1039,25 +1041,8 @@ Int_t decayTo2Body(ExpParameters &gen, AxionParameters &alp, Double_t &eventWeig
 		else{
 			std::cout<<"\r"<<"[Info] unrecognised final state treated as invisible decay"<<std::flush;
 		}
-	}else if (finalStates.size()==3) {
-		if(gen.GetDecayModeName() == "RhoNu") {//nupipi
-			condition = gen.twoHadronCondition(iOnTracker1, iOnTracker4, iChOnECal, iOnMuonDetector, exotic->GetEndPosition(), &lorMomAll.front());
-		} else { //nugammagamma from PiNu or EtaNu
-			condition = gen.twoPhotonCondition(iOnECal, totalEnergyInAcceptance, exotic->GetEndPosition(), &posFVEndAll.front(), &posECalAll.front(), &lorMomAll.front());
-		}
-
-	}else if( finalStates.size()==4){
-		std::vector<TVector3> posFVEndGammaSystem { {posFVEndAll.at(2), posFVEndAll.at(3)} }; // store final state projections
-		std::vector<TVector3> posECalGammaSystem   { {posECalAll.at(2), posECalAll.at(3)} }; // store final state projections
-		std::vector<TLorentzVector> lorMomGammaSystem { {lorMomAll.at(2), lorMomAll.at(3)} }; // store final state 4-mom
-		if (gen.GetDecayModeName() == "RhoMu"  ){ // 1mu 1hadron 2 gammas 
-			sigacc = gen.GetSigacceptancemumu();
-			condition = gen.muonHadronCondition(iOnTracker1, iOnTracker4, iChOnECal, iOnMuonDetector, exotic->GetEndPosition(), &lorMomAll.front())
-						&& gen.twoPhotonCondition(iOnECal, totalEnergyInAcceptance, exotic->GetEndPosition(), &posFVEndGammaSystem.front(), &posECalGammaSystem.front(), &lorMomGammaSystem.front());
-		} else if (gen.GetDecayModeName() == "RhoEl" ){
-			condition = gen.electronHadronCondition(iOnTracker1, iOnTracker4, iChOnECal, exotic->GetEndPosition(), &posECalAll.front(), &lorMomAll.front())
-						&& gen.twoPhotonCondition(iOnECal, totalEnergyInAcceptance, exotic->GetEndPosition(), &posFVEndGammaSystem.front(), &posECalGammaSystem.front(), &lorMomGammaSystem.front());
-		}
+	}else if (finalStates.size()==3) {//nugammagamma from PiNu or EtaNu
+		condition = gen.twoPhotonCondition(iOnECal, totalEnergyInAcceptance, exotic->GetEndPosition(), &posFVEndAll.front(), &posECalAll.front(), &lorMomAll.front());
 	}
 	finalStates.clear();
 	return condition;
@@ -1168,12 +1153,23 @@ Int_t decayTo3Body(ExpParameters &gen, AxionParameters &alp, Double_t &eventWeig
 
 	if ((gen.GetDecayModeName() == "NuMuMu" ) ){ 
 		sigacc = gen.GetSigacceptancemumu();
-		condition = iOnMuonDetector == 2 && gen.twoMuonCondition(iOnTracker1, iOnTracker4, iChOnECal, iOnMuonDetector, exotic->GetEndPosition(), &lorMomRest.front(), missingMom);
+		condition = iOnMuonDetector == 2 && gen.twoMuonCondition(iOnTracker1, iOnTracker4, iChOnECal, iOnMuonDetector, exotic->GetEndPosition(), &lorMomRest.front());
 	}else if ((gen.GetDecayModeName() == "NuElEl" )  ){ 
-		condition = gen.twoElectronCondition(iOnTracker1, iOnTracker4, iChOnECal, totalEnergyInAcceptance, exotic->GetEndPosition(), &posFVEndRest.front(), &posECalRest.front(), &lorMomRest.front(), missingMom);
+		condition = gen.twoElectronCondition(iOnTracker1, iOnTracker4, iChOnECal, totalEnergyInAcceptance, exotic->GetEndPosition(), &posFVEndRest.front(), &posECalRest.front(), &lorMomRest.front());
 	}else if ((gen.GetDecayModeName() == "NuElMu" )  ){ 
 		sigacc = gen.GetSigacceptancemumu();
-		condition = gen.electronMuonCondition(totalEnergyInAcceptance, iOnTracker1, iOnTracker4, iChOnECal, iOnMuonDetector, exotic->GetEndPosition(), &posECalRest.front(), &lorMomRest.front(), missingMom);
+		condition = gen.electronMuonCondition(totalEnergyInAcceptance, iOnTracker1, iOnTracker4, iChOnECal, iOnMuonDetector, exotic->GetEndPosition(), &posECalRest.front(), &lorMomRest.front());
+	}else if(gen.GetDecayModeName() == "PiPiNu") {//nupipi
+			condition = gen.twoHadronCondition(iOnTracker1, iOnTracker4, iChOnECal, iOnMuonDetector, exotic->GetEndPosition(), &lorMomRest.front());
+	}else if( finalStates.size()==4){
+		if (gen.GetDecayModeName() == "PiPiMu"  ){ // 1mu 1hadron 2 gammas 
+			sigacc = gen.GetSigacceptancemumu();
+			condition = gen.muonHadronCondition(iOnTracker1, iOnTracker4, iChOnECal, iOnMuonDetector, exotic->GetEndPosition(), &lorMomRest.front())
+						&& gen.twoPhotonCondition(iOnECal, totalEnergyInAcceptance, exotic->GetEndPosition(), &posFVEndPhotons.front(), &posECalPhotons.front(), &lorMomPhotons.front());
+		} else if (gen.GetDecayModeName() == "PiPiEl" ){
+			condition = gen.electronHadronCondition(iOnTracker1, iOnTracker4, iChOnECal, exotic->GetEndPosition(), &posECalRest.front(), &lorMomRest.front())
+						&& gen.twoPhotonCondition(iOnECal, totalEnergyInAcceptance, exotic->GetEndPosition(), &posFVEndPhotons.front(), &posECalPhotons.front(), &lorMomPhotons.front());
+		}
 	} else {
 		if(nCharged == 2){
 			sigacc = gen.GetSigacceptancemumu();

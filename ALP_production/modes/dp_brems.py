@@ -1,5 +1,5 @@
 # modes/dp_brems.py
-# dark photon bremsstrahlung production
+# dark photon bremsstrahlung production according to 1311.3870
 
 import numpy as np
 from multiprocessing import Pool
@@ -13,7 +13,7 @@ class brems_production:
 	def __init__(self, experiment,daugther_name):
 		self.exp = experiment
 		self.daughter = daugther_name
-		self.export_header = f"Differential {daugther_name} yield at {experiment} experiment produced in Dark Bremsstrahlung | generated with modified Weizsacker-Williams-approximation"
+		self.export_header = f"Differential {daugther_name} yield at {experiment} experiment produced in Dark Bremsstrahlung | generated with modified Weizsacker-Williams-approximation following 1311.3870"
 
 		self.th_list = np.linspace(setup.theta_min.get(self.exp,0.00018), setup.theta_max.get(self.exp,0.01098), num=setup.theta_bins).tolist()
 		en_halfstep = np.floor(9.5*setup.p_beam.get(self.exp,400)/setup.energy_bins/2)/10
@@ -22,12 +22,19 @@ class brems_production:
 		for iFile in range(len(setup.mass_bins)):
 			self.m_lists.append(np.logspace(np.log10(setup.mass_min[iFile]), np.log10(setup.mass_max[iFile]), num=setup.mass_bins[iFile]).tolist())
 
-	def process_pool(self,nthreads):
+	def process_pool(self,nthreads,single_mass_point=0):
 		"""Wrapper to run production in parallel threads.
 		Args:
 			nthreads (int): number of parallel threads to run
+			single_mass_point (float, optional): Single mass point for which to run. Defaults to 0.
 		"""
 
+		export_units_header = "Theta_X[rad] E_X[GeV] m_X[GeV] dY[per(rad GeV N_pN eps^2)]"
+
+		if single_mass_point>0:
+			list_brems = self.dp_brems_process(single_mass_point)
+			f.export(setup.experiments[self.exp],self.daughter + "_Brems_beam" + str(setup.p_beam[self.exp]) + "GeV_" + str(int(single_mass_point*1e6)) + "keV_" + setup.experiments[self.exp] + ".dat",np.reshape(list_brems,(len(self.th_list)*len(self.en_list),4)),header = self.export_header+'\n'+export_units_header)
+			return
 		for iFile in range(len(setup.mass_bins)):
 			iFileName = str(int(setup.mass_min[iFile]*1000)) + "to" + str(int(setup.mass_max[iFile]*1000)) + "MeV"
 			if setup.mass_min[iFile]*1000 < 1:
@@ -41,7 +48,6 @@ class brems_production:
 			pool.join() 
 
 			# export
-			export_units_header = "Theta[rad] E_x[GeV] dY[per(rad GeV N_pN eps^2)]"
 			f.export(setup.experiments[self.exp],self.daughter + "_Brems_beam" + str(setup.p_beam[self.exp]) + "GeV_" + iFileName + "_" + setup.experiments[self.exp] + ".dat",np.reshape(list_brems,(len(self.th_list)*len(self.en_list)*len(self.m_lists[iFile]),4)),header = self.export_header+'\n'+export_units_header)
 		return
 

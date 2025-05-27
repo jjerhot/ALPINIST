@@ -13,6 +13,7 @@ channels_decay = [  '2El',
                     ]
 
 channels_production = [ 
+                        'Brems',
                         'Bmeson',
                         'Bmeson2S'
                         ]

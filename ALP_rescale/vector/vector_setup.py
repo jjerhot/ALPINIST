@@ -9,14 +9,18 @@ couplings = [   'eps'
             ]
 
 experiments = { 'NA62':         'NA62',
+                'HIKE':         'NA62',
                 'CHARM':        'CHARM',
                 'NuCal':        'NuCal',
                 'SHiP':         'SHiP',
-                'SHiPecn3':     'SHiP',
+                'SHiPecn4':     'SHiP',
                 'DarkQuest':    'DarkQuest',
+                'DarkQuestPhase2':'DarkQuest',
                 'DUNE':         'DUNE',
                 'SHADOWS':      'SHADOWS',
                 'NuTeV':        'NuTeV',
+                'BEBC':         'BEBC',
+                'BEBCcuboid':   'BEBC',
                 'ORCA':         'ORCA'}
 
 channels_decay = [  '2El',
@@ -32,16 +36,22 @@ channels_decay = [  '2El',
 channels_production = [ 
                         'Brems',
                         'MesonDecay',
-                        'Mixing',
+                        'MixingRho',
+                        'MixingOmega',
+                        'MixingPhi',
                         ]
 
 reference_couplings = {
                         'Brems':        1,
                         'MesonDecay':   1,
-                        'Mixing':       1,
+                        'MixingRho':    1,
+                        'MixingOmega':  1,
+                        'MixingPhi':    1,
                         }
 scaling_exponent =    {
                         'Brems':        2,
                         'MesonDecay':   2,
-                        'Mixing':       2,
+                        'MixingRho':    1,
+                        'MixingOmega':  1,
+                        'MixingPhi':    1,
                         }

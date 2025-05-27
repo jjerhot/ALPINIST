@@ -12,12 +12,6 @@ from tqdm import tqdm
 import sys
 
 rng = np.random.default_rng()
-setup.pythia_dir = os.environ.get('PYTHIA8', None)
-if setup.pythia_dir is None:
-    print("[Error:] \t Pythia not found. Please set PYTHIA8 to the corresponding directory")
-    sys.exit(1)
-
-### from hnl branch
 
 class decay_to_2_body:
     """Generic class to decay parent (m_parent) in a two body decay (m_exo, m_daughter)
@@ -40,7 +34,7 @@ class decay_to_2_body:
         p_exo_cm = np.sqrt(f.lambda_Kallen(m_parent,m_daughter,m_exo))/(2*m_parent)
         data_en_th_exo = f.decay_meson_vectorized(p_exo_cm, m_exo, parent_frame_lorentz_boosts) 
         if not data_en_th_exo.size: return np.zeros((2,1))
-        data_en_th_clean = data_en_th_exo[np.where(0<=data_en_th_exo[:,0])]
+        data_en_th_clean = data_en_th_exo[np.logical_and(np.all(np.isfinite(data_en_th_exo),axis=1), 0<=data_en_th_exo[:,0])]
         data_en_th_clean[:,1] = np.clip(data_en_th_clean[:,1],1E-10,None) #set min value for log theta
         return np.log(data_en_th_clean).T
     
@@ -72,7 +66,7 @@ class decay_to_n_body:
     def exo_en_th_array(parent_frame_lorentz_boosts, exo_weights, exo_parent_frame_momenta):
         p_exo_cms = rng.choice(exo_parent_frame_momenta, size = parent_frame_lorentz_boosts.shape[0], p = exo_weights)
         data_en_th_exo = f.decay_meson_vectorized(p_exo_cms, np.nan, parent_frame_lorentz_boosts) 
-        data_en_th_clean = data_en_th_exo[np.where(0<=data_en_th_exo[:,0])]
+        data_en_th_clean = data_en_th_exo[np.logical_and(np.all(np.isfinite(data_en_th_exo),axis=1), 0<=data_en_th_exo[:,0])]
         data_en_th_clean[:,1] = np.clip(data_en_th_clean[:,1], 1E-10, None) #set min value for log theta
         return np.log(data_en_th_clean).T
 
@@ -124,6 +118,11 @@ class bmeson_decay_production:
         self.active_coupling = active_coupling
         self.export_header = f"Differential {daugther_name} yield at {experiment} experiment produced in Bmeson decays | generated with statistics of {n_production*n_decay} events using "
 
+        p_beam = setup.p_beam.get(self.exp,400)
+        self.th_list = np.linspace(setup.theta_min.get(self.exp,0.00018), setup.theta_max.get(self.exp,0.01098), num=setup.theta_bins).tolist()
+        self.en_list = np.linspace(setup.energy_min.get(p_beam), setup.energy_max.get(p_beam), num=setup.energy_bins).tolist()
+        self.norm_xsec = c.sigma_bb[p_beam] / c.sigma_pp[p_beam] * c.A_target[experiment]**(1./3)
+
         self.th_list = np.linspace(setup.theta_min.get(self.exp,0.00018), setup.theta_max.get(self.exp,0.01098), num=setup.theta_bins).tolist()
         self.en_list = np.linspace(setup.energy_min.get(setup.p_beam.get(self.exp,400)), setup.energy_max.get(setup.p_beam.get(self.exp,400)), num=setup.energy_bins).tolist()
         self.m_lists = []
@@ -144,7 +143,7 @@ class bmeson_decay_production:
             # self.bsbar_meson_list   = np.array([[-531,0,0,1],[-531,0,0,1]])
         elif use_external:
             print("[Info:] \t Using external B meson source")
-            filename = os.getcwd()+"/tab_mesons/beauty/"
+            filename = os.path.dirname(os.path.realpath(__file__))+"/../tab_mesons/beauty/"
             filename += "hsbbbar_"+("massless_" if use_massless else "")+("statcomb23partprod_" if use_3part_prod else "")+str(setup.p_beam[self.exp])+'GeV_'+f.number_to_3sigfigs_str(n_production)+".dat"
             if target_code != "2212": 
                 PID_to_extension =  {"2112":"pn", "100822080":"pPb"}
@@ -165,7 +164,7 @@ class bmeson_decay_production:
                 sys.exit(1)
         else:
             print("[Info:] \t Starting Pythia")
-            self._init_pythia_()
+            self._init_pythia_(beam_particle_code, target_code, pythia_Ppdf_code, pythia_extra_args)
 
             print("[Info:] \t Pythia production finished")
 
@@ -230,58 +229,53 @@ class bmeson_decay_production:
             pythia.next()
             for isubEvent in range(pythia.event.size()):
                 evt = pythia.event[isubEvent]
-                if abs(evt.id()) not in evtID_to_list.keys(): continue
+                if evt.id() not in evtID_to_list.keys(): continue
                 evtID_to_list[evt.id()].append([evt.id(),evt.px(),evt.py(),evt.pz()])
-                # d.append()
-                # if evtID == 411: #d meson
-                #     d.append([evtID,pythia.event[isubEvent].px(),pythia.event[isubEvent].py(),pythia.event[isubEvent].pz()])
+
         self.b0_meson_list = np.array(evtID_to_list[521])
         self.b_meson_list  = np.array(evtID_to_list[511])
         self.bs_meson_list = np.array(evtID_to_list[531])
         self.b0bar_meson_list = np.array(evtID_to_list[-521])
         self.bbar_meson_list  = np.array(evtID_to_list[-511])
         self.bsbar_meson_list = np.array(evtID_to_list[-531])
+        if save_pythia_file:
+            file_info  =  "Beauty meson momenta as generated for " + self.nprod +" impining protons, with PYTHIA (version "+str(pythia.parm("Pythia:versionNumber"))+") and modifiers " + ', '.join(pythia_modifiers)
+            np.savetxt(f".ALP_production/tab_mesons/beauty/hsbbbar_{setup.p_beam[self.exp]}GeV_{f.number_to_3sigfigs_str(self.nprod)}.dat", np.concatenate(evtID_to_list.values()), header=file_info, fmt='%i %4f %4f %3f')
         return
 
-        # for _ in range(self.nprod):
-        #     pythia.next()
-        #     for isubEvent in range(pythia.event.size()):
-        #         evtID = np.abs(pythia.event[isubEvent].id())
-        #         if evtID == 521:#b meson
-        #             self.b0_meson_list.append([evtID,pythia.event[isubEvent].px(),pythia.event[isubEvent].py(),pythia.event[isubEvent].pz()])
-        #         if evtID == -521:#b meson
-        #             self.b0bar_meson_list.append([evtID,pythia.event[isubEvent].px(),pythia.event[isubEvent].py(),pythia.event[isubEvent].pz()])
-        #         elif evtID == 521:#b0 meson
-        #             self.b_meson_list.append([evtID,pythia.event[isubEvent].px(),pythia.event[isubEvent].py(),pythia.event[isubEvent].pz()])
-        #         elif evtID == 531:#bs meson
-        #             self.bs_meson_list.append([evtID,pythia.event[isubEvent].px(),pythia.event[isubEvent].py(),pythia.event[isubEvent].pz()])
-        # return
-
-    def process_pool(self, nthreads, active_couplings = [""]):
+    def process_pool(self, nthreads, active_couplings = [""], single_mass_point=0):
         """Wrapper to run production in parallel threads.
         Args:
             nthreads (int): number of parallel threads to run
+            single_mass_point (float, optional): Single mass point for which to run. Defaults to 0.
         """
-        for active_coupling in active_couplings:
+
+        for active_coupling in active_couplings:   
+            export_units_header = "Theta[rad], E_x [GeV], m_x [GeV], dY[per(rad GeV " + {"hnl":f"U2_{active_coupling}", "alp":"g_bs_eff^2/GeV^2", "ds":"Y^2" }[self.daughter_exo] + ')]'
+
+            mixing_info  = "-" + active_coupling + "Mixing" if active_coupling else ""
             if active_coupling: print("[Info:] \t Starting "+self.daughter_exo+" production with active coupling U2_" + active_coupling)
+            export_info_header = self.export_header if not active_coupling else self.export_header.replace(' yield', f'({active_coupling} mixing) yield')
             self.active_coupling = active_coupling
-            for iFile in range(len(setup.mass_bins)):
-                iFileName = str(int(setup.mass_min[iFile]*1000)) + "to" + str(int(setup.mass_max[iFile]*1000)) + "MeV"
-                if setup.mass_min[iFile]*1000 < 1:
-                    iFileName = "01to" + str(int(setup.mass_max[iFile]*1000)) + "MeV"
-                print("[Info:] \t Starting exotic production for mass range",setup.mass_min[iFile],"to",setup.mass_max[iFile]," GeV with",nthreads,"threads")
-                export_info_header = self.export_header if not active_coupling else self.export_header.replace(' yield', f'({active_coupling} mixing) yield')
 
-                with Pool(processes=nthreads) as pool:
-                    list_b = list(tqdm(pool.imap(self.b_meson_decay_process, self.m_lists[iFile]), total=len(self.m_lists[iFile])))
+            if single_mass_point>0:
+                list_b = self.b_meson_decay_process(single_mass_point)
+                f.export(setup.experiments[self.exp],self.daughter + "_Bmeson"+mixing_info+"_beam" + str(setup.p_beam[self.exp]) + "GeV_" + str(int(single_mass_point*1e6)) + "keV_" + setup.experiments[self.exp] + ".dat",np.reshape(list_b,(len(self.th_list)*len(self.en_list),4)),header = self.export_header+'\n'+export_units_header)
+            else:
+                for iFile in range(len(setup.mass_bins)):
+                    iFileName = str(int(setup.mass_min[iFile]*1000)) + "to" + str(int(setup.mass_max[iFile]*1000)) + "MeV"
+                    if setup.mass_min[iFile]*1000 < 1:
+                        iFileName = "01to" + str(int(setup.mass_max[iFile]*1000)) + "MeV"
+                    print("[Info:] \t Starting exotic production for mass range",setup.mass_min[iFile],"to",setup.mass_max[iFile]," GeV with",nthreads,"threads")
 
-                pool.close()
-                pool.join()
+                    with Pool(processes=nthreads) as pool:
+                        list_b = list(tqdm(pool.imap(self.b_meson_decay_process, self.m_lists[iFile]), total=len(self.m_lists[iFile])))
 
-                # export   
-                mixing_info  = "-" + active_coupling + "Mixing" if active_coupling else ""
-                export_units_header = "Theta[rad] E_x [GeV] dY[per(rad GeV N_bbbar " + {"hnl":f"U2_{active_coupling}", "alp":"g_bs_eff^2/GeV^2", "ds":"Y^2" }[self.daughter_exo] + ')]'
-                f.export(setup.experiments[self.exp],self.daughter_exo + "_Bmeson"+mixing_info+"_beam" + str(setup.p_beam[self.exp]) + "GeV_" + iFileName + "_" + setup.experiments[self.exp] + ".dat",np.reshape(list_b,(len(self.th_list)*len(self.en_list)*len(self.m_lists[iFile]),4)),header = export_info_header+'\n'+export_units_header)
+                    pool.close()
+                    pool.join()
+
+                    # export   
+                    f.export(setup.experiments[self.exp],self.daughter_exo + "_Bmeson"+mixing_info+"_beam" + str(setup.p_beam[self.exp]) + "GeV_" + iFileName + "_" + setup.experiments[self.exp] + ".dat",np.reshape(list_b,(len(self.th_list)*len(self.en_list)*len(self.m_lists[iFile]),4)),header = export_info_header+'\n'+export_units_header)
         return
   
     def b_meson_decay_process(self, m_exo):
@@ -296,46 +290,28 @@ class bmeson_decay_production:
         kdes = []
         weights = []
         if self.daughter_exo in ["alp", "ds"]:
-            curr_weight = 0.
-            successfull_decays = []
-            if(m_exo+c.m_K <c.m_B): 
-                b_decay = decay_to_2_body(self.b_boosts, m_exo, c.m_B, c.m_K)
-                if b_decay.success: 
-                    successfull_decays.append(b_decay)
-                    curr_weight += self.multiplicities["Bmeson"]*f.get_branching_ratios(self.daughter_exo, m_exo, "Bmeson", "K", 1)
-                del b_decay
-            if(m_exo+c.m_K0<c.m_B0):
-                b0_decay = decay_to_2_body(self.b0_boosts, m_exo, c.m_B0, c.m_K0)
-                if b0_decay.success: 
-                    successfull_decays.append(b0_decay)
-                    curr_weight += self.multiplicities["B0meson"]*f.get_branching_ratios(self.daughter_exo, m_exo, "B0meson", "K0", 1)
-                del b0_decay
-            if successfull_decays:
-                bK_decay = np.sum(successfull_decays)
-                kdes.append(bK_decay.kde())
-                weights.append(curr_weight)
-                del bK_decay
-            
-            curr_weight = 0.
-            successfull_decays = []
-            if(m_exo+c.m_Kstar <c.m_B): 
-                b_decay = decay_to_2_body(self.b_boosts, m_exo, c.m_B, c.m_Kstar)
-                if b_decay.success: 
-                    successfull_decays.append(b_decay)
-                    curr_weight += self.multiplicities["Bmeson"]*f.get_branching_ratios(self.daughter_exo, m_exo, "Bmeson", "Kstar", 1)
-                del b_decay
-            if(m_exo+c.m_K0star<c.m_B0):
-                b0_decay = decay_to_2_body(self.b0_boosts, m_exo, c.m_B0, c.m_K0star)
-                if b0_decay.success: 
-                    successfull_decays.append(b0_decay)
-                    curr_weight += self.multiplicities["B0meson"]*f.get_branching_ratios(self.daughter_exo, m_exo, "B0meson", "K0star", 1)
-                del b0_decay
-            if successfull_decays:
-                bKstar_decay = np.sum(successfull_decays)
-                kdes.append(bKstar_decay.kde())
-                weights.append(curr_weight)
-                del bKstar_decay
-        if self.daughter_exo == "hnl":
+            for fin_state in setup.kaons_list:
+                #charged
+                m_K = c.m_K[fin_state]
+                if(m_exo+m_K<c.m_B):
+                    b_decay = decay_to_2_body(self.b_boosts, m_exo, c.m_B, m_K)
+                    if b_decay.success: 
+                        kdes.append(b_decay.kde())
+                        weights.append(self.multiplicities["Bmeson"]*f.get_branching_ratios(self.daughter_exo, m_exo, "Bmeson", fin_state, 1))
+                    del b_decay
+                
+                #neutral
+                if fin_state == "K" or fin_state == "Kstar_892" or fin_state == "K2star_1430":
+                    m_K = c.m_K[fin_state+"_0"]
+                else: m_K = c.m_K[fin_state]
+                if(m_exo+m_K<c.m_B0):
+                    b0_decay = decay_to_2_body(self.b0_boosts, m_exo, c.m_B0, m_K)
+                    if b0_decay.success: 
+                        kdes.append(b0_decay.kde())
+                        weights.append(self.multiplicities["B0meson"]*f.get_branching_ratios(self.daughter_exo, m_exo, "B0meson", fin_state, 1))
+                    del b0_decay
+                
+        elif self.daughter_exo == "hnl":
             if self.active_coupling == "El" and m_exo+c.m_el<c.m_B:
                 b_decay = decay_to_2_body(self.b_boosts, m_exo, c.m_B, c.m_el)
                 if b_decay.success: 
@@ -472,7 +448,7 @@ class bmeson_decay_production:
                         curr_weight += self.multiplicities["Bmeson"]*f.get_branching_ratios("hnl", m_exo, "Bmeson", ["Mu","D0star"], 1)
                     del b_D0starMu_decay
                 if m_exo+c.m_mu+c.m_Dstar<c.m_B0:
-                    b0_DstarMu_decay = decay_to_n_body(self.b0_boosts, m_exo, c.m_B0,[c.m_mu, c.m_Dstar], weight_function=f.hnl_production_BRs.get_differential_weight_function("B0meson", ["El","Dstar"]))
+                    b0_DstarMu_decay = decay_to_n_body(self.b0_boosts, m_exo, c.m_B0,[c.m_mu, c.m_Dstar], weight_function=f.hnl_production_BRs.get_differential_weight_function("B0meson", ["Mu","Dstar"]))
                     if b0_DstarMu_decay.success: 
                         successfull_decays.append(b0_DstarMu_decay)
                         curr_weight += self.multiplicities["B0meson"]*f.get_branching_ratios("hnl", m_exo, "B0meson", ["Mu","Dstar"], 1)
@@ -531,7 +507,7 @@ class bmeson_decay_production:
                     norm_yield = 0.
                     for weight, kde in zip(weights, kdes):
                         if weight==0.: continue
-                        norm_yield += f.f_kde(kde, weight, en_exo, th_exo)[0]
+                        norm_yield += f.f_kde(kde, self.norm_xsec*weight, en_exo, th_exo)[0]
                     data_sublist_bk.append([th_exo, en_exo, m_exo, norm_yield])
             else:
                 for th_exo in self.th_list:
@@ -539,12 +515,18 @@ class bmeson_decay_production:
             data_list_bk_exo.append([data_sublist_bk])  
         return data_list_bk_exo
 
-    def process_pool_2s(self,nthreads):
+    def process_pool_2s(self,nthreads,single_mass_point=0):
         """Wrapper to run production in parallel threads.
         Args:
             nthreads (int): number of parallel threads to run
+            single_mass_point (float, optional): Single mass point for which to run. Defaults to 0.
         """
 
+        export_units_header = "Theta[rad], E_x [GeV], m_x [GeV], dY per [rad GeV LambdaS]"
+        if single_mass_point>0:
+            list_bk = self.b_meson_decay_process_2s(single_mass_point)
+            f.export(setup.experiments[self.exp],self.daughter + "_Bmeson2S_beam" + str(setup.p_beam[self.exp]) + "GeV_" + str(int(single_mass_point*1e6)) + "keV_" + setup.experiments[self.exp] + ".dat",np.reshape(list_bk,(len(self.th_list)*len(self.en_list),4)),header = self.export_header+'\n'+export_units_header)
+            return
         for iFile in range(len(setup.mass_bins)):
             iFileName = str(int(setup.mass_min[iFile]*1000)) + "to" + str(int(setup.mass_max[iFile]*1000)) + "MeV"
             if setup.mass_min[iFile]*1000 < 1:
@@ -558,7 +540,6 @@ class bmeson_decay_production:
             pool.join()
             
             # export
-            export_units_header = "Theta [rad], E_x [GeV], dY per [rad GeV N_bbbar LambdaS]"
             f.export(setup.experiments[self.exp],self.daughter_exo + "_Bmeson2S_beam" + str(setup.p_beam[self.exp]) + "GeV_" + iFileName + "_" + setup.experiments[self.exp] + ".dat",np.reshape(list_bk,(len(self.th_list)*len(self.en_list)*len(self.m_lists[iFile]),4)),header = self.export_header+'\n'+export_units_header)
 
         return
@@ -575,38 +556,40 @@ class bmeson_decay_production:
         kdes = []
         weights = []
 
-        curr_weight = 0.
-        successfull_decays = []
-        if 2*m_exo+c.m_K<c.m_B:
-            bk2s_decay = decay_to_n_body(self.b_boosts, m_exo, c.m_B, [c.m_K], n_exos=2, weight_function = f.ds_production_BRs.d_BR_B_K_2S)
-            if bk2s_decay.success:
-                successfull_decays.append(bk2s_decay)
-                curr_weight += self.b_meson_mult*f.get_branching_ratios("2ds", m_exo, "Bmeson","K",1)*2
-            del bk2s_decay
-        if 2*m_exo+c.m_K0<c.m_B0:
-            b0k02s_decay = decay_to_n_body(self.b0_boosts, m_exo, c.m_B0, [c.m_K0], n_exos=2, weight_function = f.ds_production_BRs.d_BR_B0_K0_2S)
-            if b0k02s_decay.success:
-                successfull_decays.append(b0k02s_decay)
-                curr_weight += self.b0_meson_mult*f.get_branching_ratios("2ds", m_exo, "B0meson","K0",1)*2
-            del b0k02s_decay
-        if 2*m_exo+c.m_Kstar<c.m_B:
-            bkstar2s_decay = decay_to_n_body(self.b_boosts, m_exo, c.m_B, [c.m_Kstar], n_exos=2, weight_function = f.ds_production_BRs.d_BR_B_Kstar_2S)
-            if bkstar2s_decay.success:
-                successfull_decays.append(bkstar2s_decay)
-                curr_weight += self.b_meson_mult*f.get_branching_ratios("2ds", m_exo, "Bmeson","Kstar",1)*2
-            del bkstar2s_decay
-        if 2*m_exo+c.m_K0star<c.m_B0:
-            b0k0star2s_decay = decay_to_n_body(self.b0_boosts, m_exo, c.m_B0, [c.m_K0star], n_exos=2, weight_function = f.ds_production_BRs.d_BR_B0_K0star_2S)
-            if b0k0star2s_decay.success:
-                successfull_decays.append(b0k0star2s_decay)
-                curr_weight += self.b0_meson_mult*f.get_branching_ratios("2ds", m_exo, "B0meson","K0star",1)*2
-            del b0k0star2s_decay
-
-        if successfull_decays:
-            b_all_decay = np.sum(successfull_decays)
-            kdes.append(b_all_decay.kde())
-            weights.append(curr_weight)
-            del b_all_decay
+        for fin_state in setup.kaons_list:
+            #charged
+            m_K = c.m_K[fin_state]
+            if(2*m_exo+m_K<c.m_B):
+                diff_class = f.diff_BR_B_K_2S("Bmeson",fin_state)
+                bk2s_decay = decay_to_n_body(self.b_boosts, m_exo, c.m_B, [m_K], n_exos=2, weight_function = diff_class.d_BR_B_K_2S)
+                if bk2s_decay.success: 
+                    kdes.append(bk2s_decay.kde())
+                    weights.append(self.multiplicities["Bmeson"]*f.get_branching_ratios("2ds", m_exo, "Bmeson",fin_state,1)*2)
+                del bk2s_decay
+            
+            #neutral
+            if fin_state == "K" or fin_state == "Kstar_892" or fin_state == "K2star_1430":
+                m_K = c.m_K[fin_state+"_0"]
+            else: m_K = c.m_K[fin_state]
+            if(2*m_exo+m_K<c.m_B0):
+                diff_class = f.diff_BR_B_K_2S("B0meson",fin_state)
+                b0k02s_decay = decay_to_n_body(self.b0_boosts, m_exo, c.m_B0, [m_K], n_exos=2, weight_function = diff_class.d_BR_B_K_2S)
+                if b0k02s_decay.success: 
+                    kdes.append(b0k02s_decay.kde())
+                    weights.append(self.multiplicities["B0meson"]*f.get_branching_ratios("2ds", m_exo, "B0meson",fin_state,1)*2)
+                del b0k02s_decay
+        if(2*m_exo<c.m_B0): #B0->2S
+            b0_decay = decay_to_2_body(self.b0_boosts, m_exo, c.m_B0, m_exo)
+            if b0_decay.success: 
+                kdes.append(b0_decay.kde())
+                weights.append(self.multiplicities["B0meson"]*f.get_branching_ratios("2ds", m_exo, "B0meson", "2S", 1)*2)
+            del b0_decay
+        if(2*m_exo<c.m_Bs): #Bs->2S
+            bs_decay = decay_to_2_body(self.b0_boosts, m_exo, c.m_Bs, m_exo)
+            if bs_decay.success: 
+                kdes.append(bs_decay.kde())
+                weights.append(self.multiplicities["Bsmeson"]*f.get_branching_ratios("2ds", m_exo, "Bsmeson", "2S", 1)*2)
+            del bs_decay
 
         data_list_bk_exo = []
         for en_exo in self.en_list:
@@ -616,7 +599,7 @@ class bmeson_decay_production:
                     norm_yield = 0.
                     for weight, kde in zip(weights, kdes):
                         if weight==0.: continue
-                        norm_yield += f.f_kde(kde, weight, en_exo, th_exo)[0]
+                        norm_yield += f.f_kde(kde, self.norm_xsec*weight, en_exo, th_exo)[0]
                     data_sublist_bk.append([th_exo, en_exo, m_exo, norm_yield])
             else:
                 for th_exo in self.th_list:
@@ -631,9 +614,13 @@ class dmeson_decay_production:
         self.ndecays = n_decay
         self.daughter_exo = daugther_name 
         self.active_coupling = active_coupling
-        self.export_header = f"Differential {daugther_name} yield at {experiment} experiment produced in Dmeson decays | generated with statistics of {n_production*n_decay} events using "
+
+        p_beam = setup.p_beam.get(self.exp,400)
         self.th_list = np.linspace(setup.theta_min.get(self.exp,0.00018), setup.theta_max.get(self.exp,0.01098), num=setup.theta_bins).tolist()
-        self.en_list = np.linspace(setup.energy_min.get(setup.p_beam.get(self.exp,400)), setup.energy_max.get(setup.p_beam.get(self.exp,400)), num=setup.energy_bins).tolist()
+        self.en_list = np.linspace(setup.energy_min.get(p_beam), setup.energy_max.get(p_beam), num=setup.energy_bins).tolist()
+        self.norm_xsec = c.sigma_cc[p_beam] / c.sigma_pp[p_beam] * c.A_target[experiment]**(1./3)
+
+        self.export_header = f"Differential {daugther_name} yield at {experiment} experiment produced in Dmeson decays | generated with statistics of {n_production*n_decay} events using "
         self.m_lists = []
         for iFile in range(len(setup.mass_bins)):
             self.m_lists.append(np.logspace(np.log10(setup.mass_min[iFile]), np.log10(setup.mass_max[iFile]), num=setup.mass_bins[iFile]).tolist())
@@ -648,7 +635,7 @@ class dmeson_decay_production:
         self.external_mod = ""
         if use_external and not use_empirical:
             print("[Info:] \t Using external D meson source")
-            filename = os.getcwd()+"/tab_mesons/charm/"
+            filename = os.path.dirname(os.path.realpath(__file__))+"/../tab_mesons/charm/"
             filename += "hsccbar_"+("massless_" if use_massless else "")+("statcomb23partprod_" if use_3part_prod else "")+str(setup.p_beam[self.exp])+'GeV_'+f.number_to_3sigfigs_str(n_production)+".dat"
             if use_3part_prod: self.external_mod = "23parton"
             if target_code != "2212": 
@@ -776,7 +763,7 @@ class dmeson_decay_production:
             pythia.next()
             for isubEvent in range(pythia.event.size()):
                 evt = pythia.event[isubEvent]
-                if abs(evt.id()) not in [411,421,431]: continue
+                if evt.id() not in evtID_to_list.keys(): continue
                 evtID_to_list[evt.id()].append([evt.id(),evt.px(),evt.py(),evt.pz()])
         self.d_meson_list     = np.array(evtID_to_list[411])
         self.dbar_meson_list  = np.array(evtID_to_list[-411])
@@ -786,7 +773,7 @@ class dmeson_decay_production:
         self.dsbar_meson_list = np.array(evtID_to_list[-431])
         if save_pythia_file:
             file_info  =  "Charmed meson momenta as generated for " + self.nprod +" impining protons, with PYTHIA (version "+str(pythia.parm("Pythia:versionNumber"))+") and modifiers " + ', '.join(pythia_modifiers)
-            np.savetxt(f"./tab_mesons/charm/hsccbar_{setup.p_beam[self.exp]}GeV_{f.number_to_3sigfigs_str(self.nprod)}.dat", np.concatenate(evtID_to_list.values()), header=file_info, fmt='%i %4f %4f %3f')
+            np.savetxt(f".ALP_production/tab_mesons/charm/hsccbar_{setup.p_beam[self.exp]}GeV_{f.number_to_3sigfigs_str(self.nprod)}.dat", np.concatenate(evtID_to_list.values()), header=file_info, fmt='%i %4f %4f %3f')
         return
 
     def _init_empirical_(self, reference = "LEBC"):
@@ -810,28 +797,39 @@ class dmeson_decay_production:
         self.export_header += reference + f"({f.Input_reweight.literature.get(reference,'no lit. entry found')}) empirical meson distributions."
         return
 
-    def process_pool(self, nthreads, active_couplings = [""]):
+    def process_pool(self, nthreads, active_couplings = [""], single_mass_point=0):
         """Wrapper to run production in parallel threads.
         Args:
             nthreads (int): number of parallel threads to run
+            single_mass_point (float, optional): Single mass point for which to run. Defaults to 0.
         """
-        for active_coupling in active_couplings:
-            if active_coupling: print("[Info:] \t Starting "+self.daughter_exo+" production with active coupling U2_" + active_coupling)
-            self.active_coupling = active_coupling
-            for iFile in range(len(setup.mass_bins)):
-                iFileName = str(int(setup.mass_min[iFile]*1000)) + "to" + str(int(setup.mass_max[iFile]*1000)) + "MeV"
-                if setup.mass_min[iFile]*1000 < 1: iFileName = "01to" + str(int(setup.mass_max[iFile]*1000)) + "MeV"
-                print("[Info:] \t Starting exotic production for mass range",setup.mass_min[iFile],"to",setup.mass_max[iFile],"GeV with",nthreads,"threads")
-                with Pool(processes=nthreads) as pool:
-                    list_d = list(tqdm(pool.imap(self.d_meson_decay_process, self.m_lists[iFile]), total=len(self.m_lists[iFile])))
-                export_info_header = self.export_header if not active_coupling else self.export_header.replace(' yield', f'({active_coupling} mixing) yield')
-                pool.close()
-                pool.join()
 
-                # export
-                coupling_info  = "-" + active_coupling + "Mixing" if active_coupling else ""
-                export_units_header = "Theta[rad] E_x[GeV] dY[per(rad GeV N_ccbar " + {"hnl":f"U2_{active_coupling}", "alp":"g_cu_eff^2/GeV^2", "ds":"Y^2" }[self.daughter_exo] + ')]'
-                f.export(setup.experiments[self.exp],self.daughter_exo+"_Dmeson"+coupling_info+"_beam" + str(setup.p_beam[self.exp]) + "GeV_" + iFileName + "_" + setup.experiments[self.exp] + ".dat",np.reshape(list_d,(len(self.th_list)*len(self.en_list)*len(self.m_lists[iFile]),4)),header = export_info_header+'\n'+export_units_header)
+        for active_coupling in active_couplings:
+            export_units_header = "Theta[rad] E_x[GeV], m_x [GeV], dY[per(rad GeV " + {"hnl":f"U2_{active_coupling}", "alp":"g_cu_eff^2/GeV^2", "ds":"Y^2" }[self.daughter_exo] + ')]'
+
+            mixing_info  = "-" + active_coupling + "Mixing" if active_coupling else ""
+            if active_coupling: print("[Info:] \t Starting "+self.daughter_exo+" production with active coupling U2_" + active_coupling)
+            export_info_header = self.export_header if not active_coupling else self.export_header.replace(' yield', f'({active_coupling} mixing) yield')
+            self.active_coupling = active_coupling
+
+            if single_mass_point>0:
+                list_d = self.d_meson_decay_process(single_mass_point)
+                f.export(setup.experiments[self.exp],self.daughter + "_Dmeson"+mixing_info+"_beam" + str(setup.p_beam[self.exp]) + "GeV_" + str(int(single_mass_point*1e6)) + "keV_" + setup.experiments[self.exp] + ".dat",np.reshape(list_d,(len(self.th_list)*len(self.en_list),4)),header = self.export_header+'\n'+export_units_header)
+            else:
+                for iFile in range(len(setup.mass_bins)):
+                    iFileName = str(int(setup.mass_min[iFile]*1000)) + "to" + str(int(setup.mass_max[iFile]*1000)) + "MeV"
+                    if setup.mass_min[iFile]*1000 < 1:
+                        iFileName = "01to" + str(int(setup.mass_max[iFile]*1000)) + "MeV"
+                    print("[Info:] \t Starting exotic production for mass range",setup.mass_min[iFile],"to",setup.mass_max[iFile]," GeV with",nthreads,"threads")
+
+                    with Pool(processes=nthreads) as pool:
+                        list_d = list(tqdm(pool.imap(self.d_meson_decay_process, self.m_lists[iFile]), total=len(self.m_lists[iFile])))
+
+                    pool.close()
+                    pool.join()
+
+                    # export   
+                    f.export(setup.experiments[self.exp],self.daughter_exo + "_Dmeson"+mixing_info+"_beam" + str(setup.p_beam[self.exp]) + "GeV_" + iFileName + "_" + setup.experiments[self.exp] + ".dat",np.reshape(list_d,(len(self.th_list)*len(self.en_list)*len(self.m_lists[iFile]),4)),header = export_info_header+'\n'+export_units_header)
         return
 
     def d_meson_decay_process(self,m_exo):
@@ -879,19 +877,19 @@ class dmeson_decay_production:
                         kdes.append(ds_decay.kde())
                         weights.append(self.multiplicities["Dsmeson"]*f.get_branching_ratios("hnl", m_exo, "Dsmeson", "El", 1))
                     del ds_decay
-                if(m_exo+c.m_el+c.m_K0< c.m_D): 
-                    d_decay = decay_to_n_body(np.concatenate((self.d_boosts,self.d0_boosts)),  m_exo, c.m_D, [c.m_el, c.m_K0], weight_function=f.hnl_production_BRs.get_differential_weight_function("Dmeson", ["El","K0"]))  
+                if(m_exo+c.m_el+c.m_K["K_0"]< c.m_D): 
+                    d_decay = decay_to_n_body(np.concatenate((self.d_boosts,self.d0_boosts)),  m_exo, c.m_D, [c.m_el, c.m_K["K_0"]], weight_function=f.hnl_production_BRs.get_differential_weight_function("Dmeson", ["El","K_0"]))  
                     if d_decay.success: 
                         kdes.append(d_decay.kde())
-                        weights.append(self.multiplicities["Dmeson"]*f.get_branching_ratios("hnl", m_exo, "Dmeson", ["El","K0"], 1)
+                        weights.append(self.multiplicities["Dmeson"]*f.get_branching_ratios("hnl", m_exo, "Dmeson", ["El","K_0"], 1)
                                         +self.multiplicities["D0meson"]*f.get_branching_ratios("hnl", m_exo, "D0meson", ["El","K"], 1))
                     del d_decay
-                if(m_exo+c.m_el+c.m_K0star< c.m_D):
-                    d_elkstar_decay = decay_to_n_body(np.concatenate((self.d_boosts,self.d0_boosts)),  m_exo, c.m_D, [c.m_el, c.m_K0star], weight_function=f.hnl_production_BRs.get_differential_weight_function("Dmeson", ["El","K0star"]))  
+                if(m_exo+c.m_el+c.m_K["Kstar_892_0"]< c.m_D):
+                    d_elkstar_decay = decay_to_n_body(np.concatenate((self.d_boosts,self.d0_boosts)),  m_exo, c.m_D, [c.m_el, c.m_K["Kstar_892_0"]], weight_function=f.hnl_production_BRs.get_differential_weight_function("Dmeson", ["El","Kstar_892_0"]))  
                     if d_elkstar_decay.success: 
                         kdes.append(d_elkstar_decay.kde())
-                        weights.append(self.multiplicities["Dmeson"]*f.get_branching_ratios("hnl", m_exo, "Dmeson", ["El","K0star"], 1)
-                                        +self.multiplicities["D0meson"]*f.get_branching_ratios("hnl", m_exo, "D0meson", ["El","Kstar"], 1))
+                        weights.append(self.multiplicities["Dmeson"]*f.get_branching_ratios("hnl", m_exo, "Dmeson", ["El","Kstar_892_0"], 1)
+                                        +self.multiplicities["D0meson"]*f.get_branching_ratios("hnl", m_exo, "D0meson", ["El","Kstar_892"], 1))
                     del d_elkstar_decay
                 if(m_exo+c.m_el+c.m_pi0<c.m_D): 
                     d_elpi_decay = decay_to_n_body(np.concatenate((self.d_boosts,self.d0_boosts)),  m_exo, c.m_D, [c.m_el, c.m_pi0], weight_function=f.hnl_production_BRs.get_differential_weight_function("Dmeson", ["El","Pi0"]))
@@ -914,19 +912,19 @@ class dmeson_decay_production:
                         kdes.append(ds_decay.kde())
                         weights.append(self.multiplicities["Dsmeson"]*f.get_branching_ratios("hnl", m_exo, "Dsmeson", "Mu", 1))
                     del ds_decay
-                if(m_exo+c.m_mu+c.m_K0< c.m_D): 
-                    d_decay = decay_to_n_body(np.concatenate((self.d_boosts,self.d0_boosts)),  m_exo, c.m_D, [c.m_mu, c.m_K0], weight_function=f.hnl_production_BRs.get_differential_weight_function("Dmeson", ["Mu","K0"]))
+                if(m_exo+c.m_mu+c.m_K["K_0"]< c.m_D): 
+                    d_decay = decay_to_n_body(np.concatenate((self.d_boosts,self.d0_boosts)),  m_exo, c.m_D, [c.m_mu, c.m_K["K_0"]], weight_function=f.hnl_production_BRs.get_differential_weight_function("Dmeson", ["Mu","K_0"]))
                     if d_decay.success: 
                         kdes.append(d_decay.kde())
-                        weights.append(self.multiplicities["Dmeson"]*f.get_branching_ratios("hnl", m_exo, "Dmeson", ["Mu","K0"], 1)
+                        weights.append(self.multiplicities["Dmeson"]*f.get_branching_ratios("hnl", m_exo, "Dmeson", ["Mu","K_0"], 1)
                                         +self.multiplicities["D0meson"]*f.get_branching_ratios("hnl", m_exo, "D0meson", ["Mu","K"], 1))
                     del d_decay
-                if(m_exo+c.m_mu+c.m_K0star< c.m_D): 
-                    d_mukstar_decay = decay_to_n_body(np.concatenate((self.d_boosts,self.d0_boosts)),  m_exo, c.m_D, [c.m_mu, c.m_K0star], weight_function=f.hnl_production_BRs.get_differential_weight_function("Dmeson", ["Mu","K0star"]))
+                if(m_exo+c.m_mu+c.m_K["Kstar_892_0"]< c.m_D): 
+                    d_mukstar_decay = decay_to_n_body(np.concatenate((self.d_boosts,self.d0_boosts)),  m_exo, c.m_D, [c.m_mu, c.m_K["Kstar_892_0"]], weight_function=f.hnl_production_BRs.get_differential_weight_function("Dmeson", ["Mu","Kstar_892_0"]))
                     if d_mukstar_decay.success: 
                         kdes.append(d_mukstar_decay.kde())
-                        weights.append(self.multiplicities["Dmeson"]*f.get_branching_ratios("hnl", m_exo, "Dmeson", ["Mu","K0star"], 1)
-                                        +self.multiplicities["D0meson"]*f.get_branching_ratios("hnl", m_exo, "D0meson", ["Mu","Kstar"], 1))
+                        weights.append(self.multiplicities["Dmeson"]*f.get_branching_ratios("hnl", m_exo, "Dmeson", ["Mu","Kstar_892_0"], 1)
+                                        +self.multiplicities["D0meson"]*f.get_branching_ratios("hnl", m_exo, "D0meson", ["Mu","Kstar_892"], 1))
                     del d_mukstar_decay
                 if(m_exo+c.m_mu+c.m_pi0<c.m_D): 
                     d_mupi_decay = decay_to_n_body(np.concatenate((self.d_boosts,self.d0_boosts)),  m_exo, c.m_D, [c.m_mu, c.m_pi0], weight_function=f.hnl_production_BRs.get_differential_weight_function("Dmeson", ["Mu","Pi0"]))
@@ -961,12 +959,18 @@ class dmeson_decay_production:
                         kdes.append(tau_pi_decay.kde())
                         weights.append(self.multiplicities["Tau"]*f.get_branching_ratios("hnl", m_exo, "Tau", "Pi", 1))
                     del tau_pi_decay
-                if(m_exo+c.m_rho < c.m_tau): 
-                    tau_rho_decay = decay_to_2_body(self.tau_boosts, m_exo, c.m_tau, c.m_rho)
-                    if tau_rho_decay.success: 
-                        kdes.append(tau_rho_decay.kde())
-                        weights.append(self.multiplicities["Tau"]*f.get_branching_ratios("hnl", m_exo, "Tau", "Rho", 1))
-                    del tau_rho_decay
+                # if(m_exo+c.m_rho < c.m_tau): 
+                    # tau_rho_decay = decay_to_2_body(self.tau_boosts, m_exo, c.m_tau, c.m_rho)
+                    # if tau_rho_decay.success: 
+                    #     kdes.append(tau_rho_decay.kde())
+                    #     weights.append(self.multiplicities["Tau"]*f.get_branching_ratios("hnl", m_exo, "Tau", "Rho", 1))
+                    # del tau_rho_decay
+                if(m_exo+c.m_pi+c.m_pi0<c.m_tau): #alternative to Nrho decay using full 3 body decay for future updates
+                    tau_pi0pi_decay = decay_to_n_body(self.tau_boosts, m_exo, c.m_tau, [c.m_pi0, c.m_pi], weight_function=f.hnl_production_BRs.get_differential_weight_function("Tau", ["Pi0","Pi"]))
+                    if tau_pi0pi_decay.success: 
+                        kdes.append(tau_pi0pi_decay.kde())
+                        weights.append(self.multiplicities["Tau"]*f.get_branching_ratios("hnl", m_exo, "Tau",["Pi0","Pi"], 1))
+                    del tau_pi0pi_decay
         data_list_dpi_exo = []
         for en_exo in self.en_list:
             data_sublist_dpi = []
@@ -975,7 +979,7 @@ class dmeson_decay_production:
                     norm_yield = 0.
                     for weight, kde in zip(weights, kdes):
                         if weight == 0.: continue
-                        norm_yield += f.f_kde(kde, weight, en_exo,th_exo)[0]
+                        norm_yield += f.f_kde(kde, self.norm_xsec*weight, en_exo,th_exo)[0]
                     data_sublist_dpi.append([th_exo, en_exo, m_exo, norm_yield])
             else:
                 for th_exo in self.th_list:
@@ -997,30 +1001,30 @@ class meson_to_dp_decay_production:
         self.en_list = np.linspace(setup.energy_min.get(setup.p_beam.get(self.exp,400)), setup.energy_max.get(setup.p_beam.get(self.exp,400)), num=setup.energy_bins).tolist()
         self.m_lists = []
         for iFile in range(len(setup.mass_bins)):
-            # self.m_lists.append(np.logspace(np.log10(setup.mass_min[iFile]), np.log10(setup.mass_max[iFile]), num=setup.mass_bins[iFile]).tolist())
-            self.m_lists.append(np.linspace(setup.mass_min[iFile], setup.mass_max[iFile], num=setup.mass_bins[iFile]).tolist())
+            self.m_lists.append(np.logspace(np.log10(setup.mass_min[iFile]), np.log10(setup.mass_max[iFile]), num=setup.mass_bins[iFile]).tolist())
+            # self.m_lists.append(np.linspace(setup.mass_min[iFile], setup.mass_max[iFile], num=setup.mass_bins[iFile]).tolist())
 
-        self.pi0_list  = np.empty((0, 4), int)
-        self.eta_list = np.empty((0, 4), int)
-        self.etap_list = np.empty((0, 4), int)
-        self.rho0_list  = np.empty((0, 4), int)
-        # self.rho_list  = np.empty((0, 4), int)
-        self.omega_list = np.empty((0, 4), int)
-        self.phi_list = np.empty((0, 4), int)
+        self.pi0_list  = np.empty((0, 4), np.float64)
+        self.eta_list = np.empty((0, 4), np.float64)
+        self.etap_list = np.empty((0, 4), np.float64)
+        self.rho0_list  = np.empty((0, 4), np.float64)
+        self.rho_list  = np.empty((0, 4), np.float64)
+        self.omega_list = np.empty((0, 4), np.float64)
+        self.phi_list = np.empty((0, 4), np.float64)
 
         if use_external:
             print("[Info:] \t Using external meson source")
-            filename = os.getcwd()+"/tab_mesons/softQCD/softQCD_"+str(setup.p_beam[self.exp])+'GeV_'+f.number_to_3sigfigs_str(n_production)+".dat"
+            filename = os.path.dirname(os.path.realpath(__file__))+"/../tab_mesons/softQCD/softQCD_"+f.number_to_3sigfigs_str(n_production)+"evts_pp_"+str(setup.p_beam[self.exp])+'GeV_'+("8.3" if setup.p_beam[self.exp] in [30,800] else "8.2" )+"_pSet2_pom_ok.txt"
 
             if os.path.exists(filename):
-                external_list = np.loadtxt(filename)
+                external_list = np.loadtxt(filename,usecols=(2,3,4,5))
                 with open(filename) as meson_source_file: self.export_header += meson_source_file.readline()[1:-1]
                 external_list[:,0] = np.abs(external_list[:,0])
                 self.pi0_list = external_list[np.where(external_list[:,0]==111)]
                 self.eta_list = external_list[np.where(external_list[:,0]==221)]
                 self.etap_list = external_list[np.where(external_list[:,0]==331)]
                 self.rho0_list = external_list[np.where(external_list[:,0]==113)]
-                # self.rho_list = external_list[np.where(external_list[:,0]==213)]
+                self.rho_list = external_list[np.where(external_list[:,0]==213)]
                 self.omega_list = external_list[np.where(external_list[:,0]==223)]
                 self.phi_list = external_list[np.where(external_list[:,0]==333)]
 
@@ -1042,8 +1046,8 @@ class meson_to_dp_decay_production:
         print("[Info:] \t eta' multiplicity",etap_mult)
         rho0_mult = len(self.rho0_list)/self.nprod
         print("[Info:] \t rho0 multiplicity",rho0_mult)
-        # rho_mult = len(self.rho_list)/self.nprod
-        # print("[Info:] \t rho multiplicity",rho_mult)
+        rho_mult = len(self.rho_list)/self.nprod
+        print("[Info:] \t rho multiplicity",rho_mult)
         omega_mult = len(self.omega_list)/self.nprod
         print("[Info:] \t omega multiplicity",omega_mult)
         phi_mult = len(self.phi_list)/self.nprod
@@ -1054,7 +1058,7 @@ class meson_to_dp_decay_production:
             "Eta" : eta_mult,
             "EtaP" : etap_mult,
             "Rho0"  : rho0_mult,
-            # "Rho"  : rho_mult,
+            "Rho"  : rho_mult,
             "Omega" : omega_mult,
             "Phi" : phi_mult
         }
@@ -1068,8 +1072,8 @@ class meson_to_dp_decay_production:
         del self.etap_list
         self.rho0_boosts = f.lorentz_boosts_vectorized(event_list=self.rho0_list, mass=c.m_rho, ndecays=self.ndecays)
         del self.rho0_list
-        # self.rho_boosts =  f.lorentz_boosts_vectorized(event_list=self.rho_list,  mass=c.m_rho,  ndecays=self.ndecays)
-        # del self.rho_list
+        self.rho_boosts =  f.lorentz_boosts_vectorized(event_list=self.rho_list,  mass=c.m_rho,  ndecays=self.ndecays)
+        del self.rho_list
         self.omega_boosts = f.lorentz_boosts_vectorized(event_list=self.omega_list, mass=c.m_omega, ndecays=self.ndecays)
         del self.omega_list
         self.phi_boosts = f.lorentz_boosts_vectorized(event_list=self.phi_list, mass=c.m_phi, ndecays=self.ndecays)
@@ -1101,28 +1105,15 @@ class meson_to_dp_decay_production:
         self.export_header += f"Pythia{pythia.parm('Pythia:versionNumber')} with settings [" +" ".join(pythia_modifiers)+"]"
         pythia.init() # initialize
         evtID_to_list = {}
-        for id in [111,221,331,113,213,223,333]: evtID_to_list[id] = []
+        for id_ in [111,221,331,113,213,223,333]: evtID_to_list[id_] = []
         for _ in range(self.nprod):
             pythia.next()
             for isubEvent in range(pythia.event.size()):
-                evtID = np.abs(pythia.event[isubEvent].id())
+                evtID = pythia.event[isubEvent].idAbs()
                 if evtID not in [111,221,331,113,213,223,333]: continue
                 evtID_to_list[evtID].append([evtID,pythia.event[isubEvent].px(),pythia.event[isubEvent].py(),pythia.event[isubEvent].pz()])
-                # if evtID == 111: #pi0
-                #     self.pi0_list.append([evtID,pythia.event[isubEvent].px(),pythia.event[isubEvent].py(),pythia.event[isubEvent].pz()])
-                # elif evtID == 221:#eta
-                #     self.eta_list.append([evtID,pythia.event[isubEvent].px(),pythia.event[isubEvent].py(),pythia.event[isubEvent].pz()])
-                # elif evtID == 331:#eta'
-                #     self.etap_list.append([evtID,pythia.event[isubEvent].px(),pythia.event[isubEvent].py(),pythia.event[isubEvent].pz()])
-                # elif evtID == 113:#rho0
-                #     self.rho0_list.append([evtID,pythia.event[isubEvent].px(),pythia.event[isubEvent].py(),pythia.event[isubEvent].pz()])
-                # elif evtID == 213:#rho
-                #     self.rho_list.append([evtID,pythia.event[isubEvent].px(),pythia.event[isubEvent].py(),pythia.event[isubEvent].pz()])
-                # elif evtID == 223:#omega
-                #     self.omega_list.append([evtID,pythia.event[isubEvent].px(),pythia.event[isubEvent].py(),pythia.event[isubEvent].pz()])
-                # elif evtID == 333:#phi
-                #     self.phi_list.append([evtID,pythia.event[isubEvent].px(),pythia.event[isubEvent].py(),pythia.event[isubEvent].pz()])
         self.pi0_list  = np.array(evtID_to_list[111])
+        self.rho_list = np.array(evtID_to_list[213])
         self.rho0_list = np.array(evtID_to_list[113])
         self.eta_list  = np.array(evtID_to_list[221])
         self.omega_list= np.array(evtID_to_list[223])
@@ -1130,11 +1121,17 @@ class meson_to_dp_decay_production:
         self.phi_list  = np.array(evtID_to_list[333])
         return
     
-    def process_pool(self,nthreads):
+    def process_pool(self,nthreads,single_mass_point=0):
         """Wrapper to run production in parallel threads.
         Args:
             nthreads (int): number of parallel threads to run
+            single_mass_point (float, optional): Single mass point for which to run. Defaults to 0.
         """
+        export_units_header = "Theta[rad] E_x [GeV] dY[per(rad GeV N_pN eps^2)]"
+        if single_mass_point>0:
+            list_out = self.meson_decay_process(single_mass_point)
+            f.export(setup.experiments[self.exp],self.daughter + "_MesonDecay_beam" + str(setup.p_beam[self.exp]) + "GeV_" + str(int(single_mass_point*1e6)) + "keV_" + setup.experiments[self.exp] + ".dat",np.reshape(list_out,(len(self.th_list)*len(self.en_list),4)),header = self.export_header+'\n'+export_units_header)
+            return
         for iFile in range(len(setup.mass_bins)):
             iFileName = str(int(setup.mass_min[iFile]*1000)) + "to" + str(int(setup.mass_max[iFile]*1000)) + "MeV"
             if setup.mass_min[iFile]*1000 < 1:
@@ -1146,9 +1143,8 @@ class meson_to_dp_decay_production:
 
             pool.close()
             pool.join()
-            export_units_header = "Theta[rad] E_x [GeV] dY[per(rad GeV N_pN eps^2)]"
             # export
-            f.export(setup.experiments[self.exp],self.daughter_exo+"_MesonDecay_beam" + str(setup.p_beam[self.exp]) + "GeV_" + iFileName + "_" + setup.experiments[self.exp] + ".dat",np.reshape(list_out,(len(self.th_list)*len(self.en_list)*len(self.m_lists[iFile]),4)), header = self.export_info_header+'\n'+export_units_header)
+            f.export(setup.experiments[self.exp],self.daughter_exo+"_MesonDecay_beam" + str(setup.p_beam[self.exp]) + "GeV_" + iFileName + "_" + setup.experiments[self.exp] + ".dat",np.reshape(list_out,(len(self.th_list)*len(self.en_list)*len(self.m_lists[iFile]),4)), header = self.export_header+'\n'+export_units_header)
         return
 
     def meson_decay_process(self,m_exo):
@@ -1185,11 +1181,11 @@ class meson_to_dp_decay_production:
             if rho0_decay.success: 
                 kdes.append(rho0_decay.kde())
                 weights.append(self.multiplicities["Rho0"]*f.rescale_v_p_gamma(m_exo,c.m_rho,c.m_pi0)*c.BR_Rho0_Pi0Gamma)
-        # if(m_exo+c.m_pi<c.m_rho):
-        #     rho_decay = decay_to_2_body(self.rho_boosts, m_exo, c.m_rho, c.m_pi)
-        #     if rho_decay.success: 
-        #         kdes.append(rho_decay.kde())
-        #         weights.append(self.multiplicities["Rho"]*f.rescale_v_p_gamma(m_exo,c.m_rho,c.m_pi)*c.BR_Rho_PiGamma)
+        if(m_exo+c.m_pi<c.m_rho):
+            rho_decay = decay_to_2_body(self.rho_boosts, m_exo, c.m_rho, c.m_pi)
+            if rho_decay.success: 
+                kdes.append(rho_decay.kde())
+                weights.append(self.multiplicities["Rho"]*f.rescale_v_p_gamma(m_exo,c.m_rho,c.m_pi)*c.BR_Rho_PiGamma)
         if(m_exo+c.m_pi0<c.m_omega):
             omega_decay = decay_to_2_body(self.omega_boosts, m_exo, c.m_omega, c.m_pi0)
             if omega_decay.success: 
@@ -1215,8 +1211,6 @@ class meson_to_dp_decay_production:
             if phi_decay.success: 
                 kdes.append(phi_decay.kde())
                 weights.append(self.multiplicities["Phi"]*f.rescale_v_p_gamma(m_exo,c.m_phi,c.m_eta)*c.BR_Phi_EtaGamma)
-
-        # print("[Info:] \t Exotic mass:",m_exo," total weight:",sum(weights))
 
         data_list = []
         for en_exo in self.en_list:

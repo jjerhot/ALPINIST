@@ -24,15 +24,15 @@ experiments = { 'NA62':             'NA62',
 
 channels_decay = [  
                     'PiEl',
-                    'RhoEl',
+                    'PiPiEl',
                     'PiMu',
-                    'RhoMu',
+                    'PiPiMu',
                     'NuElMu',
                     'NuElEl',
                     'NuMuMu',
                     'PiNu',
                     'EtaNu',
-                    'RhoNu'
+                    'PiPiNu'
                 ]
 
 channels_production =   [ 

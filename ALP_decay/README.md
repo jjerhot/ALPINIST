@@ -49,10 +49,10 @@ To compile, execute in ALP_decay/
 cmake3 -B build && cmake3 --build build
 ```
 
-To run, execute ./DecayMC in ALP_decay/bin/ with -h to show help or with required parameters (-e EXP -p PRODUCTION_MODE -d DECAY_MODE -n NUMBER_OF_EVENTS_PER_BIN). Example for simulating a->2gamma decay in CHARM experiment for primakoff production with 1M events per mass and weight bin:
+To run, execute ./DecayMC in ALP_decay/bin/ with -h to show help or with required parameters (-e EXP -p PRODUCTION_MODE -d DECAY_MODE -n NUMBER_OF_EVENTS_PER_BIN). Example for simulating a->2gamma decay in CHARM experiment for Primakoff production with 1M events per mass and weight bin:
 
 ```sh
-./DecayMC -x alp -e CHARM -p primakoff -d 2Gamma -n 1000000
+./DecayMC -x alp -e CHARM -p Primakoff -d 2Gamma -n 1000000
 ```
 
 Alternatively can be run with ROOT interpreter. Execute root in ALP_decay/src/ and then for running the same as in example above execute:
@@ -66,10 +66,10 @@ The parameter mapping for DecayMCProcess.C is the following:
   * Exotic particles: 0-Axion-Like-Particles, 1-Heavy Neutral Leptons, 2-Dark Photons,3-Dark Scalars
   * Experiment: 0-CHARM, 1-BEBC, 2-NuCal, 3-NuTeV, 4-NA62, 5-DarkQuest, 6-DarkQuestPhase2, 7-DUNE, 8-SHiP, 9-KOTOdump, 10-KOTOpnn, 11-KOTO2dump, 12-KOTO2pnn, 13-KOTOexclPnn, 14-KLEVER, 15-KLEVERext, 16-SHADOWS, 17-SHiPecn4, 18-ORCA, 19-BEBCcuboid
   * Production mode: 
-    * for ALP:  0-Bmeson, 1-Bmeson, 2-Dmeson, 3-primakoff, 4-photonfrommeson, 5-mixingPi0, 6-mixingEta, 7-mixingEtaPrim
+    * for ALP:  0-Bmeson, 1-Dmeson, 2-Primakoff, 3-PhotonFromMeson, 4-MixingPi0, 5-MixingEta, 6-MixingEtaPrim
     * for HNL:  0-Bmeson, 1-Dmeson
-    * for DP:   0-Brems, 1-MesonDecay, 2-Mixing
-    * for DS:   0-Bmeson, 1-Bmeson2S
+    * for DP:   0-Brems, 1-MesonDecay, 2-MixingRho, 3-MixingOmega, 4-MixingPhi
+    * for DS:   0-Brems, 1-Bmeson, 2-Bmeson2S
   * Decay mode: 
     * for ALP: 0-2Gamma, 1-2El, 2-2Mu, 3-3Pi0, 4-3Pi, 5-2PiGamma, 6-2Pi0Eta, 7-2PiEta, 8-2Pi0EtaPrim, 9-2PiEtaPrim, 10-2Pi, 11-2K, 12-2KPi,13-2Pi2Pi0
     * for HNL: 1-PiEl, 2-PiMu, 3-RhoEl, 4-RhoMu, 5-NuElEl, 6-NuMuMu, 7-NuElMu, 8-PiNu, EtaNu, RhoNu

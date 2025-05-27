@@ -51,17 +51,7 @@ July 2023
 
 t0.1
 ------
-July 2024 - test release
-- Implementation of the phenomenological seesaw HNL
-- Implementation of additional experiments
-- Change of simulated mass steps, defaulting to logarithmic binning in production and decay, and rescale module
-- Change in normalisation of tabulated files to the respective coupling at 1 (if applicable in GeV)
-- Change of standard mass ranges (0.1—10 MeV & 0.01–5.31GeV)
-- ALP_production python interface for ALP photo-production 
-- Optional usage of empirical meson distributions for Dmeson decay production
-- Bug fix in normalisation of three body decays 
-- Optional choice between logarithmic and linear export grid binning
-- Optional choice of export grid variable (Width, Lifetime, Decaylength)
-- decayTo4Body functionality
-- Dedicated magnet class for more versatile kick effects in ALP_decay
-- Optional calculation and ternary visual representation of HNL sensitivity limits
+July 2024
+- Change the default to log mass steps
+- Change yield coupling normalisations
+- Test release including HNLs
