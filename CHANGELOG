@@ -49,9 +49,17 @@ July 2023
 - Add KLEVER for pinunu reinterpretation
 - Add Dark Photons
 
-t0.1
+v1.4
 ------
-July 2024
+May 2025
+- Release including HNLs
+- Added BEBC, NuTeV, ORCA experiments
+- Added new layouts for DarkQuest and SHiP
 - Change the default to log mass steps
 - Change yield coupling normalisations
-- Test release including HNLs
+- Move Primakoff production to python + fix typo migrated from the Mathematica script + allow various numerical integration methods
+- Add Bremsstrahlung production according to 2108.05900 
+- Change all ALP FCNC to use 2110.10698 + include kaon decays
+- Add headers for tabulated datasets
+- Move all tabulated datasets to external repository to reduce the size of the git repo
+- Move Dalitz tables from .dat to rootfiles
